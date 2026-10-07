@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mintora</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --bg-2: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f5f5f7;
+    --surface-3: #ebebef;
+    --line: #e5e5ea;
+    --text: #0a0a0b;
+    --text-2: #6e6e73;
+    --text-3: #9a9aa0;
+
+    --blue: #0071e3;
+    --blue-ink: #0058b8;
+    --blue-soft: #e8f1fd;
+    --blue-ring: rgba(0, 113, 227, 0.18);
+
+    --red: #e5484d;
+    --red-soft: #fdecec;
+
+    --radius-card: 22px;
+    --radius-control: 16px;
+    --radius-pill: 100px;
+    --mono: 'SF Mono', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.85);
+    --glass-shadow:
+      0 12px 40px rgba(10, 11, 13, 0.1),
+      0 2px 8px rgba(10, 11, 13, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  [data-theme="dark"] {
+    --bg: #000000;
+    --bg-2: #0a0a0b;
+    --surface: #141416;
+    --surface-2: #1c1c1f;
+    --surface-3: #26262a;
+    --line: #1f1f22;
+    --text: #f5f5f7;
+    --text-2: #a1a1a6;
+    --text-3: #6e6e73;
+
+    --blue: #0a84ff;
+    --blue-ink: #409cff;
+    --blue-soft: #0f1a2e;
+    --blue-ring: rgba(10, 132, 255, 0.24);
+
+    --red: #ff453a;
+    --red-soft: #2a1414;
+
+    --glass-bg: rgba(28, 28, 30, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.6),
+      0 2px 8px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.25s, color 0.25s;
+    overflow-x: hidden;
+  }
+
+  .app {
+    max-width: 420px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 120px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 8px;
+    gap: 12px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-mark svg { width: 16px; height: 16px; }
+
+  .brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .glass-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-btn {
+    height: 32px;
+    min-width: 32px;
+    padding: 0 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border-radius: 100px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-btn svg { width: 15px; height: 15px; }
+  .glass-btn:hover { background: rgba(0,0,0,0.05); color: var(--text); }
+  .glass-btn:active { transform: scale(0.95); }
+
+  [data-theme="dark"] .glass-btn:hover { background: rgba(255,255,255,0.06); }
+
+  .glass-divider {
+    width: 1px;
+    height: 18px;
+    background: var(--line);
+    opacity: 0.6;
+  }
+
+  /* ============ BALANCE ============ */
+  .balance-hero {
+    padding: 20px 20px 28px;
+  }
+
+  .balance-eyebrow {
+    font-size: 12px;
+    color: var(--text-3);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .balance-num-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .balance-num {
+    font-size: 46px;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .balance-unit {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+  }
+
+  .balance-usd-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  .balance-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    background: var(--surface-2);
+    color: var(--text-2);
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--line);
+  }
+
+  .balance-pill .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  /* ============ SECTIONS ============ */
+  .section { display: none; padding: 0 20px; }
+  .section.active { display: block; animation: fadeIn 0.28s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ CARD ============ */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow:
+      0 1px 2px rgba(10, 11, 13, 0.03),
+      0 1px 3px rgba(10, 11, 13, 0.02);
+  }
+
+  [data-theme="dark"] .card {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  .card-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 18px;
+    border-bottom: 1px solid var(--line);
+    min-height: 60px;
+  }
+
+  .card-row:last-child { border-bottom: none; }
+
+  .row-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-2);
+    transition: all 0.15s;
+  }
+
+  .row-icon svg { width: 18px; height: 18px; }
+
+  .row-icon.blue {
+    background: var(--blue-soft);
+    color: var(--blue);
+  }
+
+  .row-icon.red {
+    background: var(--red-soft);
+    color: var(--red);
+  }
+
+  .row-body { flex: 1; min-width: 0; }
+
+  .row-label {
+    font-size: 12px;
+    color: var(--text-3);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    margin-bottom: 2px;
+  }
+
+  .row-value {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row-value.mono {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+  }
+
+  .row-value.muted { color: var(--text-2); font-weight: 500; }
+
+  .row-chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--text-3);
+    flex-shrink: 0;
+  }
+
+  /* ============ FIELD ============ */
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    min-height: 68px;
+  }
+
+  .field-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    outline: none;
+    min-width: 0;
+    padding: 0;
+  }
+
+  .field-input::placeholder { color: var(--text-3); font-weight: 500; }
+
+  .field-input.code {
+    font-family: var(--mono);
+    font-size: 18px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .field-suffix {
+    font-size: 13px;
+    color: var(--text-3);
+    font-weight: 700;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  .field-suffix.max {
+    color: var(--text-2);
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 100px;
+    background: var(--surface-2);
+    transition: all 0.15s;
+    border: 1px solid var(--line);
+    font-weight: 800;
+  }
+
+  .field-suffix.max:hover { background: var(--surface-3); color: var(--text); }
+  .field-suffix.max:active { transform: scale(0.95); }
+
+  /* ============ BUTTONS ============ */
+  .btn-primary {
+    width: 100%;
+    padding: 18px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius-control);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-primary:active { transform: scale(0.985); }
+
+  .btn-primary:disabled {
+    background: var(--surface-3);
+    color: var(--text-3);
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-primary svg { width: 16px; height: 16px; }
+
+  .btn-primary.accent {
+    background: var(--blue);
+    color: #ffffff;
+  }
+
+  .btn-primary.accent:hover {
+    background: var(--blue-ink);
+    opacity: 1;
+  }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 15px;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .btn-secondary:hover { background: var(--surface-3); }
+  .btn-secondary:active { transform: scale(0.985); }
+  .btn-secondary svg { width: 14px; height: 14px; }
+
+  .btn-spinner {
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+    opacity: 0.6;
+  }
+
+  .btn-primary.loading .btn-spinner { display: block; }
+  .btn-primary.loading .btn-icon { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============ FEEDBACK ============ */
+  .feedback {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 4px 10px;
+    min-height: 0;
+    letter-spacing: -0.005em;
+  }
+
+  .feedback.error { color: var(--red); }
+  .feedback.success { color: var(--blue); }
+  .feedback:empty { display: none; }
+
+  /* ============ NOTICE ============ */
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    letter-spacing: -0.005em;
+    font-weight: 500;
+  }
+
+  .notice svg {
+    width: 16px;
+    height: 16px;
+    color: var(--text-3);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ============ PROFILE ============ */
+  .profile-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .profile-meta { flex: 1; min-width: 0; }
+
+  .profile-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .profile-id {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 3px;
+    font-variant-numeric: tabular-nums;
+    font-family: var(--mono);
+    font-weight: 500;
+  }
+
+  /* ============ WALLET ============ */
+  .wallet-off {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .wallet-off-text {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+  }
+
+  .wallet-on { display: none; }
+  .wallet-on.show { display: block; }
+
+  .copy-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--surface-2);
+    color: var(--text-3);
+    border-radius: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { background: var(--surface-3); color: var(--text); }
+  .copy-btn:active { transform: scale(0.94); }
+  .copy-btn svg { width: 14px; height: 14px; }
+  .copy-btn.ok { color: var(--blue); background: var(--blue-soft); }
+
+  /* ============ PILL INFO ============ */
+  .pill-info {
+    display: none;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .pill-info.show { display: flex; }
+
+  .pill-info .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--blue);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px var(--blue-ring);
+  }
+
+  .pill-info .addr {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+
+  /* ============ PROCESSING ============ */
+  .processing {
+    display: none;
+    padding: 32px 20px;
+    flex-direction: column;
+  }
+
+  .processing.active { display: flex; }
+
+  .proc-head {
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+
+  .proc-eyebrow {
+    font-size: 12px;
+    color: var(--text-3);
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .proc-amount {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+  }
+
+  .proc-amount .unit {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-2);
+    margin-left: 8px;
+  }
+
+  .progress-rail {
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--blue);
+    width: 0%;
+    transition: width 1s linear;
+    border-radius: 3px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 26px;
+    font-weight: 600;
+  }
+
+  .kv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .kv:last-child { border-bottom: none; }
+
+  .kv-k { color: var(--text-3); font-weight: 600; }
+
+  .kv-v {
+    color: var(--text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .kv-v.mono {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .kv-v.blue { color: var(--blue); }
+
+  /* ============ RECEIPT ============ */
+  .receipt {
+    display: none;
+    padding: 32px 20px;
+    flex-direction: column;
+  }
+
+  .receipt.active { display: flex; }
+
+  .receipt-head {
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+
+  .receipt-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px;
+    background: var(--surface-2);
+    color: var(--text);
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+  }
+
+  .receipt-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-ring);
+  }
+
+  .receipt-title {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    line-height: 1.15;
+  }
+
+  .receipt-sub {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .receipt-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .receipt-actions .btn-secondary { margin-top: 0; }
+
+  /* ============ BOTTOM NAV ============ */
+  .bottom-nav-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    padding: 0 16px 16px;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px;
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    box-shadow: var(--glass-shadow);
+    pointer-events: auto;
+  }
+
+  .nav-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-2);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-btn .nav-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-btn .nav-icon svg { width: 22px; height: 22px; }
+
+  .nav-btn span {
+    position: relative;
+    z-index: 1;
+    transition: color 0.25s;
+  }
+
+  .nav-btn.active {
+    color: #ffffff;
+    background: var(--text);
+  }
+
+  [data-theme="dark"] .nav-btn.active {
+    color: #000000;
+    background: #f5f5f7;
+  }
+
+  .nav-btn.active .nav-icon { transform: scale(1.08); }
+
+  .nav-btn:not(.active):hover {
+    color: var(--text);
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    margin-top: auto;
+    padding: 24px 20px 8px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.02em;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="var(--bg)" stroke-width="2" stroke-linejoin="round" fill="none"/>
+          <path d="M4 9 H20" stroke="var(--bg)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="brand-name">Mintora</span>
+    </div>
+
+    <div class="glass-controls">
+      <button class="glass-btn" id="theme-toggle" aria-label="Theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.8 A9 9 0 1 1 11.2 3 a7 7 0 0 0 9.8 9.8 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M12 3 V5 M12 19 V21 M3 12 H5 M19 12 H21 M5.6 5.6 L7 7 M17 17 L18.4 18.4 M5.6 18.4 L7 17 M17 7 L18.4 5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="glass-divider"></div>
+      <button class="glass-btn" id="lang-toggle"><span id="lang-label">EN</span></button>
+    </div>
+  </div>
+
+  <!-- Balance -->
+  <div class="balance-hero" id="balance-hero">
+    <div class="balance-eyebrow" data-i18n="balanceLabel">Total balance</div>
+    <div class="balance-num-row">
+      <span class="balance-num" id="balance-amount">0</span>
+      <span class="balance-unit">GRAM</span>
+    </div>
+    <div class="balance-usd-row">
+      <span>≈ $<span id="balance-usd">0.00</span> USD</span>
+      <span class="balance-pill" id="balance-badge" style="display:none">
+        <span class="dot"></span>
+        <span data-i18n="badgeActive">Active</span>
+      </span>
+    </div>
+  </div>
+
+  <div id="main-view">
+
+    <!-- PROMO -->
+    <div class="section active" id="section-promo">
+      <div class="card">
+        <div class="field">
+          <div class="row-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M14 6 V9 M14 12 V15 M14 18 V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 3"/>
+            </svg>
+          </div>
+          <input type="text" class="field-input code" id="promo-input" placeholder="— — — — — —" maxlength="12" autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
+      <div class="feedback" id="promo-status"></div>
+
+      <button class="btn-primary accent" id="promo-submit">
+        <span class="btn-spinner"></span>
+        <span data-i18n="promoBtn">Activate code</span>
+      </button>
+
+      <div class="card" id="promo-history-card" style="display:none; margin-top: 14px;">
+        <div class="card-row" style="cursor:pointer" id="promo-history-toggle">
+          <div class="row-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="row-body">
+            <div class="row-label" data-i18n="historyLabel">Activated codes</div>
+            <div class="row-value"><span id="history-count">0</span> <span style="color:var(--text-3); font-weight:500" data-i18n="historyCountLabel">codes</span></div>
+          </div>
+          <svg class="row-chevron" id="history-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.25s">
+            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div id="promo-history-list" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- WITHDRAW -->
+    <div class="section" id="section-withdraw">
+      <div class="notice" id="locked-notice" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M8 11 V7 a4 4 0 0 1 8 0 V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span data-i18n="lockedHint">Enter your promo code first to unlock withdrawals.</span>
+      </div>
+
+      <div class="pill-info" id="wallet-pill">
+        <span class="dot"></span>
+        <span data-i18n="walletConnected">Wallet connected</span>
+        <span class="addr" id="pill-addr">—</span>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <div class="row-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12 7 V12 L15 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <input type="number" class="field-input" id="withdraw-input" placeholder="0" min="0" step="0.01" autocomplete="off" />
+          <span class="field-suffix">GRAM</span>
+          <span class="field-suffix max" id="max-btn" data-i18n="maxBtn">MAX</span>
+        </div>
+      </div>
+      <div class="feedback" id="withdraw-status"></div>
+
+      <button class="btn-primary accent" id="withdraw-btn">
+        <span class="btn-spinner"></span>
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+        </svg>
+        <span id="withdraw-btn-text" data-i18n="connectBtn">Connect wallet</span>
+      </button>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="section" id="section-profile">
+      <div class="card">
+        <div class="profile-head">
+          <div class="avatar" id="profile-avatar">U</div>
+          <div class="profile-meta">
+            <div class="profile-name" id="profile-name">Guest</div>
+            <div class="profile-id" id="profile-id">ID: —</div>
+          </div>
+        </div>
+        <div class="card-row">
+          <div class="row-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2 V22 M17 6 H9.5 a3.5 3.5 0 0 0 0 7 H14.5 a3.5 3.5 0 0 1 0 7 H7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="row-body">
+            <div class="row-label" data-i18n="statBalance">Balance</div>
+            <div class="row-value"><span id="stat-balance">0</span> GRAM</div>
+          </div>
+        </div>
+        <div class="card-row">
+          <div class="row-icon" id="status-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="row-body">
+            <div class="row-label" data-i18n="statStatus">Status</div>
+            <div class="row-value" id="stat-status" data-i18n="statusGuest">Guest</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-row">
+          <div class="row-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M3 10 H21" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="16.5" cy="14.5" r="1.2" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="row-body">
+            <div class="row-value" data-i18n="walletLabel">TON Wallet</div>
+          </div>
+        </div>
+
+        <div class="wallet-off" id="wallet-off">
+          <div class="wallet-off-text" data-i18n="walletNotConnectedText">Connect your TON wallet to receive payouts and manage withdrawals.</div>
+          <button class="btn-primary" id="profile-connect-btn">
+            <span class="btn-spinner"></span>
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 13 a5 5 0 0 0 7.54.54 l3-3 a5 5 0 0 0-7.07-7.07 l-1.72 1.71" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 11 a5 5 0 0 0-7.54-.54 l-3 3 a5 5 0 0 0 7.07 7.07 l1.71-1.71" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span data-i18n="connectBtn">Connect wallet</span>
+          </button>
+        </div>
+
+        <div class="wallet-on" id="wallet-on">
+          <div class="card-row">
+            <div class="row-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3.5 12 H20.5 M12 3 a15 15 0 0 1 0 18 a15 15 0 0 1 0-18 Z" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-label" data-i18n="walletAddress">Address</div>
+              <div class="row-value mono" id="profile-wallet-addr">—</div>
+            </div>
+            <button class="copy-btn" id="copy-addr">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-row">
+            <div class="row-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3 L4 6.5 V12 c0 4.5 3.4 7.7 8 9 c4.6-1.3 8-4.5 8-9 V6.5 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 12 L11 14 L15 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-label" data-i18n="walletNetwork">Network</div>
+              <div class="row-value muted">TON Mainnet</div>
+            </div>
+          </div>
+          <div class="card-row" id="disconnect-btn" style="cursor:pointer">
+            <div class="row-icon red">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 17 L5 12 L10 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 12 H15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                <path d="M15 5 H19 a2 2 0 0 1 2 2 V17 a2 2 0 0 1-2 2 H15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-value" style="color:var(--red)" data-i18n="disconnectBtn">Disconnect wallet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-row" style="cursor:pointer" id="menu-support">
+          <div class="row-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M9.5 9.5 a2.5 2.5 0 1 1 3.5 2.3 c-0.7 0.3-1 0.7-1 1.4 V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="12" cy="17" r="0.9" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="row-body">
+            <div class="row-value" data-i18n="menuSupport">Support</div>
+          </div>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="card-row" style="cursor:pointer" id="menu-terms">
+          <div class="row-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 3 H17 a2 2 0 0 1 2 2 V19 a2 2 0 0 1-2 2 H7 a2 2 0 0 1-2-2 V5 a2 2 0 0 1 2-2 Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M9 8 H15 M9 12 H15 M9 16 H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="row-body">
+            <div class="row-value" data-i18n="menuTerms">Terms of Use</div>
+          </div>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="card-row" style="cursor:pointer" id="menu-privacy">
+          <div class="row-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3 L4 6.5 V12 c0 4.5 3.4 7.7 8 9 c4.6-1.3 8-4.5 8-9 V6.5 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <circle cx="12" cy="11" r="1.8" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M12 12.8 V15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="row-body">
+            <div class="row-value" data-i18n="menuPrivacy">Privacy Policy</div>
+          </div>
+          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PROCESSING -->
+  <div class="processing" id="processing-view">
+    <div class="proc-head">
+      <div class="proc-eyebrow" data-i18n="procEyebrow">Processing withdrawal</div>
+      <div class="proc-amount">
+        <span id="proc-amount">0</span><span class="unit">GRAM</span>
+      </div>
+    </div>
+
+    <div class="progress-rail">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-meta">
+      <span id="proc-stage" data-i18n="stage1">Validating transaction</span>
+      <span><strong id="progress-pct">0%</strong></span>
+    </div>
+
+    <div class="kv">
+      <span class="kv-k" data-i18n="queuePos">Queue position</span>
+      <span class="kv-v blue" id="queue-pos">#2,341</span>
+    </div>
+    <div class="kv">
+      <span class="kv-k" data-i18n="queueNetwork">Network</span>
+      <span class="kv-v">Mintora Mainnet</span>
+    </div>
+    <div class="kv">
+      <span class="kv-k" data-i18n="queueFee">Network fee</span>
+      <span class="kv-v">0 GRAM</span>
+    </div>
+    <div class="kv">
+      <span class="kv-k" data-i18n="queueEta">Time remaining</span>
+      <span class="kv-v blue" id="queue-eta">~10 min</span>
+    </div>
+  </div>
+
+  <!-- RECEIPT -->
+  <div class="receipt" id="receipt-view">
+    <div class="receipt-head">
+      <div class="receipt-status"><span class="dot"></span><span data-i18n="statusConfirmed">Confirmed</span></div>
+      <div class="receipt-title"><span id="receipt-amount">0</span> GRAM</div>
+      <div class="receipt-sub" data-i18n="receiptSub">Sent to your TON wallet</div>
+    </div>
+
+    <div class="kv">
+      <span class="kv-k" data-i18n="wallet">Wallet</span>
+      <span class="kv-v mono" id="receipt-addr">—</span>
+    </div>
+    <div class="kv">
+      <span class="kv-k">Tx hash</span>
+      <span class="kv-v mono blue" id="receipt-hash">—</span>
+    </div>
+    <div class="kv">
+      <span class="kv-k" data-i18n="time">Time</span>
+      <span class="kv-v" id="receipt-time">—</span>
+    </div>
+
+    <div class="receipt-actions">
+      <button class="btn-secondary" id="copy-hash">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span data-i18n="copy">Copy</span>
+      </button>
+      <button class="btn-secondary" id="share-tx">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3 V15 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 14 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span data-i18n="share">Share</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 Mintora</div>
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav-wrap" id="bottom-nav-wrap">
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-tab="promo">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M14 6 V9 M14 12 V15 M14 18 V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 3"/>
+          </svg>
+        </span>
+        <span data-i18n="tabPromo">Promo</span>
+      </button>
+      <button class="nav-btn" data-tab="withdraw">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span data-i18n="tabWithdraw">Withdraw</span>
+      </button>
+      <button class="nav-btn" data-tab="profile">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span data-i18n="tabProfile">Profile</span>
+      </button>
+    </nav>
+  </div>
+
+</div>
+
+<script>
+  const CONFIG = {
+    manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
+    receiveWallet: 'UQBZOiimVGQ6kPYiwvRCjcxXBZcNP5gvqNmvx7deaZq67Z3k',
+    claimAmountNano: '10000000',
+    claimDurationMs: 10 * 60 * 1000
+  };
+
+  // ============================================================
+  // PROMO CODES — добавляй здесь: 'код': amount
+  // ============================================================
+  const PROMO_CODES = {
+    '123': 20,
+    'GRAM50': 50,
+    'MINTORA': 100,
+    'AIRDROP': 30,
+    'HELLO': 15
+  };
+  // ============================================================
+
+  const GRAM_USD = 0.784;
+
+  let state = {
+    balance: 0,
+    activatedCodes: {},   // { code: amount }
+    promoHistory: [],     // [ { code, amount, ts } ]
+    wallet: null,
+    connected: false,
+    userName: 'Guest',
+    userId: '—'
+  };
+
+  const I18N = {
+    en: {
+      tabPromo: 'Promo', tabWithdraw: 'Withdraw', tabProfile: 'Profile',
+      balanceLabel: 'Total balance',
+      badgeActive: 'Active',
+      promoBtn: 'Activate code',
+      promoSuccess: 'Code · +{n} GRAM',
+      promoSuccessAgain: 'Code · +{n} GRAM (total {total})',
+      promoError: 'Invalid code',
+      promoAlready: 'Code already used',
+      promoEmpty: 'Enter a code',
+      historyLabel: 'Activated codes',
+      historyCountLabel: 'codes',
+      lockedHint: 'Enter your promo code first to unlock withdrawals.',
+      maxBtn: 'MAX',
+      withdrawErrorEmpty: 'Enter amount',
+      withdrawErrorMin: 'Minimum 0.01 GRAM',
+      withdrawErrorMax: 'Not enough balance',
+      connectBtn: 'Connect wallet',
+      withdrawBtn: 'Withdraw GRAM',
+      disconnectBtn: 'Disconnect wallet',
+      procEyebrow: 'Processing withdrawal',
+      stage1: 'Validating transaction',
+      stage2: 'Verifying address',
+      stage3: 'Queue placement',
+      stage4: 'Pool distribution',
+      stage5: 'Signing payout',
+      stage6: 'Finalizing',
+      queuePos: 'Queue position',
+      queueNetwork: 'Network',
+      queueFee: 'Network fee',
+      queueEta: 'Time remaining',
+      receiptSub: 'Sent to your TON wallet',
+      wallet: 'Wallet',
+      time: 'Time',
+      statusConfirmed: 'Confirmed',
+      copy: 'Copy',
+      share: 'Share',
+      copied: 'Copied',
+      walletConnected: 'Wallet connected',
+      walletLabel: 'TON Wallet',
+      walletNotConnectedText: 'Connect your TON wallet to receive payouts and manage withdrawals.',
+      walletAddress: 'Address',
+      walletNetwork: 'Network',
+      statBalance: 'Balance',
+      statStatus: 'Status',
+      statusGuest: 'Guest',
+      statusActive: 'Active',
+      menuSupport: 'Support',
+      menuTerms: 'Terms of Use',
+      menuPrivacy: 'Privacy Policy'
+    },
+    ru: {
+      tabPromo: 'Промокод', tabWithdraw: 'Вывод', tabProfile: 'Профиль',
+      balanceLabel: 'Общий баланс',
+      badgeActive: 'Активен',
+      promoBtn: 'Активировать',
+      promoSuccess: 'Код · +{n} GRAM',
+      promoSuccessAgain: 'Код · +{n} GRAM (всего {total})',
+      promoError: 'Неверный код',
+      promoAlready: 'Код уже использован',
+      promoEmpty: 'Введите код',
+      historyLabel: 'Активированные коды',
+      historyCountLabel: 'кодов',
+      lockedHint: 'Введите промокод, чтобы разблокировать вывод.',
+      maxBtn: 'МАКС',
+      withdrawErrorEmpty: 'Введите сумму',
+      withdrawErrorMin: 'Минимум 0.01 GRAM',
+      withdrawErrorMax: 'Недостаточно средств',
+      connectBtn: 'Подключить кошелёк',
+      withdrawBtn: 'Вывести GRAM',
+      disconnectBtn: 'Отключить кошелёк',
+      procEyebrow: 'Обработка вывода',
+      stage1: 'Валидация транзакции',
+      stage2: 'Проверка адреса',
+      stage3: 'Постановка в очередь',
+      stage4: 'Распределение пула',
+      stage5: 'Подпись выплаты',
+      stage6: 'Финализация',
+      queuePos: 'Позиция в очереди',
+      queueNetwork: 'Сеть',
+      queueFee: 'Комиссия сети',
+      queueEta: 'Осталось',
+      receiptSub: 'Отправлено на ваш TON-кошелёк',
+      wallet: 'Кошелёк',
+      time: 'Время',
+      statusConfirmed: 'Подтверждено',
+      copy: 'Копировать',
+      share: 'Поделиться',
+      copied: 'Скопировано',
+      walletConnected: 'Кошелёк подключён',
+      walletLabel: 'TON Кошелёк',
+      walletNotConnectedText: 'Подключите TON-кошелёк, чтобы получать выплаты и управлять выводом.',
+      walletAddress: 'Адрес',
+      walletNetwork: 'Сеть',
+      statBalance: 'Баланс',
+      statStatus: 'Статус',
+      statusGuest: 'Гость',
+      statusActive: 'Активен',
+      menuSupport: 'Поддержка',
+      menuTerms: 'Условия',
+      menuPrivacy: 'Конфиденциальность'
+    }
+  };
+
+  let currentLang = localStorage.getItem('lang') || 'en';
+
+  function t(key, vars) {
+    let s = I18N[currentLang][key] || key;
+    if (vars) Object.keys(vars).forEach(k => s = s.replace('{' + k + '}', vars[k]));
+    return s;
+  }
+
+  function applyLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = lang;
+    document.getElementById('lang-label').textContent = lang.toUpperCase();
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (I18N[lang][k]) el.textContent = I18N[lang][k];
+    });
+    updateWithdrawBtn();
+    updateStatStatus();
+    renderPromoHistory();
+  }
+
+  function updateWithdrawBtn() {
+    const b = document.getElementById('withdraw-btn-text');
+    if (b) b.textContent = state.connected ? t('withdrawBtn') : t('connectBtn');
+  }
+
+  function updateStatStatus() {
+    const el = document.getElementById('stat-status');
+    const ic = document.getElementById('status-icon');
+    if (!el) return;
+    const hasPromo = Object.keys(state.activatedCodes).length > 0;
+    el.textContent = hasPromo ? t('statusActive') : t('statusGuest');
+    el.style.color = hasPromo ? 'var(--blue)' : 'var(--text)';
+    if (ic) ic.className = 'row-icon ' + (hasPromo ? 'blue' : '');
+  }
+
+  /* ---- Theme ---- */
+  function initTheme() {
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    syncThemeIcon();
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      syncThemeIcon();
+      if (window.Telegram?.WebApp) {
+        Telegram.WebApp.setHeaderColor(next === 'dark' ? '#000000' : '#f5f5f7');
+        Telegram.WebApp.setBackgroundColor(next === 'dark' ? '#000000' : '#f5f5f7');
+      }
+    });
+  }
+
+  function syncThemeIcon() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.querySelector('.icon-moon').style.display = dark ? 'none' : 'block';
+    document.querySelector('.icon-sun').style.display = dark ? 'block' : 'none';
+  }
+
+  /* ---- Tabs ---- */
+  function setTab(tab) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const sec = document.getElementById('section-' + tab);
+    if (sec) sec.classList.add('active');
+
+    if (tab === 'withdraw') {
+      const hasPromo = Object.keys(state.activatedCodes).length > 0;
+      if (!hasPromo) {
+        document.getElementById('locked-notice').style.display = 'flex';
+        document.getElementById('withdraw-btn').disabled = true;
+        document.getElementById('withdraw-input').disabled = true;
+      } else {
+        document.getElementById('locked-notice').style.display = 'none';
+        document.getElementById('withdraw-btn').disabled = false;
+        document.getElementById('withdraw-input').disabled = false;
+      }
+    }
+  }
+
+  function initTabs() {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => setTab(btn.getAttribute('data-tab')));
+    });
+  }
+
+  /* ---- Balance ---- */
+  function updateBalanceUI(animate) {
+    const amount = document.getElementById('balance-amount');
+    const usd = document.getElementById('balance-usd');
+    const badge = document.getElementById('balance-badge');
+
+    if (animate && parseFloat(amount.textContent) !== state.balance) {
+      const from = parseFloat(amount.textContent) || 0;
+      const to = state.balance;
+      const start = performance.now();
+      const dur = 700;
+      function tick(now) {
+        const p = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const val = from + (to - from) * eased;
+        amount.textContent = val.toFixed(val % 1 === 0 ? 0 : 2);
+        usd.textContent = (val * GRAM_USD).toFixed(2);
+        if (p < 1) requestAnimationFrame(tick);
+        else {
+          amount.textContent = to.toFixed(to % 1 === 0 ? 0 : 2);
+          usd.textContent = (to * GRAM_USD).toFixed(2);
+        }
+      }
+      requestAnimationFrame(tick);
+    } else {
+      amount.textContent = state.balance.toFixed(state.balance % 1 === 0 ? 0 : 2);
+      usd.textContent = (state.balance * GRAM_USD).toFixed(2);
+    }
+
+    const hasPromo = Object.keys(state.activatedCodes).length > 0;
+    badge.style.display = hasPromo ? 'inline-flex' : 'none';
+    document.getElementById('stat-balance').textContent = state.balance.toFixed(state.balance % 1 === 0 ? 0 : 2);
+  }
+
+  /* ---- Promo ---- */
+  function initPromo() {
+    const input = document.getElementById('promo-input');
+    const status = document.getElementById('promo-status');
+    const btn = document.getElementById('promo-submit');
+
+    btn.addEventListener('click', () => {
+      const code = input.value.trim().toUpperCase();
+      status.className = 'feedback';
+      status.textContent = '';
+
+      if (!code) {
+        status.classList.add('error');
+        status.textContent = t('promoEmpty');
+        return;
+      }
+
+      if (state.activatedCodes[code]) {
+        status.classList.add('error');
+        status.textContent = t('promoAlready');
+        input.animate([
+          { transform: 'translateX(0)' },
+          { transform: 'translateX(-4px)' },
+          { transform: 'translateX(4px)' },
+          { transform: 'translateX(0)' }
+        ], { duration: 220 });
+        return;
+      }
+
+      const value = PROMO_CODES[code];
+      if (!value) {
+        status.classList.add('error');
+        status.textContent = t('promoError');
+        input.animate([
+          { transform: 'translateX(0)' },
+          { transform: 'translateX(-4px)' },
+          { transform: 'translateX(4px)' },
+          { transform: 'translateX(0)' }
+        ], { duration: 220 });
+        return;
+      }
+
+      // apply
+      state.balance += value;
+      state.activatedCodes[code] = value;
+      state.promoHistory.push({ code, amount: value, ts: Date.now() });
+
+      status.classList.add('success');
+      if (state.promoHistory.length > 1) {
+        status.textContent = t('promoSuccessAgain', { n: value, total: state.balance });
+      } else {
+        status.textContent = t('promoSuccess', { n: value });
+      }
+
+      input.value = '';
+      input.focus();
+
+      updateBalanceUI(true);
+      updateStatStatus();
+      renderPromoHistory();
+
+      document.getElementById('locked-notice').style.display = 'none';
+      document.getElementById('withdraw-btn').disabled = false;
+      document.getElementById('withdraw-input').disabled = false;
+    });
+
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') btn.click(); });
+
+    // history toggle
+    document.getElementById('promo-history-toggle').addEventListener('click', () => {
+      const list = document.getElementById('promo-history-list');
+      const chev = document.getElementById('history-chevron');
+      if (list.style.display === 'none' || !list.style.display) {
+        list.style.display = 'block';
+        chev.style.transform = 'rotate(90deg)';
+      } else {
+        list.style.display = 'none';
+        chev.style.transform = 'rotate(0deg)';
+      }
+    });
+  }
+
+  function renderPromoHistory() {
+    const card = document.getElementById('promo-history-card');
+    const count = document.getElementById('history-count');
+    const list = document.getElementById('promo-history-list');
+
+    const n = state.promoHistory.length;
+    if (n === 0) {
+      card.style.display = 'none';
+      return;
+    }
+    card.style.display = 'block';
+    count.textContent = n;
+
+    list.innerHTML = '';
+    // newest first
+    [...state.promoHistory].reverse().forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'card-row';
+      row.style.cursor = 'default';
+
+      const iconWrap = document.createElement('div');
+      iconWrap.className = 'row-icon';
+      iconWrap.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 12 L10 17 L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+
+      const body = document.createElement('div');
+      body.className = 'row-body';
+
+      const label = document.createElement('div');
+      label.className = 'row-label';
+      label.textContent = item.code;
+
+      const val = document.createElement('div');
+      val.className = 'row-value';
+      val.style.color = 'var(--blue)';
+      val.textContent = '+' + item.amount + ' GRAM';
+
+      body.appendChild(label);
+      body.appendChild(val);
+
+      const time = document.createElement('div');
+      time.style.fontSize = '11px';
+      time.style.color = 'var(--text-3)';
+      time.style.fontFamily = 'var(--mono)';
+      time.style.fontWeight = '500';
+      time.textContent = new Date(item.ts).toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : 'en-US', { day: '2-digit', month: 'short' });
+
+      row.appendChild(iconWrap);
+      row.appendChild(body);
+      row.appendChild(time);
+      list.appendChild(row);
+    });
+  }
+
+  /* ---- TonConnect ---- */
+  let tonConnectUI = null;
+
+  async function initTonConnect() {
+    try {
+      tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: CONFIG.manifestUrl,
+        buttonRootId: null
+      });
+      tonConnectUI.onStatusChange((wallet) => {
+        if (wallet && wallet.account?.address) {
+          state.wallet = wallet;
+          state.connected = true;
+          onConnected(wallet);
+        } else {
+          state.wallet = null;
+          state.connected = false;
+          onDisconnected();
+        }
+      });
+    } catch (e) { console.error('[TonConnect]', e); }
+  }
+
+  function onConnected(wallet) {
+    const addr = wallet.account.address;
+    const short = addr.slice(0, 4) + '…' + addr.slice(-4);
+
+    document.getElementById('pill-addr').textContent = short;
+    document.getElementById('wallet-pill').classList.add('show');
+
+    document.getElementById('wallet-off').style.display = 'none';
+    document.getElementById('wallet-on').classList.add('show');
+    document.getElementById('profile-wallet-addr').textContent = short;
+
+    const avatar = document.getElementById('profile-avatar');
+    if (avatar && window.Telegram?.WebApp?.initDataUnsafe?.user) {
+      const u = Telegram.WebApp.initDataUnsafe.user;
+      avatar.textContent = (u.first_name || 'U')[0].toUpperCase();
+      state.userName = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'User';
+      state.userId = u.id || '—';
+      document.getElementById('profile-name').textContent = state.userName;
+      document.getElementById('profile-id').textContent = 'ID: ' + state.userId;
+    }
+
+    updateWithdrawBtn();
+  }
+
+  function onDisconnected() {
+    document.getElementById('pill-addr').textContent = '—';
+    document.getElementById('wallet-pill').classList.remove('show');
+    document.getElementById('wallet-off').style.display = 'flex';
+    document.getElementById('wallet-on').classList.remove('show');
+    document.getElementById('profile-wallet-addr').textContent = '—';
+    updateWithdrawBtn();
+  }
+
+  /* ---- Withdraw ---- */
+  async function doWithdraw() {
+    if (!state.connected) {
+      if (tonConnectUI) tonConnectUI.openModal();
+      return;
+    }
+
+    const input = document.getElementById('withdraw-input');
+    const status = document.getElementById('withdraw-status');
+    const amount = parseFloat(input.value);
+
+    status.className = 'feedback';
+    status.textContent = '';
+
+    if (!amount || amount <= 0) { status.classList.add('error'); status.textContent = t('withdrawErrorEmpty'); return; }
+    if (amount < 0.01) { status.classList.add('error'); status.textContent = t('withdrawErrorMin'); return; }
+    if (amount > state.balance) { status.classList.add('error'); status.textContent = t('withdrawErrorMax'); return; }
+
+    const btn = document.getElementById('withdraw-btn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const tx = {
+      validUntil: Math.floor(Date.now() / 1000) + 360,
+      messages: [{ address: CONFIG.receiveWallet, amount: CONFIG.claimAmountNano }]
+    };
+
+    try {
+      const res = await tonConnectUI.sendTransaction(tx);
+      console.log('[+] withdraw TX', res);
+      showProcessing(amount);
+    } catch (e) {
+      console.error('[-] withdraw failed', e);
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  }
+
+  /* ---- Processing ---- */
+  let processingTimer = null;
+
+  function showProcessing(amount) {
+    document.getElementById('main-view').style.display = 'none';
+    document.getElementById('balance-hero').style.display = 'none';
+    document.getElementById('bottom-nav-wrap').style.display = 'none';
+    document.getElementById('processing-view').classList.add('active');
+
+    document.getElementById('proc-amount').textContent = amount.toFixed(2);
+
+    const fill = document.getElementById('progress-fill');
+    const pct = document.getElementById('progress-pct');
+    const queuePos = document.getElementById('queue-pos');
+    const queueEta = document.getElementById('queue-eta');
+    const stageEl = document.getElementById('proc-stage');
+
+    const stages = [t('stage1'), t('stage2'), t('stage3'), t('stage4'), t('stage5'), t('stage6')];
+
+    let progress = 0;
+    const totalMs = CONFIG.claimDurationMs;
+    const tickMs = 1000;
+    const steps = totalMs / tickMs;
+    const per = 100 / steps;
+
+    processingTimer = setInterval(() => {
+      progress += per;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(processingTimer);
+        setTimeout(() => showReceipt(amount), 600);
+      }
+      fill.style.width = progress.toFixed(2) + '%';
+      pct.textContent = Math.floor(progress) + '%';
+
+      const pos = Math.max(1, Math.floor(2341 * (1 - progress / 100)));
+      queuePos.textContent = '#' + pos.toLocaleString('en-US');
+
+      const remainMin = Math.ceil(10 * (1 - progress / 100));
+      queueEta.textContent = progress >= 100 ? '0 min' : `~${remainMin} min`;
+
+      const idx = Math.min(stages.length - 1, Math.floor(progress / (100 / stages.length)));
+      stageEl.textContent = stages[idx];
+    }, tickMs);
+  }
+
+  /* ---- Receipt ---- */
+  function showReceipt(amount) {
+    document.getElementById('processing-view').classList.remove('active');
+    document.getElementById('receipt-view').classList.add('active');
+
+    const addr = state.wallet?.account?.address || '—';
+    const short = addr.length > 12 ? addr.slice(0, 6) + '…' + addr.slice(-6) : addr;
+    const hash = '0x' + Array.from({length: 40}, () =>
+      '0123456789abcdef'[Math.floor(Math.random() * 16)]
+    ).join('');
+    const hashShort = hash.slice(0, 10) + '…' + hash.slice(-8);
+
+    document.getElementById('receipt-amount').textContent = amount.toFixed(2);
+    document.getElementById('receipt-addr').textContent = short;
+    document.getElementById('receipt-hash').textContent = hashShort;
+    document.getElementById('receipt-time').textContent =
+      new Date().toLocaleString(currentLang === 'ru' ? 'ru-RU' : 'en-US', {
+        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+      });
+
+    document.getElementById('copy-hash').onclick = () => {
+      navigator.clipboard.writeText(hash);
+      document.getElementById('copy-hash').querySelector('span').textContent = t('copied');
+    };
+
+    document.getElementById('share-tx').onclick = () => {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Mintora',
+          text: currentLang === 'ru'
+            ? `Вывел ${amount.toFixed(2)} GRAM через Mintora`
+            : `Withdrew ${amount.toFixed(2)} GRAM via Mintora`
+        });
+      }
+    };
+
+    setTimeout(() => {
+      if (window.Telegram?.WebApp) Telegram.WebApp.close();
+    }, 6000);
+  }
+
+  /* ---- Profile ---- */
+  function initProfile() {
+    document.getElementById('profile-connect-btn').addEventListener('click', () => {
+      if (tonConnectUI) tonConnectUI.openModal();
+    });
+
+    document.getElementById('disconnect-btn').addEventListener('click', () => {
+      if (tonConnectUI) tonConnectUI.disconnect();
+    });
+
+    document.getElementById('copy-addr').addEventListener('click', () => {
+      const addr = state.wallet?.account?.address;
+      if (!addr) return;
+      navigator.clipboard.writeText(addr);
+      const btn = document.getElementById('copy-addr');
+      btn.classList.add('ok');
+      setTimeout(() => btn.classList.remove('ok'), 1000);
+    });
+
+    document.getElementById('max-btn').addEventListener('click', () => {
+      if (state.balance > 0) document.getElementById('withdraw-input').value = state.balance;
+    });
+  }
+
+  /* ---- Init ---- */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.Telegram?.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      const theme = document.documentElement.getAttribute('data-theme') || 'light';
+      Telegram.WebApp.setHeaderColor(theme === 'dark' ? '#000000' : '#f5f5f7');
+      Telegram.WebApp.setBackgroundColor(theme === 'dark' ? '#000000' : '#f5f5f7');
+
+      const u = Telegram.WebApp.initDataUnsafe?.user;
+      if (u) {
+        state.userName = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'User';
+        state.userId = u.id || '—';
+        document.getElementById('profile-name').textContent = state.userName;
+        document.getElementById('profile-id').textContent = 'ID: ' + state.userId;
+        document.getElementById('profile-avatar').textContent = (u.first_name || 'U')[0].toUpperCase();
+      }
+    }
+
+    initTheme();
+    applyLang(currentLang);
+    initTabs();
+    initPromo();
+    initProfile();
+    initTonConnect();
+    updateBalanceUI(false);
+    updateWithdrawBtn();
+    updateStatStatus();
+    renderPromoHistory();
+
+    document.getElementById('lang-toggle').addEventListener('click', () => {
+      applyLang(currentLang === 'en' ? 'ru' : 'en');
+    });
+
+    document.getElementById('withdraw-btn').addEventListener('click', doWithdraw);
+
+    setTab('promo');
+  });
+</script>
+</body>
+</html>
