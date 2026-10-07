@@ -95,14 +95,14 @@
     z-index: 1;
   }
 
-  /* ============ LOCK SCREEN ============ */
+  /* ============ LOCK SCREEN (minimal) ============ */
   .lock-screen {
     position: fixed; inset: 0;
     background: var(--bg);
     z-index: 2000;
     display: none;
     flex-direction: column;
-    padding: 60px 32px 40px;
+    padding: 80px 32px 40px;
     max-width: 420px;
     margin: 0 auto;
     text-align: center;
@@ -113,121 +113,123 @@
   .lock-screen.hidden { opacity: 0; pointer-events: none; }
 
   .lock-logo {
-    width: 64px; height: 64px;
-    border-radius: 18px;
+    width: 60px; height: 60px;
+    border-radius: 17px;
     background: linear-gradient(180deg, var(--blue-2), var(--blue));
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 12px 32px var(--blue-ring);
-    margin: 0 auto 24px;
+    box-shadow: 0 10px 28px var(--blue-ring);
+    margin: 0 auto 32px;
   }
 
-  .lock-logo svg { width: 30px; height: 30px; }
+  .lock-logo svg { width: 28px; height: 28px; }
 
   .lock-title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--text);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .lock-sub {
     font-size: 14px;
     color: var(--text-2);
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     letter-spacing: -0.005em;
+  }
+
+  .lock-input-wrap {
+    position: relative;
+    max-width: 240px;
+    margin: 0 auto 8px;
+    cursor: text;
+  }
+
+  .lock-input-real {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    background: transparent;
+    text-align: center;
+    letter-spacing: 40px;
+    padding-left: 40px;
+    cursor: text;
   }
 
   .lock-dots {
     display: flex;
     justify-content: center;
-    gap: 14px;
-    margin-bottom: 40px;
-    height: 18px;
+    gap: 20px;
+    height: 16px;
+    align-items: center;
+    pointer-events: none;
   }
 
   .lock-dot {
     width: 14px; height: 14px;
     border-radius: 50%;
     background: var(--surface-3);
-    transition: background 0.2s;
+    border: 1.5px solid var(--line-2);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .lock-dot.filled {
     background: linear-gradient(180deg, var(--blue-2), var(--blue));
-    box-shadow: 0 0 0 3px var(--blue-ring);
+    border-color: transparent;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px var(--blue-ring);
   }
 
-  .lock-keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    max-width: 320px;
-    margin: 0 auto 20px;
+  .lock-dot.error {
+    background: var(--red);
+    border-color: transparent;
+    animation: shake-dot 0.4s ease;
   }
 
-  .lock-key {
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 24px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.12s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  @keyframes shake-dot {
+    0%, 100% { transform: translateX(0) scale(1.15); }
+    25% { transform: translateX(-4px) scale(1.15); }
+    75% { transform: translateX(4px) scale(1.15); }
   }
-
-  .lock-key:hover { background: var(--surface-3); }
-  .lock-key:active { transform: scale(0.92); }
-
-  .lock-key.empty { visibility: hidden; }
-
-  .lock-key.icon { background: transparent; border: none; }
-  .lock-key.icon svg { width: 24px; height: 24px; color: var(--text-2); }
-
-  .lock-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-width: 320px;
-    margin: 20px auto 0;
-  }
-
-  .lock-biometric {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 16px;
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .lock-biometric.show { display: flex; }
-  .lock-biometric:hover { background: var(--surface-3); }
-  .lock-biometric:active { transform: scale(0.98); }
-  .lock-biometric svg { width: 22px; height: 22px; color: var(--blue); }
 
   .lock-error {
     color: var(--red);
     font-size: 13px;
     font-weight: 600;
     min-height: 18px;
-    margin-top: 12px;
+    margin-top: 16px;
     letter-spacing: -0.005em;
   }
+
+  .lock-biometric-btn {
+    display: none;
+    margin: 40px auto 0;
+    padding: 16px 24px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.15s;
+    max-width: 260px;
+    width: 100%;
+  }
+
+  .lock-biometric-btn.show { display: flex; }
+  .lock-biometric-btn:hover { background: var(--surface-3); }
+  .lock-biometric-btn:active { transform: scale(0.97); }
+  .lock-biometric-btn svg { width: 22px; height: 22px; color: var(--blue); }
 
   .lock-forgot {
     background: transparent;
@@ -237,17 +239,18 @@
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 24px;
+    margin-top: auto;
+    padding: 16px;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
-  /* ============ SIGNUP SCREEN ============ */
+  /* ============ SIGNUP ============ */
   .signup {
     position: fixed; inset: 0;
     background: var(--bg);
     z-index: 1000;
-    display: flex;
+    display: none;
     flex-direction: column;
     padding: 40px 24px 32px;
     max-width: 420px;
@@ -256,11 +259,7 @@
     overflow-y: auto;
   }
 
-  .signup.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-8px);
-  }
+  .signup.active { display: flex; }
 
   .signup-logo {
     width: 68px; height: 68px;
@@ -332,10 +331,7 @@
     min-width: 0;
   }
 
-  .signup-input::placeholder {
-    color: var(--text-3);
-    font-weight: 500;
-  }
+  .signup-input::placeholder { color: var(--text-3); font-weight: 500; }
 
   .signup-check-status {
     width: 22px; height: 22px;
@@ -346,7 +342,6 @@
   }
 
   .signup-field.valid .signup-check-status { display: flex; }
-
   .signup-check-status svg { width: 18px; height: 18px; }
 
   .signup-hint {
@@ -380,10 +375,7 @@
     border-color: var(--blue);
   }
 
-  .signup-wallet-left {
-    display: flex; align-items: center; gap: 12px;
-    min-width: 0;
-  }
+  .signup-wallet-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
 
   .signup-wallet-icon {
     width: 22px; height: 22px;
@@ -393,13 +385,9 @@
   }
 
   .signup-wallet.connected .signup-wallet-icon { color: var(--blue); }
-
   .signup-wallet-icon svg { width: 20px; height: 20px; }
 
-  .signup-wallet-text {
-    display: flex; flex-direction: column;
-    min-width: 0;
-  }
+  .signup-wallet-text { display: flex; flex-direction: column; min-width: 0; }
 
   .signup-wallet-label {
     font-size: 15px;
@@ -462,12 +450,7 @@
     margin-top: 1px;
   }
 
-  .signup-terms-box svg {
-    width: 12px; height: 12px;
-    color: #fff;
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
+  .signup-terms-box svg { width: 12px; height: 12px; color: #fff; opacity: 0; transition: opacity 0.15s; }
 
   .signup-terms.checked .signup-terms-box {
     background: linear-gradient(180deg, var(--blue-2), var(--blue));
@@ -531,7 +514,7 @@
     box-shadow: none;
   }
 
-  /* ============ PIN SETUP MODAL ============ */
+  /* ============ PIN MODAL ============ */
   .pin-modal {
     position: fixed; inset: 0;
     background: rgba(10, 11, 13, 0.4);
@@ -613,11 +596,7 @@
     box-shadow: 0 0 0 4px var(--blue-ring);
   }
 
-  .pin-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+  .pin-actions { display: flex; flex-direction: column; gap: 8px; }
 
   .pin-skip {
     width: 100%;
@@ -697,10 +676,7 @@
     text-transform: uppercase; margin-bottom: 12px;
   }
 
-  .balance-num-row {
-    display: flex; align-items: baseline; gap: 10px;
-    margin-bottom: 10px;
-  }
+  .balance-num-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
 
   .balance-num {
     font-size: 46px; font-weight: 800;
@@ -785,7 +761,6 @@
 
   .ton-balance-refresh:hover { background: var(--surface); color: var(--text); }
   .ton-balance-refresh.spinning svg { animation: spin 1s linear infinite; }
-
   .ton-balance-refresh svg { width: 16px; height: 16px; }
 
   .section { display: none; padding: 0 20px; }
@@ -972,14 +947,6 @@
     background: var(--surface-3); color: var(--text-3);
     box-shadow: none;
   }
-
-  .btn-primary.danger {
-    background: var(--red);
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(229, 72, 77, 0.25);
-  }
-
-  .btn-primary.danger:hover:not(:disabled) { opacity: 0.94; }
 
   .btn-secondary {
     width: 100%; padding: 15px;
@@ -1297,6 +1264,31 @@
 
   .receipt-actions .btn-secondary { margin-top: 0; }
 
+  .btn-return {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-control);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    box-shadow: 0 8px 20px var(--blue-ring);
+  }
+
+  .btn-return:hover { opacity: 0.94; }
+  .btn-return:active { transform: scale(0.985); }
+  .btn-return svg { width: 16px; height: 16px; }
+
   .verifying {
     display: none; padding: 80px 20px;
     flex-direction: column; align-items: center;
@@ -1443,7 +1435,7 @@
 </head>
 <body>
 
-<!-- ============ LOCK SCREEN ============ -->
+<!-- ============ LOCK SCREEN (minimal) ============ -->
 <div class="lock-screen" id="lock-screen">
   <div class="lock-logo">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1454,43 +1446,24 @@
   <div class="lock-title" id="lock-title">Welcome back</div>
   <div class="lock-sub" id="lock-sub">Enter your PIN to unlock Mintora</div>
 
-  <div class="lock-dots" id="lock-dots">
-    <div class="lock-dot"></div>
-    <div class="lock-dot"></div>
-    <div class="lock-dot"></div>
-    <div class="lock-dot"></div>
-  </div>
-
-  <div class="lock-keypad" id="lock-keypad">
-    <button class="lock-key" data-key="1">1</button>
-    <button class="lock-key" data-key="2">2</button>
-    <button class="lock-key" data-key="3">3</button>
-    <button class="lock-key" data-key="4">4</button>
-    <button class="lock-key" data-key="5">5</button>
-    <button class="lock-key" data-key="6">6</button>
-    <button class="lock-key" data-key="7">7</button>
-    <button class="lock-key" data-key="8">8</button>
-    <button class="lock-key" data-key="9">9</button>
-    <button class="lock-key empty"></button>
-    <button class="lock-key" data-key="0">0</button>
-    <button class="lock-key icon" id="lock-delete">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21 6 H9 l-6 6 l6 6 h12 a1 1 0 0 0 1-1 V7 a1 1 0 0 0-1-1 Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M17 10 L13 14 M13 10 L17 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </svg>
-    </button>
+  <div class="lock-input-wrap" id="lock-input-wrap">
+    <input type="tel" class="lock-input-real" id="lock-input-real" maxlength="4" inputmode="numeric" autocomplete="off" />
+    <div class="lock-dots" id="lock-dots">
+      <div class="lock-dot"></div>
+      <div class="lock-dot"></div>
+      <div class="lock-dot"></div>
+      <div class="lock-dot"></div>
+    </div>
   </div>
 
   <div class="lock-error" id="lock-error"></div>
 
-  <div class="lock-actions">
-    <button class="lock-biometric" id="lock-biometric">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 3 a9 9 0 0 0-9 9 M12 3 a9 9 0 0 1 9 9 M4 16 a3 3 0 0 1 3-3 a3 3 0 0 1 3 3 v3 M12 12 a2 2 0 0 1 2 2 v4 M12 12 a2 2 0 0 0-2 2 v4 M20 16 a3 3 0 0 0-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </svg>
-      <span id="lock-biometric-text">Use Face ID</span>
-    </button>
-  </div>
+  <button class="lock-biometric-btn" id="lock-biometric">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3 a9 9 0 0 0-9 9 M12 3 a9 9 0 0 1 9 9 M4 16 a3 3 0 0 1 3-3 a3 3 0 0 1 3 3 v3 M12 12 a2 2 0 0 1 2 2 v4 M12 12 a2 2 0 0 0-2 2 v4 M20 16 a3 3 0 0 0-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <span id="lock-biometric-text">Use Face ID</span>
+  </button>
 
   <button class="lock-forgot" id="lock-forgot">Forgot PIN? Sign out</button>
 </div>
@@ -1573,7 +1546,7 @@
   <div class="pin-sheet">
     <div class="pin-grip"></div>
     <div class="pin-title" id="pin-title">Set up your PIN</div>
-    <div class="pin-sub" id="pin-sub">Secure your Mintora wallet with a 4-digit PIN. You'll use it to unlock the app.</div>
+    <div class="pin-sub" id="pin-sub">Secure your Mintora wallet with a 4-digit PIN.</div>
 
     <div class="pin-inputs">
       <input type="tel" maxlength="1" inputmode="numeric" data-pin="0" />
@@ -2038,6 +2011,15 @@
           <span data-i18n="share">Share</span>
         </button>
       </div>
+
+      <button class="btn-return" id="btn-return">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 17 L5 12 L10 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 12 H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M15 5 H19 a2 2 0 0 1 2 2 V17 a2 2 0 0 1-2 2 H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span data-i18n="returnBtn">Return to menu</span>
+      </button>
     </div>
 
     <div class="footer">
@@ -2206,12 +2188,13 @@
       lockBiometric: 'Use Face ID',
       lockForgot: 'Forgot PIN? Sign out',
       pinTitle: 'Set up your PIN',
-      pinSub: 'Secure your Mintora wallet with a 4-digit PIN. You\'ll use it to unlock the app.',
+      pinSub: 'Secure your Mintora wallet with a 4-digit PIN.',
       pinSave: 'Save PIN',
       pinSkip: 'Skip for now',
       pinError: 'PIN must be 4 digits',
       lockErrorWrong: 'Wrong PIN. Try again.',
       logoutConfirm: 'Sign out? This will remove your account data and disconnect wallet.',
+      returnBtn: 'Return to menu',
     },
     ru: {
       signupTitle: 'Добро пожаловать в Mintora',
@@ -2293,12 +2276,13 @@
       lockBiometric: 'Использовать Face ID',
       lockForgot: 'Забыли PIN? Выйти',
       pinTitle: 'Установите PIN',
-      pinSub: 'Защитите свой Mintora-кошелёк 4-значным PIN-кодом. Он будет нужен для входа.',
+      pinSub: 'Защитите свой Mintora-кошелёк 4-значным PIN-кодом.',
       pinSave: 'Сохранить PIN',
       pinSkip: 'Пропустить',
       pinError: 'PIN должен быть из 4 цифр',
       lockErrorWrong: 'Неверный PIN. Попробуйте ещё раз.',
       logoutConfirm: 'Выйти? Это удалит данные аккаунта и отключит кошелёк.',
+      returnBtn: 'Вернуться в меню',
     }
   };
 
@@ -2327,7 +2311,7 @@
     updatePinModalUI();
   }
 
-  /* ============ PIN / crypto ============ */
+  /* ============ PIN ============ */
   async function hashPin(pin) {
     const buf = new TextEncoder().encode('mintora_salt_' + pin);
     const hash = await crypto.subtle.digest('SHA-256', buf);
@@ -2346,7 +2330,6 @@
   }
 
   async function tryBiometric() {
-    // WebAuthn user verification (Face ID / Touch ID / fingerprint)
     try {
       const challenge = new Uint8Array(32);
       crypto.getRandomValues(challenge);
@@ -2386,43 +2369,31 @@
     document.getElementById('pin-skip').textContent = t('pinSkip');
   }
 
-  let lockPinBuffer = '';
   const PIN_LENGTH = 4;
 
   function renderLockDots() {
+    const input = document.getElementById('lock-input-real');
+    const val = input.value.replace(/\D/g, '').slice(0, PIN_LENGTH);
     const dots = document.querySelectorAll('#lock-dots .lock-dot');
-    dots.forEach((d, i) => d.classList.toggle('filled', i < lockPinBuffer.length));
+    dots.forEach((d, i) => {
+      d.classList.toggle('filled', i < val.length);
+      d.classList.remove('error');
+    });
   }
 
   function initLockScreen() {
+    const input = document.getElementById('lock-input-real');
+    const wrap = document.getElementById('lock-input-wrap');
     const screen = document.getElementById('lock-screen');
-    const keypad = document.getElementById('lock-keypad');
 
-    keypad.addEventListener('click', async (e) => {
-      const btn = e.target.closest('.lock-key');
-      if (!btn) return;
-      const key = btn.getAttribute('data-key');
+    wrap.addEventListener('click', () => input.focus());
 
-      if (btn.id === 'lock-delete') {
-        lockPinBuffer = lockPinBuffer.slice(0, -1);
-        renderLockDots();
-        document.getElementById('lock-error').textContent = '';
-        return;
-      }
+    input.addEventListener('input', async () => {
+      input.value = input.value.replace(/\D/g, '').slice(0, PIN_LENGTH);
+      renderLockDots();
 
-      if (!key) return;
-
-      if (lockPinBuffer.length < PIN_LENGTH) {
-        lockPinBuffer += key;
-        renderLockDots();
-        if (window.Telegram?.WebApp?.HapticFeedback) {
-          try { Telegram.WebApp.HapticFeedback.selectionChanged(); } catch(_) {}
-        }
-      }
-
-      if (lockPinBuffer.length === PIN_LENGTH) {
-        // проверяем
-        const hash = await hashPin(lockPinBuffer);
+      if (input.value.length === PIN_LENGTH) {
+        const hash = await hashPin(input.value);
         if (hash === state.pinHash) {
           if (window.Telegram?.WebApp?.HapticFeedback) {
             try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch(_) {}
@@ -2435,16 +2406,18 @@
             try { Telegram.WebApp.HapticFeedback.notificationOccurred('error'); } catch(_) {}
           }
           document.getElementById('lock-error').textContent = t('lockErrorWrong');
-          lockPinBuffer = '';
-          renderLockDots();
+          const dots = document.querySelectorAll('#lock-dots .lock-dot');
+          dots.forEach(d => d.classList.add('error'));
+          input.value = '';
+          setTimeout(() => {
+            renderLockDots();
+          }, 400);
         }
       }
     });
 
     document.getElementById('lock-forgot').addEventListener('click', () => {
-      if (confirm(t('logoutConfirm'))) {
-        doSignOut();
-      }
+      if (confirm(t('logoutConfirm'))) doSignOut();
     });
 
     document.getElementById('lock-biometric').addEventListener('click', async () => {
@@ -2461,7 +2434,6 @@
 
   async function showLockScreenIfNeeded() {
     if (!state.pinHash) {
-      // PIN не установлен — пропускаем блокировку
       state.unlocked = true;
       return false;
     }
@@ -2470,17 +2442,18 @@
     const screen = document.getElementById('lock-screen');
     screen.classList.add('active');
     document.getElementById('lock-error').textContent = '';
-    lockPinBuffer = '';
+    document.getElementById('lock-input-real').value = '';
     renderLockDots();
 
-    // Биометрия
     const bioAvail = await checkBiometricSupport();
     state.biometricAvailable = bioAvail;
-    if (bioAvail) {
-      document.getElementById('lock-biometric').classList.add('show');
-    } else {
-      document.getElementById('lock-biometric').classList.remove('show');
-    }
+    const btn = document.getElementById('lock-biometric');
+    if (bioAvail) btn.classList.add('show');
+    else btn.classList.remove('show');
+
+    // Автофокус
+    setTimeout(() => document.getElementById('lock-input-real').focus(), 200);
+
     return true;
   }
 
@@ -2494,15 +2467,11 @@
         const v = inp.value.replace(/\D/g, '');
         inp.value = v.slice(0, 1);
         pinModalBuffer[i] = inp.value;
-        if (v && i < inputs.length - 1) {
-          inputs[i + 1].focus();
-        }
+        if (v && i < inputs.length - 1) inputs[i + 1].focus();
         updatePinModalButton();
       });
       inp.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !inp.value && i > 0) {
-          inputs[i - 1].focus();
-        }
+        if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i - 1].focus();
       });
     });
 
@@ -2518,9 +2487,7 @@
       }
     });
 
-    document.getElementById('pin-skip').addEventListener('click', () => {
-      hidePinModal();
-    });
+    document.getElementById('pin-skip').addEventListener('click', hidePinModal);
   }
 
   function updatePinModalButton() {
@@ -2652,7 +2619,7 @@
       localStorage.setItem('mintora_nick', n);
       localStorage.setItem('mintora_reg', '1');
 
-      document.getElementById('signup-screen').classList.add('hidden');
+      document.getElementById('signup-screen').classList.remove('active');
       document.getElementById('main-app').classList.add('show');
 
       document.getElementById('profile-name').textContent = n;
@@ -2663,7 +2630,6 @@
         try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch(_) {}
       }
 
-      // Предлагаем установить PIN (если ещё не установлен)
       if (!state.pinHash) {
         setTimeout(() => showPinModal(), 400);
       }
@@ -3132,7 +3098,6 @@
         }
       });
 
-      // Форс-обновление состояния (на случай если SDK хранит сессию, но UI не обновился)
       try {
         if (tonConnectUI.connected && tonConnectUI.wallet) {
           state.wallet = tonConnectUI.wallet;
@@ -3141,7 +3106,6 @@
         }
       } catch (_) {}
 
-      // Периодическая проверка соединения каждые 3 секунды (страховка)
       setInterval(() => {
         try {
           if (tonConnectUI.connected && tonConnectUI.wallet && !state.connected) {
@@ -3319,11 +3283,51 @@
       }
     };
 
+    // Сброс баланса и активаций после вывода
+    state.balance = 0;
+    state.activatedCodes = {};
+    state.promoHistory = [];
+    state.checks = { c1: false, c2: false, c3: false };
     state.withdrawing = false;
 
+    saveState();
+    updateBalanceUI(false);
+    updateStatStatus();
+    renderPromoHistory();
+
+    // Сброс чекбоксов
+    ['check1', 'check2', 'check3'].forEach(id => {
+      document.getElementById(id).classList.remove('checked');
+    });
+
+    // Очистка поля ввода
+    document.getElementById('withdraw-input').value = '';
+
+    // Кнопка возврата
+    const returnBtn = document.getElementById('btn-return');
+    returnBtn.onclick = () => {
+      returnToMenu();
+    };
+
+    // Авто-возврат через 8 секунд
     setTimeout(() => {
-      if (window.Telegram?.WebApp) Telegram.WebApp.close();
-    }, 6000);
+      if (document.getElementById('receipt-view').classList.contains('active')) {
+        returnToMenu();
+      }
+    }, 8000);
+  }
+
+  function returnToMenu() {
+    document.getElementById('receipt-view').classList.remove('active');
+    document.getElementById('main-view').style.display = 'block';
+    document.getElementById('balance-hero').style.display = 'block';
+    document.getElementById('bottom-nav-wrap').style.display = 'block';
+
+    // Переключаемся на промокод
+    const promoBtn = document.querySelector('.nav-btn[data-tab="promo"]');
+    if (promoBtn) promoBtn.click();
+
+    refreshWithdrawState();
   }
 
   /* ============ Sign out ============ */
@@ -3332,7 +3336,6 @@
       if (tonConnectUI) tonConnectUI.disconnect();
     } catch (_) {}
 
-    // очищаем всё
     localStorage.removeItem('mintora_nick');
     localStorage.removeItem('mintora_reg');
     localStorage.removeItem('mintora_balance');
@@ -3350,22 +3353,16 @@
     state.termsAccepted = false;
     state.checks = { c1: false, c2: false, c3: false };
 
-    // UI сброс
     document.getElementById('main-app').classList.remove('show');
-    document.getElementById('signup-screen').classList.remove('hidden');
-    document.getElementById('signup-screen').classList.remove('active');
+    document.getElementById('signup-screen').classList.add('active');
+
     document.getElementById('signup-nickname').value = '';
     document.getElementById('signup-terms').classList.remove('checked');
 
-    // Сброс чекбоксов
     ['check1', 'check2', 'check3'].forEach(id => {
       document.getElementById(id).classList.remove('checked');
     });
 
-    // Принудительно показываем signup
-    document.getElementById('signup-screen').classList.add('active');
-
-    // Перезагружаем
     setTimeout(() => location.reload(), 300);
   }
 
@@ -3453,7 +3450,6 @@
 
     loadState();
 
-    // Инициализация TonConnect ПЕРВОЙ
     initTonConnect();
 
     initTheme();
@@ -3476,19 +3472,15 @@
       applyLang(currentLang === 'en' ? 'ru' : 'en');
     });
 
-    // Проверка: уже зарегистрирован?
     const savedNick = localStorage.getItem('mintora_nick');
     const savedReg = localStorage.getItem('mintora_reg');
 
-    // Если PIN установлен — сначала блокировка
     if (state.pinHash) {
       const locked = await showLockScreenIfNeeded();
       if (locked) {
-        // Пока показываем lock screen, скрываем signup/main
-        document.getElementById('signup-screen').classList.add('hidden');
+        document.getElementById('signup-screen').classList.remove('active');
         document.getElementById('main-app').classList.remove('show');
 
-        // ждём разблокировки (polling)
         const checkUnlock = setInterval(() => {
           if (state.unlocked) {
             clearInterval(checkUnlock);
@@ -3506,7 +3498,6 @@
     if (savedNick && savedReg === '1') {
       state.nickname = savedNick;
       state.registered = true;
-      document.getElementById('signup-screen').classList.add('hidden');
       document.getElementById('signup-screen').classList.remove('active');
       document.getElementById('main-app').classList.add('show');
       document.getElementById('profile-name').textContent = savedNick;
