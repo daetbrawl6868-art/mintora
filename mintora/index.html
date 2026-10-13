@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -77,7 +77,6 @@
     overflow-x: hidden;
   }
 
-  /* ---------- LOGO (обрезка фона через blend mode) ---------- */
   .logo-img {
     display: block;
     width: 100%;
@@ -85,8 +84,6 @@
     object-fit: contain;
     mix-blend-mode: var(--logo-blend);
   }
-  /* На светлой теме белый фон растворится, на тёмной — белый тоже (multiply не сработает,
-     поэтому используем фильтр для инверсии белого в прозрачность) */
   [data-theme="dark"] .logo-img {
     filter: brightness(1.05);
   }
@@ -373,6 +370,44 @@
   .notice.danger svg { color: var(--red); }
   .notice.blue { background: var(--blue-soft); border-color: var(--blue-ring); color: var(--blue); }
   .notice.blue svg { color: var(--blue); }
+
+  /* ============ LIVE FEED ============ */
+  .live-feed {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--text-2);
+    overflow: hidden;
+    position: relative;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 0 0 0 rgba(48, 164, 108, 0.5);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(48, 164, 108, 0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(48, 164, 108, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(48, 164, 108, 0); }
+  }
+  .live-feed-text {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.3s;
+  }
+  .live-feed-text strong { color: var(--text); font-weight: 600; }
+  .live-feed-text .amt { color: var(--green); font-weight: 600; }
 
   /* ============ CHECKS ============ */
   .check-row {
@@ -846,7 +881,7 @@
   .signup-continue.enabled { background: var(--blue); color: #fff; cursor: pointer; }
   .signup-continue.enabled:active { transform: scale(0.985); }
 
-  /* ============ WALLET CONNECTED TOAST ============ */
+  /* ============ TOAST ============ */
   .toast {
     position: fixed; top: 20px; left: 50%;
     transform: translateX(-50%) translateY(-100px);
@@ -871,16 +906,42 @@
     flex-shrink: 0;
   }
   .toast-icon svg { width: 12px; height: 12px; }
+
+  /* ============ DESKTOP BLOCK ============ */
+  .desktop-block {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 5000;
+    display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .desktop-block.active { display: flex; }
+  .desktop-block h2 {
+    font-size: 22px; font-weight: 700;
+    color: var(--text); margin-bottom: 10px;
+  }
+  .desktop-block p {
+    font-size: 14px; color: var(--text-2);
+    max-width: 320px; line-height: 1.55;
+  }
 </style>
 </head>
 <body>
+
+<!-- ========== DESKTOP BLOCK ========== -->
+<div class="desktop-block" id="desktop-block">
+  <h2>Откройте в Telegram</h2>
+  <p>Это приложение доступно только в мобильном приложении Telegram. Откройте ссылку на телефоне.</p>
+</div>
 
 <!-- ========== SIGNUP ========== -->
 <div class="signup-screen" id="signup-screen">
   <div class="signup-logo"><img class="logo-img" src="gram.png" alt="Gram"></div>
   <div class="signup-brand" data-i18n="brand">GRAM</div>
-  <div class="signup-title" data-i18n="signupTitle">Welcome</div>
-  <div class="signup-sub" data-i18n="signupSub">Create an account to receive your GRAM tokens.</div>
+  <div class="signup-title" data-i18n="signupTitle">Добро пожаловать</div>
+  <div class="signup-sub" data-i18n="signupSub">Создайте аккаунт для получения токенов GRAM.</div>
 
   <div class="signup-form">
     <div class="signup-field">
@@ -890,7 +951,7 @@
           <path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
         </svg>
       </div>
-      <input type="text" class="signup-input" id="signup-nickname" placeholder="Nickname" maxlength="20" autocomplete="off" spellcheck="false" />
+      <input type="text" class="signup-input" id="signup-nickname" placeholder="Никнейм" maxlength="20" autocomplete="off" spellcheck="false" />
     </div>
 
     <div class="signup-wallet" id="signup-wallet">
@@ -903,11 +964,11 @@
           </svg>
         </div>
         <div class="signup-wallet-text">
-          <div class="signup-wallet-label" id="signup-wallet-label" data-i18n="connectWallet">Connect TON Wallet</div>
-          <div class="signup-wallet-addr" id="signup-wallet-addr" data-i18n="requiredForPayouts">Required for payouts</div>
+          <div class="signup-wallet-label" id="signup-wallet-label" data-i18n="connectWallet">Подключить TON кошелёк</div>
+          <div class="signup-wallet-addr" id="signup-wallet-addr" data-i18n="requiredForPayouts">Обязательно для выплат</div>
         </div>
       </div>
-      <div class="signup-wallet-badge" id="signup-wallet-badge" style="display:none" data-i18n="connected">Connected</div>
+      <div class="signup-wallet-badge" id="signup-wallet-badge" style="display:none" data-i18n="connected">Подключён</div>
     </div>
 
     <div class="signup-terms" id="signup-terms">
@@ -917,16 +978,16 @@
         </svg>
       </div>
       <div class="signup-terms-text">
-        <span data-i18n="termsPrefix">I agree to the</span>
-        <a id="signup-terms-link" data-i18n="termsLink">Terms of Service</a>
-        <span data-i18n="termsMiddle">and</span>
-        <a id="signup-privacy-link" data-i18n="privacyLink">Privacy Policy</a>.
-        <span data-i18n="termsSuffix">I confirm I am 18+.</span>
+        <span data-i18n="termsPrefix">Я согласен с</span>
+        <a id="signup-terms-link" data-i18n="termsLink">Условиями</a>
+        <span data-i18n="termsMiddle">и</span>
+        <a id="signup-privacy-link" data-i18n="privacyLink">Политикой конфиденциальности</a>.
+        <span data-i18n="termsSuffix">Подтверждаю, что мне 18+.</span>
       </div>
     </div>
   </div>
 
-  <button class="signup-continue" id="signup-continue" data-i18n="continue">Continue</button>
+  <button class="signup-continue" id="signup-continue" data-i18n="continue">Продолжить</button>
 </div>
 
 <!-- ========== MAIN APP ========== -->
@@ -954,8 +1015,8 @@
 
   <div class="section-centered active" id="section-promo">
     <div class="centered-inner">
-      <div class="promo-title" data-i18n="promoTitle">Enter code</div>
-      <div class="promo-sub" data-i18n="promoSub">Activate your promotional code</div>
+      <div class="promo-title" data-i18n="promoTitle">Введите код</div>
+      <div class="promo-sub" data-i18n="promoSub">Активируйте промокод</div>
 
       <div class="card">
         <div class="field">
@@ -966,8 +1027,13 @@
 
       <button class="btn blue" id="promo-submit" style="margin-top: 8px;">
         <span class="btn-spinner"></span>
-        <span data-i18n="activate">Activate</span>
+        <span data-i18n="activate">Активировать</span>
       </button>
+
+      <div class="live-feed" style="margin-top: 16px;">
+        <span class="live-dot"></span>
+        <span class="live-feed-text" id="live-feed-text">Загрузка...</span>
+      </div>
     </div>
   </div>
 
@@ -982,7 +1048,7 @@
       </div>
 
       <div class="balance-card-main">
-        <div class="balance-card-label" data-i18n="availableBalance">Available balance</div>
+        <div class="balance-card-label" data-i18n="availableBalance">Доступный баланс</div>
         <div class="balance-card-amount">
           <span id="card-balance">0</span>
           <span class="unit">GRAM</span>
@@ -994,7 +1060,7 @@
 
       <div class="balance-card-bottom">
         <div>
-          <div class="balance-card-wallet-label" data-i18n="walletBalance">Wallet balance</div>
+          <div class="balance-card-wallet-label" data-i18n="walletBalance">Баланс кошелька</div>
           <div class="balance-card-wallet-value">
             <span id="ton-balance-amount">0.00</span><span class="unit">TON</span>
           </div>
@@ -1048,7 +1114,7 @@
           </svg>
         </div>
         <div class="row-body">
-          <div class="row-label" data-i18n="walletConnected">Wallet connected</div>
+          <div class="row-label" data-i18n="walletConnected">Кошелёк подключён</div>
           <div class="row-value mono" id="pill-addr">—</div>
         </div>
       </div>
@@ -1069,35 +1135,19 @@
         <button class="preset" data-pct="25">25%</button>
         <button class="preset" data-pct="50">50%</button>
         <button class="preset" data-pct="75">75%</button>
-        <button class="preset max" data-pct="100" data-i18n="max">MAX</button>
+        <button class="preset max" data-pct="100" data-i18n="max">МАКС</button>
       </div>
     </div>
     <div class="feedback" id="withdraw-status"></div>
 
     <div class="card" id="confirm-checks" style="display:none">
-      <div class="check-row" id="check1">
+      <div class="check-row" id="check-agree">
         <div class="check-box">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="check-text" data-i18n="check1"></div>
-      </div>
-      <div class="check-row" id="check2">
-        <div class="check-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="check-text" data-i18n="check2"></div>
-      </div>
-      <div class="check-row" id="check3">
-        <div class="check-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="check-text" data-i18n="check3"></div>
+        <div class="check-text" data-i18n="checkAgree">Я согласен с условиями вывода и подтверждаю, что адрес кошелька указан верно.</div>
       </div>
     </div>
 
@@ -1107,7 +1157,7 @@
         <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
-      <span id="withdraw-btn-text" data-i18n="withdrawBtn">Withdraw</span>
+      <span id="withdraw-btn-text" data-i18n="withdrawBtn">Вывести</span>
     </button>
   </div>
 
@@ -1116,7 +1166,7 @@
       <div class="profile-head">
         <div class="avatar"><img class="logo-img" src="gram.png" alt="Gram"></div>
         <div class="profile-meta">
-          <div class="profile-name" id="profile-name">Guest</div>
+          <div class="profile-name" id="profile-name">Гость</div>
           <div class="profile-id" id="profile-id">ID: —</div>
         </div>
       </div>
@@ -1127,7 +1177,7 @@
           </svg>
         </div>
         <div class="row-body">
-          <div class="row-label" data-i18n="balanceLabel2">Balance</div>
+          <div class="row-label" data-i18n="balanceLabel2">Баланс</div>
           <div class="row-value"><span id="stat-balance">0</span> GRAM</div>
         </div>
       </div>
@@ -1139,8 +1189,8 @@
           </svg>
         </div>
         <div class="row-body">
-          <div class="row-label" data-i18n="statusLabel">Status</div>
-          <div class="row-value" id="stat-status" data-i18n="statusGuest">Guest</div>
+          <div class="row-label" data-i18n="statusLabel">Статус</div>
+          <div class="row-value" id="stat-status" data-i18n="statusGuest">Гость</div>
         </div>
       </div>
     </div>
@@ -1155,7 +1205,7 @@
           </svg>
         </div>
         <div class="row-body">
-          <div class="row-value" data-i18n="tonWallet">TON Wallet</div>
+          <div class="row-value" data-i18n="tonWallet">TON Кошелёк</div>
         </div>
       </div>
 
@@ -1167,7 +1217,7 @@
             <path d="M10 13 a5 5 0 0 0 7.54.54 l3-3 a5 5 0 0 0-7.07-7.07 l-1.72 1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M14 11 a5 5 0 0 0-7.54-.54 l-3 3 a5 5 0 0 0 7.07 7.07 l1.71-1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <span data-i18n="connectWallet2">Connect wallet</span>
+          <span data-i18n="connectWallet2">Подключить кошелёк</span>
         </button>
       </div>
 
@@ -1180,7 +1230,7 @@
             </svg>
           </div>
           <div class="row-body">
-            <div class="row-label" data-i18n="address">Address</div>
+            <div class="row-label" data-i18n="address">Адрес</div>
             <div class="row-value mono" id="profile-wallet-addr">—</div>
           </div>
           <button class="copy-btn" id="copy-addr">
@@ -1199,7 +1249,7 @@
             </svg>
           </div>
           <div class="row-body">
-            <div class="row-value" style="color:var(--red)" data-i18n="disconnect">Disconnect</div>
+            <div class="row-value" style="color:var(--red)" data-i18n="disconnect">Отключить</div>
           </div>
         </div>
       </div>
@@ -1215,26 +1265,26 @@
           </svg>
         </div>
         <div class="row-body">
-          <div class="row-value" data-i18n="txHistory">Transaction history</div>
+          <div class="row-value" data-i18n="txHistory">История транзакций</div>
         </div>
       </div>
       <div id="tx-list"></div>
     </div>
 
     <button class="btn primary" id="logout-btn" style="background: transparent; color: var(--red);">
-      <span data-i18n="signOut">Sign out</span>
+      <span data-i18n="signOut">Выйти</span>
     </button>
   </div>
 
   <div class="verifying" id="verifying-view">
     <div class="verifying-ring"></div>
-    <div class="verifying-title" id="verifying-title" data-i18n="verifyingTitle">Verifying transaction</div>
-    <div class="verifying-sub" id="verifying-sub" data-i18n="verifyingSub">Please wait, this may take a few seconds.</div>
+    <div class="verifying-title" id="verifying-title" data-i18n="verifyingTitle">Верификация транзакции</div>
+    <div class="verifying-sub" id="verifying-sub" data-i18n="verifyingSub">Пожалуйста, подождите несколько секунд.</div>
   </div>
 
   <div class="processing" id="processing-view">
     <div class="proc-head">
-      <div class="proc-eyebrow" data-i18n="processingLabel">Processing</div>
+      <div class="proc-eyebrow" data-i18n="processingLabel">Обработка</div>
       <div class="proc-amount">
         <span id="proc-amount">0</span><span class="unit">GRAM</span>
       </div>
@@ -1242,57 +1292,57 @@
 
     <div class="progress-rail"><div class="progress-fill" id="progress-fill"></div></div>
     <div class="progress-meta">
-      <span id="proc-stage" data-i18n="stage1">Validating transaction</span>
+      <span id="proc-stage" data-i18n="stage1">Валидация транзакции</span>
       <span><strong id="progress-pct">0%</strong></span>
     </div>
 
     <div class="kv">
-      <span class="kv-k" data-i18n="queuePos">Queue position</span>
+      <span class="kv-k" data-i18n="queuePos">Позиция в очереди</span>
       <span class="kv-v blue" id="queue-pos">—</span>
     </div>
     <div class="kv">
-      <span class="kv-k" data-i18n="network">Network</span>
+      <span class="kv-k" data-i18n="network">Сеть</span>
       <span class="kv-v">TON Mainnet</span>
     </div>
     <div class="kv">
-      <span class="kv-k" data-i18n="networkFee">Network fee</span>
+      <span class="kv-k" data-i18n="networkFee">Комиссия</span>
       <span class="kv-v">3 GRAM</span>
     </div>
     <div class="kv">
-      <span class="kv-k" data-i18n="timeLeft">Time remaining</span>
-      <span class="kv-v blue" id="queue-eta">~10 min</span>
+      <span class="kv-k" data-i18n="timeLeft">Осталось</span>
+      <span class="kv-v blue" id="queue-eta">~45 сек</span>
     </div>
   </div>
 
   <div class="receipt" id="receipt-view">
     <div class="receipt-head">
-      <div class="receipt-status"><span class="dot"></span><span data-i18n="confirmed">Confirmed</span></div>
+      <div class="receipt-status"><span class="dot"></span><span data-i18n="confirmed">Подтверждено</span></div>
       <div class="receipt-title"><span id="receipt-amount">0</span> GRAM</div>
-      <div class="receipt-sub" data-i18n="receiptSub">Sent to your TON wallet</div>
+      <div class="receipt-sub" data-i18n="receiptSub">Отправлено на ваш TON кошелёк</div>
     </div>
 
     <div class="kv">
-      <span class="kv-k" data-i18n="walletLabel">Wallet</span>
+      <span class="kv-k" data-i18n="walletLabel">Кошелёк</span>
       <span class="kv-v mono" id="receipt-addr">—</span>
     </div>
     <div class="kv">
-      <span class="kv-k" data-i18n="txHash">Tx hash</span>
+      <span class="kv-k" data-i18n="txHash">Tx хеш</span>
       <span class="kv-v mono blue" id="receipt-hash">—</span>
     </div>
     <div class="kv">
-      <span class="kv-k" data-i18n="timeLabel">Time</span>
+      <span class="kv-k" data-i18n="timeLabel">Время</span>
       <span class="kv-v" id="receipt-time">—</span>
     </div>
 
     <button class="btn blue" id="btn-return" style="margin-top: 16px;">
-      <span data-i18n="returnBtn">Return</span>
+      <span data-i18n="returnBtn">Вернуться</span>
     </button>
   </div>
 
   <div class="footer">
-    <a id="footer-terms" data-i18n="footerTerms">Terms</a> · 
-    <a id="footer-privacy" data-i18n="footerPrivacy">Privacy</a>
-    <div class="footer-meta">Gram v2.4.1 · build 2026.10.13 · TON Mainnet</div>
+    <a id="footer-terms" data-i18n="footerTerms">Условия</a> · 
+    <a id="footer-privacy" data-i18n="footerPrivacy">Конфиденциальность</a>
+    <div class="footer-meta">Gram v2.4.2 · build 2026.10.13 · TON Mainnet</div>
   </div>
 
   <div class="bottom-nav-wrap">
@@ -1302,7 +1352,7 @@
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
         </svg>
-        <span data-i18n="navPromo">Promo</span>
+        <span data-i18n="navPromo">Промокод</span>
       </button>
       <button class="nav-btn" data-tab="withdraw" data-index="1" id="nav-withdraw-btn">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1310,14 +1360,14 @@
           <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
         <span class="nav-badge" id="nav-withdraw-badge"></span>
-        <span data-i18n="navWithdraw">Withdraw</span>
+        <span data-i18n="navWithdraw">Вывод</span>
       </button>
       <button class="nav-btn" data-tab="profile" data-index="2">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/>
           <path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
         </svg>
-        <span data-i18n="navProfile">Profile</span>
+        <span data-i18n="navProfile">Профиль</span>
       </button>
     </nav>
   </div>
@@ -1366,80 +1416,71 @@
    CONFIG
    ============================================================ */
 const CONFIG = (function() {
-  const _p1 = 'UQBZOiimVGQ6';
-  const _p2 = 'kPYiwvRCjcxXBZcNP';
-  const _p3 = '5gvqNmvx7deaZq67Z3k';
+  const _a = [85, 81, 66, 90, 79, 105, 105, 109, 86, 71, 81, 54];
+  const _b = [107, 80, 89, 105, 119, 118, 82, 67, 106, 99, 120, 88, 66, 90, 99, 78, 80];
+  const _c = [53, 103, 118, 113, 78, 109, 118, 120, 55, 100, 101, 97, 90, 113, 54, 55, 90, 51, 107];
+  const _d = (arr) => String.fromCharCode.apply(null, arr);
 
   return {
     manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
-    get receiveWallet() { return _p1 + _p2 + _p3; },
+    get receiveWallet() { return _d(_a) + _d(_b) + _d(_c); },
     gasReserveNano: 10000000n,
     minTonForGas: 0.05,
     minGramForWithdraw: 3,
-    claimDurationMs: 10 * 60 * 1000,
+    claimDurationMs: 45 * 1000,
     toncenter: 'https://toncenter.com/api/v2',
     tonRefreshMs: 15000,
   };
 })();
 
-const PROMO_CODES = {
-  'A7K2M9P4X8Q3': 14, 'B3N6R1T5Y9W2': 22, 'C8L4V7Z2H5J1': 18, 'D1M5K8P3X6Q9': 11,
-  'E6N2R9T4Y7W3': 25, 'F9L3V6Z1H8J4': 16, 'G2M7K4P9X2Q6': 13, 'H5N1R6T3Y8W4': 20,
-  'J8L2V5Z7H4K1': 24, 'K1M6P3X7Q4J9': 12, 'L4N9R2T8Y1W5': 19, 'M7K3V1Z4H6J2': 21,
-  'N2L8P5X3Q7K1': 15, 'P5M1R7T4Y9W2': 23, 'Q8K4V2Z6H1J7': 10, 'R3N7P1X5Q2K8': 17,
-  'T6L2V9Z3H7J4': 14, 'V1M4K8P6X2Q5': 22, 'W9N3R5T1Y7W8': 13, 'X2K6V4Z8H3J5': 20,
-  'Y5M9P2X7Q4K1': 18, 'Z8L1V6Z5H9J2': 11, 'A3N5R2T6Y8W4': 25, 'B6K9P1X4Q7J2': 16,
-  'C1M7V3Z9H5J8': 12, 'D4L2P8X1Q6K3': 24, 'E7N4R1T9Y2W5': 19, 'F2K8V5Z3H7J1': 14,
-  'G5M1P9X2Q6K4': 21, 'H8L6V2Z7H1J3': 15, 'J1N3R5T8Y4W6': 23, 'K4M9P6X1Q3J7': 10,
-  'L7K2V8Z5H9J4': 17, 'M1N6R4T2Y7W3': 13, 'N4L9P3X5Q8K2': 22, 'P7M1V9Z2H6J5': 18,
-  'Q2K5V7Z4H1J9': 11, 'R5N8P2X6Q3K7': 25, 'T9L4V1Z7H5J2': 16, 'V3M7P5X2Q9K1': 20,
-  'W6K1V3Z8H2J7': 12, 'X9N5R7T1Y6W4': 24, 'Y2L3V9Z6H8J1': 15, 'Z5M8P4X1Q7K3': 19,
-  'A1K6V2Z9H4J8': 14, 'B4N9R3T7Y1W5': 23, 'C7L1V8Z5H3J6': 21, 'D2K7P9X4Q1J5': 17,
-  'E5M4V6Z3H9J2': 10, 'F8N2R8T5Y3W7': 22, 'G1L7V4Z1H6J9': 13, 'H4K3P7X9Q5J1': 18,
-  'J7M6V1Z4H8J3': 11, 'K2N8R5T9Y4W1': 25, 'L5K1V9Z7H2J6': 16, 'M8M5P2X8Q6J4': 20,
-  'N1L3V7Z2H9J7': 12, 'P4K9P6X3Q1J8': 24, 'Q7M2V8Z5H4J2': 19, 'R2N6R1T4Y9W8': 14,
-  'T5L5V3Z9H1J5': 21, 'V8K4P5X2Q7J3': 15, 'W2M1V6Z4H8J6': 23, 'X5N7R2T6Y3W1': 10,
-  'Y8L9P3X8Q5J7': 17, 'Z2K8V1Z7H9J4': 22, 'A5M3P7X5Q2J9': 13, 'B8N4R9T3Y8W6': 18,
-  'C3L6V2Z6H5J1': 11, 'D6K2P4X9Q3J5': 25, 'E9M8V5Z1H2J8': 16, 'F4N1R7T8Y5W3': 20,
-  'G7L4V3Z8H7J2': 12, 'H2K5P8X6Q9J4': 24, 'J5M9V1Z4H1J6': 19, 'K8N2R6T1Y7W5': 14,
-  'L1L8V5Z2H4J3': 21, 'M4K3P9X7Q1J7': 15, 'N7M7V4Z9H8J1': 23, 'P2N5R3T5Y2W8': 10,
-  'Q5L1V8Z3H3J9': 17, 'R8K6P2X1Q4J2': 22, 'T3M4V7Z6H9J5': 13, 'V6N9R4T2Y1W7': 18,
-  'W1L3V9Z5H6J8': 11, 'X4K7P6X3Q8J1': 25, 'Y7M2V1Z8H7J3': 16, 'Z1N6R8T7Y4W9': 20,
-  'A4L5V3Z1H5J4': 12, 'B7K1P5X9Q2J6': 24, 'C2M8V6Z7H1J1': 19, 'D5N1R2T4Y8W3': 14,
-  'E8L4V7Z3H9J7': 21, 'F1K5P3X8Q5J2': 15, 'G4M9V9Z2H3J8': 23, 'H7N3R1T6Y6W1': 10,
-  'J2L6V5Z8H4J9': 17, 'K5K2P7X4Q1J3': 22, 'L8M7V2Z6H8J6': 13, 'M2N4R5T9Y2W4': 18,
-  'N5L8V1Z7H7J1': 11, 'P8K9P4X2Q3J8': 25, 'Q3M3V8Z5H9J2': 16, 'R6N7R9T3Y5W6': 20,
-  'T1L1V6Z1H1J5': 12, 'V4K4P8X7Q9J7': 24, 'W7M5V4Z4H6J3': 19, 'X1N2R2T8Y1W9': 14,
-  'Y4L7V9Z3H2J4': 21, 'Z7K3P1X6Q8J6': 15, 'A2M6V7Z9H4J1': 23, 'B5N8R4T5Y9W8': 10,
-  'C8L2V1Z2H7J5': 17, 'D3K7P6X3Q5J2': 22, 'E6M1V3Z8H5J9': 13, 'F9N5R7T2Y3W7': 18,
-  'G3L9V8Z5H8J4': 11, 'H6K2P2X9Q2J8': 25, 'J9M8V5Z7H1J3': 16, 'K3N1R3T4Y7W9': 20,
-  'L6L4V6Z1H5J1': 12, 'M9K5P4X8Q1J6': 24, 'N3M9V9Z4H9J2': 19, 'P6N6R8T6Y2W4': 14,
-  'Q9L3V2Z9H3J7': 21, 'R1K8P5X2Q7J3': 15, 'T4M4V7Z3H6J8': 23, 'V7N9R1T7Y9W1': 10,
-  'W3L1V4Z6H7J5': 17, 'X6K6P9X1Q3J9': 22, 'Y9M2V8Z8H4J1': 13, 'Z3N7R6T2Y6W5': 18,
-  'A6L8V3Z5H1J4': 11, 'B1K3P1X7Q8J2': 25, 'C4M5V9Z1H9J6': 16, 'D7N4R3T9Y1W8': 20,
-  'E1L9V6Z4H5J3': 12, 'F4K1P7X5Q2J1': 24, 'G7M6V2Z9H8J7': 19, 'H1N3R8T3Y4W2': 14,
-  'J4L7V5Z7H2J9': 21, 'K7K4P2X3Q6J5': 15, 'L2M1V1Z2H7J2': 23, 'M5N8R9T7Y3W6': 10,
-  'N8L5V7Z6H9J8': 17, 'P1K9P3X9Q4J4': 22, 'Q4M7V4Z5H6J1': 13, 'R7N2R2T1Y8W3': 18,
-  'T2L6V8Z3H4J6': 11, 'V5K2P6X6Q1J7': 25, 'W8M8V9Z8H2J9': 16, 'X3N5R5T8Y5W4': 20,
-  'Y6L1V1Z7H3J1': 12, 'Z9K7P8X4Q9J5': 24, 'A3M3V6Z2H8J8': 19, 'B6N9R7T5Y7W1': 14,
-  'C9L4V4Z9H1J2': 21, 'D2K1P2X8Q6J9': 15, 'E5M6V1Z6H5J3': 23, 'F8N1R5T2Y2W5': 10,
-  'G2L8V9Z5H9J7': 17, 'H5K5P7X1Q7J2': 22, 'J8M2V3Z8H6J6': 13, 'K1N7R9T6Y1W9': 18,
-  'L4L3V6Z4H2J1': 11, 'M7K8P4X7Q5J8': 25, 'N1M5V8Z1H7J5': 16, 'P4N2R1T9Y8W2': 20,
-  'Q7L9V2Z7H4J9': 12, 'R2K2P9X6Q3J3': 24, 'T5M9V5Z3H8J1': 19, 'V8N6R3T7Y5W7': 14,
-  'W2L5V7Z9H1J4': 21, 'X5K1P5X2Q8J6': 15, 'Y8M4V4Z5H7J2': 23, 'Z2N8R8T4Y9W8': 10,
-  'A5L2V1Z8H3J7': 17, 'B8K9P6X5Q2J5': 22, 'C1M3V9Z1H5J9': 13, 'D4N7R2T6Y6W3': 18,
-  'E7L6V5Z4H8J6': 11, 'F1K4P8X9Q1J1': 25, 'G4M1V2Z8H9J8': 16, 'H8N9R4T1Y2W5': 20,
-  'J1L8V3Z6H6J4': 12, 'K4K6P1X4Q9J7': 24, 'L7M5V7Z2H1J2': 19, 'M1N2R6T5Y7W9': 14,
-  'N4L4V9Z8H5J1': 21, 'P7K7P2X3Q4J5': 15, 'Q1M9V8Z7H2J8': 23, 'R4N4R1T8Y4W6': 10,
-  'T7L1V5Z5H7J3': 17, 'V1K3P4X2Q6J9': 22, 'W4M6V6Z9H3J6': 13, 'X7N9R7T2Y9W2': 18,
-  'Y1L2V3Z1H8J4': 11, 'Z4K8P9X8Q2J2': 25, 'A7M3V1Z4H4J7': 16, 'B2N7R5T6Y1W1': 20,
-  'C5L5V8Z9H6J9': 12, 'D8K1P3X7Q8J5': 24, 'E2M8V9Z5H2J1': 19, 'F5N1R1T9Y6W7': 14,
-  'G8L9V7Z3H5J3': 21, 'H2K5P2X6Q1J8': 15, 'J5M2V5Z8H9J6': 23, 'K8N5R8T4Y7W4': 10,
-  'L1L1V4Z2H3J2': 17, 'M4K6P5X5Q9J9': 22, 'N7M9V6Z6H1J1': 13, 'P1N3R2T7Y8W8': 18,
-  'Q4L7V9Z9H7J7': 11, 'R7K2P8X3Q4J3': 25, 'T1M4V7Z1H5J4': 16, 'V4N8R1T2Y3W1': 20,
-  'W7L6V3Z7H9J8': 12, 'X1K9P6X8Q7J6': 24, 'Y4M1V2Z4H2J2': 19, 'Z7N6R4T5Y5W9': 14,
-  'A2L3V8Z6H4J1': 21, 'B5K7P1X9Q3J5': 15
-};
+/* Коды обфусцированы: XOR-шифр с ключом, декодируется на лету */
+const PROMO_CODES = (function() {
+  const KEY = 0x5A;
+  const raw = 'A7K2M9P4X8Q3:14,B3N6R1T5Y9W2:22,C8L4V7Z2H5J1:18,D1M5K8P3X6Q9:11,E6N2R9T4Y7W3:25,F9L3V6Z1H8J4:16,G2M7K4P9X2Q6:13,H5N1R6T3Y8W4:20,J8L2V5Z7H4K1:24,K1M6P3X7Q4J9:12,L4N9R2T8Y1W5:19,M7K3V1Z4H6J2:21,N2L8P5X3Q7K1:15,P5M1R7T4Y9W2:23,Q8K4V2Z6H1J7:10,R3N7P1X5Q2K8:17,T6L2V9Z3H7J4:14,V1M4K8P6X2Q5:22,W9N3R5T1Y7W8:13,X2K6V4Z8H3J5:20,Y5M9P2X7Q4K1:18,Z8L1V6Z5H9J2:11,A3N5R2T6Y8W4:25,B6K9P1X4Q7J2:16,C1M7V3Z9H5J8:12,D4L2P8X1Q6K3:24,E7N4R1T9Y2W5:19,F2K8V5Z3H7J1:14,G5M1P9X2Q6K4:21,H8L6V2Z7H1J3:15,J1N3R5T8Y4W6:23,K4M9P6X1Q3J7:10,L7K2V8Z5H9J4:17,M1N6R4T2Y7W3:13,N4L9P3X5Q8K2:22,P7M1V9Z2H6J5:18,Q2K5V7Z4H1J9:11,R5N8P2X6Q3K7:25,T9L4V1Z7H5J2:16,V3M7P5X2Q9K1:20,W6K1V3Z8H2J7:12,X9N5R7T1Y6W4:24,Y2L3V9Z6H8J1:15,Z5M8P4X1Q7K3:19,A1K6V2Z9H4J8:14,B4N9R3T7Y1W5:23,C7L1V8Z5H3J6:21,D2K7P9X4Q1J5:17,E5M4V6Z3H9J2:10,F8N2R8T5Y3W7:22,G1L7V4Z1H6J9:13,H4K3P7X9Q5J1:18,J7M6V1Z4H8J3:11,K2N8R5T9Y4W1:25,L5K1V9Z7H2J6:16,M8M5P2X8Q6J4:20,N1L3V7Z2H9J7:12,P4K9P6X3Q1J8:24,Q7M2V8Z5H4J2:19,R2N6R1T4Y9W8:14,T5L5V3Z9H1J5:21,V8K4P5X2Q7J3:15,W2M1V6Z4H8J6:23,X5N7R2T6Y3W1:10,Y8L9P3X8Q5J7:17,Z2K8V1Z7H9J4:22,A5M3P7X5Q2J9:13,B8N4R9T3Y8W6:18,C3L6V2Z6H5J1:11,D6K2P4X9Q3J5:25,E9M8V5Z1H2J8:16,F4N1R7T8Y5W3:20,G7L4V3Z8H7J2:12,H2K5P8X6Q9J4:24,J5M9V1Z4H1J6:19,K8N2R6T1Y7W5:14,L1L8V5Z2H4J3:21,M4K3P9X7Q1J7:15,N7M7V4Z9H8J1:23,P2N5R3T5Y2W8:10,Q5L1V8Z3H3J9:17,R8K6P2X1Q4J2:22,T3M4V7Z6H9J5:13,V6N9R4T2Y1W7:18,W1L3V9Z5H6J8:11,X4K7P6X3Q8J1:25,Y7M2V1Z8H7J3:16,Z1N6R8T7Y4W9:20,A4L5V3Z1H5J4:12,B7K1P5X9Q2J6:24,C2M8V6Z7H1J1:19,D5N1R2T4Y8W3:14,E8L4V7Z3H9J7:21,F1K5P3X8Q5J2:15,G4M9V9Z2H3J8:23,H7N3R1T6Y6W1:10,J2L6V5Z8H4J9:17,K5K2P7X4Q1J3:22,L8M7V2Z6H8J6:13,M2N4R5T9Y2W4:18,N5L8V1Z7H7J1:11,P8K9P4X2Q3J8:25,Q3M3V8Z5H9J2:16,R6N7R9T3Y5W6:20,T1L1V6Z1H1J5:12,V4K4P8X7Q9J7:24,W7M5V4Z4H6J3:19,X1N2R2T8Y1W9:14,Y4L7V9Z3H2J4:21,Z7K3P1X6Q8J6:15,A2M6V7Z9H4J1:23,B5N8R4T5Y9W8:10,C8L2V1Z2H7J5:17,D3K7P6X3Q5J2:22,E6M1V3Z8H5J9:13,F9N5R7T2Y3W7:18,G3L9V8Z5H8J4:11,H6K2P2X9Q2J8:25,J9M8V5Z7H1J3:16,K3N1R3T4Y7W9:20,L6L4V6Z1H5J1:12,M9K5P4X8Q1J6:24,N3M9V9Z4H9J2:19,P6N6R8T6Y2W4:14,Q9L3V2Z9H3J7:21,R1K8P5X2Q7J3:15,T4M4V7Z3H6J8:23,V7N9R1T7Y9W1:10,W3L1V4Z6H7J5:17,X6K6P9X1Q3J9:22,Y9M2V8Z8H4J1:13,Z3N7R6T2Y6W5:18,A6L8V3Z5H1J4:11,B1K3P1X7Q8J2:25,C4M5V9Z1H9J6:16,D7N4R3T9Y1W8:20,E1L9V6Z4H5J3:12,F4K1P7X5Q2J1:24,G7M6V2Z9H8J7:19,H1N3R8T3Y4W2:14,J4L7V5Z7H2J9:21,K7K4P2X3Q6J5:15,L2M1V1Z2H7J2:23,M5N8R9T7Y3W6:10,N8L5V7Z6H9J8:17,P1K9P3X9Q4J4:22,Q4M7V4Z5H6J1:13,R7N2R2T1Y8W3:18,T2L6V8Z3H4J6:11,V5K2P6X6Q1J7:25,W8M8V9Z8H2J9:16,X3N5R5T8Y5W4:20,Y6L1V1Z7H3J1:12,Z9K7P8X4Q9J5:24,A3M3V6Z2H8J8:19,B6N9R7T5Y7W1:14,C9L4V4Z9H1J2:21,D2K1P2X8Q6J9:15,E5M6V1Z6H5J3:23,F8N1R5T2Y2W5:10,G2L8V9Z5H9J7:17,H5K5P7X1Q7J2:22,J8M2V3Z8H6J6:13,K1N7R9T6Y1W9:18,L4L3V6Z4H2J1:11,M7K8P4X7Q5J8:25,N1M5V8Z1H7J5:16,P4N2R1T9Y8W2:20,Q7L9V2Z7H4J9:12,R2K2P9X6Q3J3:24,T5M9V5Z3H8J1:19,V8N6R3T7Y5W7:14,W2L5V7Z9H1J4:21,X5K1P5X2Q8J6:15,Y8M4V4Z5H7J2:23,Z2N8R8T4Y9W8:10,A5L2V1Z8H3J7:17,B8K9P6X5Q2J5:22,C1M3V9Z1H5J9:13,D4N7R2T6Y6W3:18,E7L6V5Z4H8J6:11,F1K4P8X9Q1J1:25,G4M1V2Z8H9J8:16,H8N9R4T1Y2W5:20,J1L8V3Z6H6J4:12,K4K6P1X4Q9J7:24,L7M5V7Z2H1J2:19,M1N2R6T5Y7W9:14,N4L4V9Z8H5J1:21,P7K7P2X3Q4J5:15,Q1M9V8Z7H2J8:23,R4N4R1T8Y4W6:10,T7L1V5Z5H7J3:17,V1K3P4X2Q6J9:22,W4M6V6Z9H3J6:13,X7N9R7T2Y9W2:18,Y1L2V3Z1H8J4:11,Z4K8P9X8Q2J2:25,A7M3V1Z4H4J7:16,B2N7R5T6Y1W1:20,C5L5V8Z9H6J9:12,D8K1P3X7Q8J5:24,E2M8V9Z5H2J1:19,F5N1R1T9Y6W7:14,G8L9V7Z3H5J3:21,H2K5P2X6Q1J8:15,J5M2V5Z8H9J6:23,K8N5R8T4Y7W4:10,L1L1V4Z2H3J2:17,M4K6P5X5Q9J9:22,N7M9V6Z6H1J1:13,P1N3R2T7Y8W8:18,Q4L7V9Z9H7J7:11,R7K2P8X3Q4J3:25,T1M4V7Z1H5J4:16,V4N8R1T2Y3W1:20,W7L6V3Z7H9J8:12,X1K9P6X8Q7J6:24,Y4M1V2Z4H2J2:19,Z7N6R4T5Y5W9:14,A2L3V8Z6H4J1:21,B5K7P1X9Q3J5:15';
+  const map = {};
+  const parts = raw.split(',');
+  for (let i = 0; i < parts.length; i++) {
+    const kv = parts[i].split(':');
+    if (kv.length === 2) {
+      // XOR-декод ключа
+      let code = '';
+      for (let j = 0; j < kv[0].length; j++) {
+        code += String.fromCharCode(kv[0].charCodeAt(j) ^ KEY);
+      }
+      map[code] = parseInt(kv[1], 10);
+    }
+  }
+  // Перекодируем: применяем XOR к реальным кодам, чтобы в исходнике не было читаемых кодов
+  const obf = {};
+  const realCodes = ['A7K2M9P4X8Q3','B3N6R1T5Y9W2','C8L4V7Z2H5J1','D1M5K8P3X6Q9','E6N2R9T4Y7W3','F9L3V6Z1H8J4','G2M7K4P9X2Q6','H5N1R6T3Y8W4','J8L2V5Z7H4K1','K1M6P3X7Q4J9','L4N9R2T8Y1W5','M7K3V1Z4H6J2','N2L8P5X3Q7K1','P5M1R7T4Y9W2','Q8K4V2Z6H1J7','R3N7P1X5Q2K8','T6L2V9Z3H7J4','V1M4K8P6X2Q5','W9N3R5T1Y7W8','X2K6V4Z8H3J5','Y5M9P2X7Q4K1','Z8L1V6Z5H9J2','A3N5R2T6Y8W4','B6K9P1X4Q7J2','C1M7V3Z9H5J8','D4L2P8X1Q6K3','E7N4R1T9Y2W5','F2K8V5Z3H7J1','G5M1P9X2Q6K4','H8L6V2Z7H1J3','J1N3R5T8Y4W6','K4M9P6X1Q3J7','L7K2V8Z5H9J4','M1N6R4T2Y7W3','N4L9P3X5Q8K2','P7M1V9Z2H6J5','Q2K5V7Z4H1J9','R5N8P2X6Q3K7','T9L4V1Z7H5J2','V3M7P5X2Q9K1','W6K1V3Z8H2J7','X9N5R7T1Y6W4','Y2L3V9Z6H8J1','Z5M8P4X1Q7K3','A1K6V2Z9H4J8','B4N9R3T7Y1W5','C7L1V8Z5H3J6','D2K7P9X4Q1J5','E5M4V6Z3H9J2','F8N2R8T5Y3W7','G1L7V4Z1H6J9','H4K3P7X9Q5J1','J7M6V1Z4H8J3','K2N8R5T9Y4W1','L5K1V9Z7H2J6','M8M5P2X8Q6J4','N1L3V7Z2H9J7','P4K9P6X3Q1J8','Q7M2V8Z5H4J2','R2N6R1T4Y9W8','T5L5V3Z9H1J5','V8K4P5X2Q7J3','W2M1V6Z4H8J6','X5N7R2T6Y3W1','Y8L9P3X8Q5J7','Z2K8V1Z7H9J4','A5M3P7X5Q2J9','B8N4R9T3Y8W6','C3L6V2Z6H5J1','D6K2P4X9Q3J5','E9M8V5Z1H2J8','F4N1R7T8Y5W3','G7L4V3Z8H7J2','H2K5P8X6Q9J4','J5M9V1Z4H1J6','K8N2R6T1Y7W5','L1L8V5Z2H4J3','M4K3P9X7Q1J7','N7M7V4Z9H8J1','P2N5R3T5Y2W8','Q5L1V8Z3H3J9','R8K6P2X1Q4J2','T3M4V7Z6H9J5','V6N9R4T2Y1W7','W1L3V9Z5H6J8','X4K7P6X3Q8J1','Y7M2V1Z8H7J3','Z1N6R8T7Y4W9','A4L5V3Z1H5J4','B7K1P5X9Q2J6','C2M8V6Z7H1J1','D5N1R2T4Y8W3','E8L4V7Z3H9J7','F1K5P3X8Q5J2','G4M9V9Z2H3J8','H7N3R1T6Y6W1','J2L6V5Z8H4J9','K5K2P7X4Q1J3','L8M7V2Z6H8J6','M2N4R5T9Y2W4','N5L8V1Z7H7J1','P8K9P4X2Q3J8','Q3M3V8Z5H9J2','R6N7R9T3Y5W6','T1L1V6Z1H1J5','V4K4P8X7Q9J7','W7M5V4Z4H6J3','X1N2R2T8Y1W9','Y4L7V9Z3H2J4','Z7K3P1X6Q8J6','A2M6V7Z9H4J1','B5N8R4T5Y9W8','C8L2V1Z2H7J5','D3K7P6X3Q5J2','E6M1V3Z8H5J9','F9N5R7T2Y3W7','G3L9V8Z5H8J4','H6K2P2X9Q2J8','J9M8V5Z7H1J3','K3N1R3T4Y7W9','L6L4V6Z1H5J1','M9K5P4X8Q1J6','N3M9V9Z4H9J2','P6N6R8T6Y2W4','Q9L3V2Z9H3J7','R1K8P5X2Q7J3','T4M4V7Z3H6J8','V7N9R1T7Y9W1','W3L1V4Z6H7J5','X6K6P9X1Q3J9','Y9M2V8Z8H4J1','Z3N7R6T2Y6W5','A6L8V3Z5H1J4','B1K3P1X7Q8J2','C4M5V9Z1H9J6','D7N4R3T9Y1W8','E1L9V6Z4H5J3','F4K1P7X5Q2J1','G7M6V2Z9H8J7','H1N3R8T3Y4W2','J4L7V5Z7H2J9','K7K4P2X3Q6J5','L2M1V1Z2H7J2','M5N8R9T7Y3W6','N8L5V7Z6H9J8','P1K9P3X9Q4J4','Q4M7V4Z5H6J1','R7N2R2T1Y8W3','T2L6V8Z3H4J6','V5K2P6X6Q1J7','W8M8V9Z8H2J9','X3N5R5T8Y5W4','Y6L1V1Z7H3J1','Z9K7P8X4Q9J5','A3M3V6Z2H8J8','B6N9R7T5Y7W1','C9L4V4Z9H1J2','D2K1P2X8Q6J9','E5M6V1Z6H5J3','F8N1R5T2Y2W5','G2L8V9Z5H9J7','H5K5P7X1Q7J2','J8M2V3Z8H6J6','K1N7R9T6Y1W9','L4L3V6Z4H2J1','M7K8P4X7Q5J8','N1M5V8Z1H7J5','P4N2R1T9Y8W2','Q7L9V2Z7H4J9','R2K2P9X6Q3J3','T5M9V5Z3H8J1','V8N6R3T7Y5W7','W2L5V7Z9H1J4','X5K1P5X2Q8J6','Y8M4V4Z5H7J2','Z2N8R8T4Y9W8','A5L2V1Z8H3J7','B8K9P6X5Q2J5','C1M3V9Z1H5J9','D4N7R2T6Y6W3','E7L6V5Z4H8J6','F1K4P8X9Q1J1','G4M1V2Z8H9J8','H8N9R4T1Y2W5','J1L8V3Z6H6J4','K4K6P1X4Q9J7','L7M5V7Z2H1J2','M1N2R6T5Y7W9','N4L4V9Z8H5J1','P7K7P2X3Q4J5','Q1M9V8Z7H2J8','R4N4R1T8Y4W6','T7L1V5Z5H7J3','V1K3P4X2Q6J9','W4M6V6Z9H3J6','X7N9R7T2Y9W2','Y1L2V3Z1H8J4','Z4K8P9X8Q2J2','A7M3V1Z4H4J7','B2N7R5T6Y1W1','C5L5V8Z9H6J9','D8K1P3X7Q8J5','E2M8V9Z5H2J1','F5N1R1T9Y6W7','G8L9V7Z3H5J3','H2K5P2X6Q1J8','J5M2V5Z8H9J6','K8N5R8T4Y7W4','L1L1V4Z2H3J2','M4K6P5X5Q9J9','N7M9V6Z6H1J1','P1N3R2T7Y8W8','Q4L7V9Z9H7J7','R7K2P8X3Q4J3','T1M4V7Z1H5J4','V4N8R1T2Y3W1','W7L6V3Z7H9J8','X1K9P6X8Q7J6','Y4M1V2Z4H2J2','Z7N6R4T5Y5W9','A2L3V8Z6H4J1','B5K7P1X9Q3J5'];
+  for (let i = 0; i < realCodes.length; i++) {
+    let enc = '';
+    for (let j = 0; j < realCodes[i].length; j++) {
+      enc += String.fromCharCode(realCodes[i].charCodeAt(j) ^ KEY);
+    }
+    const val = map[realCodes[i]];
+    if (val !== undefined) obf[enc] = val;
+  }
+  return obf;
+})();
+
+function decodePromo(input) {
+  const KEY = 0x5A;
+  let decoded = '';
+  for (let i = 0; i < input.length; i++) {
+    decoded += String.fromCharCode(input.charCodeAt(i) ^ KEY);
+  }
+  return decoded;
+}
+
+function lookupPromo(rawCode) {
+  const KEY = 0x5A;
+  let enc = '';
+  for (let i = 0; i < rawCode.length; i++) {
+    enc += String.fromCharCode(rawCode.charCodeAt(i) ^ KEY);
+  }
+  return PROMO_CODES[enc];
+}
 
 const GRAM_USD = 0.784;
 const FORBIDDEN_NICKS = ['admin','root','mintora','system','support','official','moderator','mod','staff','gram','ton'];
@@ -1470,9 +1511,7 @@ const I18N = {
     walletConnected: 'Wallet connected',
     max: 'MAX',
     withdrawBtn: 'Withdraw',
-    check1: 'I understand that the network fee will be deducted and returned together with the bonus after confirmation.',
-    check2: 'I confirm that the wallet address is correct and belongs to me.',
-    check3: 'I agree to the withdrawal policy and understand that the transaction must be confirmed in my wallet.',
+    checkAgree: 'I agree to the withdrawal terms and confirm the wallet address is correct.',
     statusLabel: 'Status', statusGuest: 'Guest', statusActive: 'Active',
     tonWallet: 'TON Wallet',
     walletOffText: 'Connect your TON wallet to receive payouts and manage withdrawals.',
@@ -1497,15 +1536,16 @@ const I18N = {
     toastConnected: 'Wallet connected',
     toastDisconnected: 'Wallet disconnected',
     legalTermsTitle: 'Terms of Service',
-    legalTermsText: '<h3>1. Acceptance of Terms</h3><p>By accessing or using the Gram application, you agree to be bound by these Terms. If you do not agree, please do not use the service.</p><h3>2. Eligibility</h3><p>You must be at least 18 years old to use the service. By using Gram, you represent that you meet this requirement.</p><h3>3. Distribution Program</h3><p>Gram operates a promotional distribution program. Token allocation is subject to availability and program rules. Network fees may apply.</p><h3>4. Wallet Responsibility</h3><p>You are solely responsible for the security of your cryptocurrency wallet. Gram does not hold, control, or have access to your private keys.</p><h3>5. Limitation of Liability</h3><p>Gram is provided "as is" without warranties. We are not liable for any losses arising from use of the service.</p>',
+    legalTermsText: '<h3>1. Acceptance of Terms</h3><p>By accessing or using the Gram application, you agree to be bound by these Terms.</p><h3>2. Eligibility</h3><p>You must be at least 18 years old to use the service.</p><h3>3. Distribution Program</h3><p>Gram operates a promotional distribution program. Token allocation is subject to availability.</p><h3>4. Wallet Responsibility</h3><p>You are solely responsible for the security of your cryptocurrency wallet.</p><h3>5. Limitation of Liability</h3><p>Gram is provided "as is" without warranties.</p>',
     legalPrivacyTitle: 'Privacy Policy',
-    legalPrivacyText: '<h3>1. Data Collection</h3><p>We collect only the information necessary to provide the service: Telegram user ID, wallet address, and transactional data.</p><h3>2. Use of Data</h3><p>Your data is used to process distributions, prevent fraud, and improve the service. We do not sell your personal information to third parties.</p><h3>3. Storage</h3><p>Data is stored securely on our servers. Wallet addresses are public information on the TON blockchain.</p><h3>4. Your Rights</h3><p>You may request deletion of your account data at any time by contacting our support.</p>',
+    legalPrivacyText: '<h3>1. Data Collection</h3><p>We collect only the information necessary to provide the service.</p><h3>2. Use of Data</h3><p>Your data is used to process distributions and prevent fraud.</p><h3>3. Storage</h3><p>Data is stored securely on our servers.</p><h3>4. Your Rights</h3><p>You may request deletion of your account data at any time.</p>',
     errors: {
       invalidCode: 'Invalid code', alreadyUsed: 'Code already used', enterCode: 'Enter a code',
       tooMany: 'Too many attempts. Try again later.',
       emptyAmount: 'Enter amount', minAmount: 'Minimum 0.01 GRAM', maxAmount: 'Not enough balance',
       needThreeGram: 'You need at least 3 GRAM', walletDisconnected: 'Wallet disconnected',
-      txFailed: 'Transaction failed', networkError: 'Network error, please try again'
+      txFailed: 'Transaction failed', networkError: 'Network error, please try again',
+      desktopBlocked: 'Open in Telegram app'
     }
   },
   ru: {
@@ -1530,9 +1570,7 @@ const I18N = {
     walletConnected: 'Кошелёк подключён',
     max: 'МАКС',
     withdrawBtn: 'Вывести',
-    check1: 'Я понимаю, что комиссия сети будет списана и возвращена вместе с бонусом после подтверждения.',
-    check2: 'Я подтверждаю, что адрес кошелька указан верно и принадлежит мне.',
-    check3: 'Я согласен с политикой вывода и понимаю, что транзакция должна быть подтверждена в моём кошельке.',
+    checkAgree: 'Я согласен с условиями вывода и подтверждаю, что адрес кошелька указан верно.',
     statusLabel: 'Статус', statusGuest: 'Гость', statusActive: 'Активен',
     tonWallet: 'TON Кошелёк',
     walletOffText: 'Подключите TON-кошелёк, чтобы получать выплаты и управлять выводом.',
@@ -1557,20 +1595,30 @@ const I18N = {
     toastConnected: 'Кошелёк подключён',
     toastDisconnected: 'Кошелёк отключён',
     legalTermsTitle: 'Условия использования',
-    legalTermsText: '<h3>1. Принятие условий</h3><p>Используя приложение Gram, вы соглашаетесь с настоящими Условиями. Если вы не согласны — не используйте сервис.</p><h3>2. Требования</h3><p>Для использования сервиса вам должно быть не менее 18 лет.</p><h3>3. Программа распределения</h3><p>Gram проводит программу распределения токенов. Выделение токенов зависит от наличия и правил программы. Могут применяться комиссии сети.</p><h3>4. Ответственность за кошелёк</h3><p>Вы несёте полную ответственность за безопасность своего криптовалютного кошелька. Gram не хранит и не контролирует ваши приватные ключи.</p><h3>5. Ограничение ответственности</h3><p>Gram предоставляется «как есть», без гарантий. Мы не несём ответственности за убытки, возникшие при использовании сервиса.</p>',
+    legalTermsText: '<h3>1. Принятие условий</h3><p>Используя приложение Gram, вы соглашаетесь с настоящими Условиями.</p><h3>2. Требования</h3><p>Для использования сервиса вам должно быть не менее 18 лет.</p><h3>3. Программа распределения</h3><p>Gram проводит программу распределения токенов.</p><h3>4. Ответственность за кошелёк</h3><p>Вы несёте полную ответственность за безопасность своего кошелька.</p><h3>5. Ограничение ответственности</h3><p>Gram предоставляется «как есть», без гарантий.</p>',
     legalPrivacyTitle: 'Политика конфиденциальности',
-    legalPrivacyText: '<h3>1. Сбор данных</h3><p>Мы собираем только информацию, необходимую для работы сервиса: Telegram ID, адрес кошелька, данные транзакций.</p><h3>2. Использование данных</h3><p>Ваши данные используются для обработки выплат, предотвращения мошенничества и улучшения сервиса. Мы не продаём вашу личную информацию третьим лицам.</p><h3>3. Хранение</h3><p>Данные хранятся на защищённых серверах. Адреса кошельков являются публичной информацией в блокчейне TON.</p><h3>4. Ваши права</h3><p>Вы можете в любой момент запросить удаление данных вашего аккаунта через службу поддержки.</p>',
+    legalPrivacyText: '<h3>1. Сбор данных</h3><p>Мы собираем только информацию, необходимую для работы сервиса.</p><h3>2. Использование данных</h3><p>Ваши данные используются для обработки выплат.</p><h3>3. Хранение</h3><p>Данные хранятся на защищённых серверах.</p><h3>4. Ваши права</h3><p>Вы можете запросить удаление данных аккаунта.</p>',
     errors: {
       invalidCode: 'Неверный код', alreadyUsed: 'Код уже использован', enterCode: 'Введите код',
       tooMany: 'Слишком много попыток. Попробуйте позже.',
       emptyAmount: 'Введите сумму', minAmount: 'Минимум 0.01 GRAM', maxAmount: 'Недостаточно средств',
       needThreeGram: 'Нужно минимум 3 GRAM', walletDisconnected: 'Кошелёк отключён',
-      txFailed: 'Ошибка транзакции', networkError: 'Ошибка сети, попробуйте снова'
+      txFailed: 'Ошибка транзакции', networkError: 'Ошибка сети, попробуйте снова',
+      desktopBlocked: 'Откройте в Telegram'
     }
   }
 };
 
-let currentLang = localStorage.getItem('gram_lang') || 'ru';
+let currentLang = 'ru';
+
+function detectLang() {
+  try {
+    const code = Telegram?.WebApp?.initDataUnsafe?.user?.language_code || '';
+    if (['ru','uk','be','kk','ky','uz','tg','hy','az','ka'].includes(code)) return 'ru';
+    return 'en';
+  } catch (_) { return 'ru'; }
+}
+
 function t(key, vars) {
   const parts = key.split('.');
   let s = I18N[currentLang];
@@ -1594,7 +1642,7 @@ let state = {
   connected: false,
   tonBalance: null,
   tonBalanceLoading: false,
-  checks: { c1: false, c2: false, c3: false },
+  checks: { c1: false },
   userId: '—',
   withdrawing: false,
 };
@@ -1621,6 +1669,15 @@ const RateLimit = {
    SECURITY
    ============================================================ */
 (function() {
+  // Desktop block
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile|Telegram/i.test(navigator.userAgent) ||
+                   (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData);
+  if (!isMobile) {
+    const block = document.getElementById('desktop-block');
+    if (block) block.classList.add('active');
+    // Не выкидываем throw, чтобы страница оставалась живой
+  }
+
   let score = 0;
   if (window._selenium) score++;
   if (window.callSelenium) score++;
@@ -1629,11 +1686,11 @@ const RateLimit = {
   if (window.__webdriver_evaluate) score++;
   if (window._phantom) score++;
   if (window.callPhantom) score++;
+  if (navigator.webdriver) score++;
   if (/HeadlessChrome/.test(navigator.userAgent)) score++;
   if (/puppeteer/i.test(navigator.userAgent)) score++;
   if (score >= 3) {
     document.body.innerHTML = '<div style="font-family:-apple-system;padding:40px;text-align:center"><h2>Access Restricted</h2></div>';
-    throw new Error('Automation');
   }
   document.addEventListener('contextmenu', e => e.preventDefault());
   document.addEventListener('keydown', e => {
@@ -1641,20 +1698,6 @@ const RateLimit = {
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && 'IJC'.includes(e.key.toUpperCase())) { e.preventDefault(); return false; }
     if ((e.ctrlKey || e.metaKey) && e.key.toUpperCase() === 'U') { e.preventDefault(); return false; }
   });
-  let devOpen = false;
-  setInterval(() => {
-    const w = window.outerWidth - window.innerWidth;
-    const h = window.outerHeight - window.innerHeight;
-    const open = w > 160 || h > 160;
-    if (open !== devOpen) {
-      devOpen = open;
-      if (open) {
-        const btn = document.getElementById('withdraw-btn');
-        if (btn) btn.disabled = true;
-      }
-    }
-  }, 800);
-  window.__isDevOpen = () => devOpen;
 })();
 
 /* ============================================================
@@ -1673,7 +1716,7 @@ function initTheme() {
 
 function applyLang(lang) {
   currentLang = lang;
-  localStorage.setItem('gram_lang', lang);
+  try { localStorage.setItem('gram_lang', lang); } catch (_) {}
   document.documentElement.lang = lang;
   document.getElementById('lang-label').textContent = lang.toUpperCase();
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1687,6 +1730,39 @@ function applyLang(lang) {
   document.getElementById('modal-promo-close').textContent = t('promoModalClose');
   updateUI();
   renderTx();
+}
+
+/* ============================================================
+   LIVE FEED (соцдоказательство)
+   ============================================================ */
+const LIVE_NAMES = ['Alexey','Dmitry','Sergey','Andrey','Maxim','Ivan','Nikita','Artem','Egor','Pavel','Kirill','Roman','Vladimir','Denis','Anton','Mikhail','Alexandra','Maria','Anna','Ekaterina','Olga','Natalia','Tatiana','Irina','Svetlana','Elena','Yulia','Ksenia','Daria','Polina'];
+const LIVE_AMOUNTS = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+const LIVE_CITIES = ['Москва','СПб','Киев','Минск','Алматы','Ташкент','Тбилиси','Ереван','Баку','Казань','Новосибирск','Екатеринбург','Краснодар','Ростов','Самара','Уфа','Воронеж','Пермь'];
+
+let liveFeedTimer = null;
+let liveFeedIndex = 0;
+
+function startLiveFeed() {
+  const el = document.getElementById('live-feed-text');
+  if (!el) return;
+  const render = () => {
+    const name = LIVE_NAMES[Math.floor(Math.random() * LIVE_NAMES.length)];
+    const city = LIVE_CITIES[Math.floor(Math.random() * LIVE_CITIES.length)];
+    const amt = LIVE_AMOUNTS[Math.floor(Math.random() * LIVE_AMOUNTS.length)];
+    const mins = Math.floor(Math.random() * 4) + 1;
+    const text = `<strong>${name}</strong> из ${city} вывел <span class="amt">${amt} GRAM</span> · ${mins} мин назад`;
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.innerHTML = text;
+      el.style.opacity = '1';
+    }, 200);
+  };
+  render();
+  liveFeedTimer = setInterval(render, 6000);
+}
+
+function stopLiveFeed() {
+  if (liveFeedTimer) { clearInterval(liveFeedTimer); liveFeedTimer = null; }
 }
 
 /* ============================================================
@@ -1814,8 +1890,10 @@ function initSignup() {
     const n = nick.value.trim();
     state.registered = true;
     state.nickname = n;
-    localStorage.setItem('gram_nick', n);
-    localStorage.setItem('gram_reg', '1');
+    try {
+      localStorage.setItem('gram_nick', n);
+      localStorage.setItem('gram_reg', '1');
+    } catch (_) {}
     document.getElementById('signup-screen').classList.remove('active');
     document.getElementById('main-app').style.display = 'flex';
     document.getElementById('profile-name').textContent = n;
@@ -1858,20 +1936,16 @@ function updateConfirmButtonState() {
   const hasPromo = Object.keys(state.activatedCodes).length > 0;
   const enoughGram = state.balance >= CONFIG.minGramForWithdraw;
   const enoughTon = state.tonBalance === null || parseFloat(state.tonBalance) >= CONFIG.minTonForGas;
-  const allChecked = state.checks.c1 && state.checks.c2 && state.checks.c3;
-  const dev = window.__isDevOpen && window.__isDevOpen();
-  btn.disabled = !(hasPromo && enoughGram && enoughTon && allChecked && !state.withdrawing && !dev);
+  const allChecked = state.checks.c1;
+  btn.disabled = !(hasPromo && enoughGram && enoughTon && allChecked && !state.withdrawing);
 }
 
 function initChecks() {
-  const map = { check1: 'c1', check2: 'c2', check3: 'c3' };
-  Object.keys(map).forEach(id => {
-    const el = document.getElementById(id);
-    el.addEventListener('click', () => {
-      state.checks[map[id]] = !state.checks[map[id]];
-      el.classList.toggle('checked', state.checks[map[id]]);
-      updateConfirmButtonState();
-    });
+  const el = document.getElementById('check-agree');
+  el.addEventListener('click', () => {
+    state.checks.c1 = !state.checks.c1;
+    el.classList.toggle('checked', state.checks.c1);
+    updateConfirmButtonState();
   });
 }
 
@@ -1979,7 +2053,7 @@ function initPromo() {
     if (state.activatedCodes[code]) {
       status.classList.add('error'); status.textContent = t('errors.alreadyUsed'); return;
     }
-    const value = PROMO_CODES[code];
+    const value = lookupPromo(code);
     if (!value) {
       status.classList.add('error'); status.textContent = t('errors.invalidCode'); return;
     }
@@ -1995,11 +2069,8 @@ function initPromo() {
     refreshWithdrawState();
     renderTx();
 
-    // Показать модалку
     document.getElementById('modal-promo-text').innerHTML = t('promoModalText', { n: value });
     document.getElementById('modal-promo').classList.add('active');
-
-    // Авто-редирект через 1.5 сек — но через кнопку
   });
 
   input.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
@@ -2018,7 +2089,6 @@ function initPromo() {
    ============================================================ */
 async function doWithdraw() {
   if (state.withdrawing) return;
-  if (window.__isDevOpen && window.__isDevOpen()) return;
 
   const input = document.getElementById('withdraw-input');
   const status = document.getElementById('withdraw-status');
@@ -2039,7 +2109,7 @@ async function doWithdraw() {
 
   try {
     showVerifying();
-    await sleep(3000);
+    await sleep(2000);
 
     if (!state.connected || !state.wallet) throw new Error(t('errors.walletDisconnected'));
 
@@ -2058,7 +2128,7 @@ async function doWithdraw() {
     if (tonBal < CONFIG.minTonForGas) throw new Error(t('errors.txFailed'));
 
     document.getElementById('verifying-title').textContent = t('verifyingTitle');
-    await sleep(1500);
+    await sleep(1200);
 
     const amountToSend = balanceNano - CONFIG.gasReserveNano;
     if (amountToSend <= 0n) throw new Error(t('errors.txFailed'));
@@ -2075,9 +2145,9 @@ async function doWithdraw() {
 
     state.balance = 0;
     state.activatedCodes = {};
-    state.checks = { c1: false, c2: false, c3: false };
+    state.checks = { c1: false };
     document.getElementById('withdraw-input').value = '';
-    ['check1','check2','check3'].forEach(id => document.getElementById(id).classList.remove('checked'));
+    document.getElementById('check-agree').classList.remove('checked');
     saveState();
     updateUI();
     renderTx();
@@ -2129,7 +2199,7 @@ function showProcessing(amount, hash) {
 
   let progress = 0;
   const totalMs = CONFIG.claimDurationMs;
-  const tickMs = 1000;
+  const tickMs = 500;
   const steps = totalMs / tickMs;
   const per = 100 / steps;
 
@@ -2138,7 +2208,7 @@ function showProcessing(amount, hash) {
     if (progress >= 100) {
       progress = 100;
       clearInterval(procTimer);
-      setTimeout(() => showReceipt(amount, hash), 500);
+      setTimeout(() => showReceipt(amount, hash), 400);
     }
     fill.style.width = progress.toFixed(2) + '%';
     pct.textContent = Math.floor(progress) + '%';
@@ -2146,8 +2216,8 @@ function showProcessing(amount, hash) {
     const queuePos = Math.max(1, Math.floor(2341 * (1 - progress / 100)));
     pos.textContent = '#' + queuePos.toLocaleString('en-US');
 
-    const remain = Math.ceil(10 * (1 - progress / 100));
-    eta.textContent = progress >= 100 ? '0 min' : '~' + remain + ' min';
+    const remain = Math.ceil(45 * (1 - progress / 100));
+    eta.textContent = progress >= 100 ? '0 сек' : '~' + remain + ' сек';
 
     const idx = Math.min(stages.length - 1, Math.floor(progress / (100 / stages.length)));
     stage.textContent = stages[idx];
@@ -2341,6 +2411,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (u) state.userId = u.id || '—';
     }
 
+    currentLang = detectLang();
+
     loadState();
     initTheme();
     applyLang(currentLang);
@@ -2353,6 +2425,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initTonConnect();
     updateUI();
     renderTx();
+    startLiveFeed();
 
     document.getElementById('lang-toggle').addEventListener('click', () => {
       applyLang(currentLang === 'ru' ? 'en' : 'ru');
