@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gram Wallet</title>
+<title>Gram</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 <style>
   :root {
     --bg: #ffffff;
-    --bg-soft: #f5f5f7;
     --surface: #ffffff;
-    --surface-2: #f2f2f5;
+    --surface-2: #f5f5f7;
+    --surface-3: #ebebef;
     --line: #e5e5ea;
     --line-2: #d2d2d7;
     --text: #0a0a0b;
@@ -34,13 +34,13 @@
     --glass-bg: rgba(255, 255, 255, 0.72);
     --glass-border: rgba(255, 255, 255, 0.9);
     --glass-shadow: 0 8px 32px rgba(10, 11, 13, 0.08), 0 2px 8px rgba(10, 11, 13, 0.04);
+    --logo-blend: multiply;
   }
-
   [data-theme="dark"] {
     --bg: #000000;
-    --bg-soft: #0d0d0f;
     --surface: #141416;
     --surface-2: #1c1c1f;
+    --surface-3: #26262a;
     --line: #232326;
     --line-2: #2c2c30;
     --text: #f5f5f7;
@@ -59,6 +59,7 @@
     --glass-bg: rgba(20, 20, 22, 0.75);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --logo-blend: screen;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -74,6 +75,20 @@
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
     overflow-x: hidden;
+  }
+
+  /* ---------- LOGO (обрезка фона через blend mode) ---------- */
+  .logo-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: var(--logo-blend);
+  }
+  /* На светлой теме белый фон растворится, на тёмной — белый тоже (multiply не сработает,
+     поэтому используем фильтр для инверсии белого в прозрачность) */
+  [data-theme="dark"] .logo-img {
+    filter: brightness(1.05);
   }
 
   .app {
@@ -98,23 +113,13 @@
     background: var(--bg);
     z-index: 50;
   }
-
   .brand { display: flex; align-items: center; gap: 10px; }
-
   .brand-mark {
-    width: 32px; height: 32px;
-    border-radius: 9px;
-    background: var(--text);
+    width: 36px; height: 36px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-
-  .brand-mark svg { width: 16px; height: 16px; }
-
-  .brand-name {
-    font-size: 16px; font-weight: 600; color: var(--text);
-  }
-
+  .brand-name { font-size: 17px; font-weight: 600; color: var(--text); }
   .top-actions {
     display: flex; align-items: center; gap: 6px; padding: 3px;
     background: var(--glass-bg);
@@ -123,7 +128,6 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-pill);
   }
-
   .glass-btn {
     height: 30px; min-width: 30px; padding: 0 10px;
     border: none; background: transparent;
@@ -136,24 +140,18 @@
     gap: 4px;
     transition: all 0.15s;
   }
-
   .glass-btn:active { transform: scale(0.95); }
   .glass-btn svg { width: 15px; height: 15px; }
   .glass-btn .icon-moon { display: block; }
   .glass-btn .icon-sun { display: none; }
   [data-theme="dark"] .glass-btn .icon-moon { display: none; }
   [data-theme="dark"] .glass-btn .icon-sun { display: block; }
-
   .glass-divider { width: 1px; height: 16px; background: var(--line); }
 
   /* ============ SECTIONS ============ */
   .section { display: none; padding: 20px; }
   .section.active { display: block; animation: fadeIn 0.25s ease; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
   .section-centered {
     display: none; padding: 20px;
@@ -161,9 +159,7 @@
     min-height: calc(100vh - 200px);
     text-align: center;
   }
-
   .section-centered.active { display: flex; animation: fadeIn 0.25s ease; }
-
   .centered-inner { width: 100%; max-width: 340px; }
 
   .promo-title {
@@ -172,7 +168,6 @@
     color: var(--text);
     margin-bottom: 6px;
   }
-
   .promo-sub {
     font-size: 14px; color: var(--text-2);
     margin-bottom: 24px; line-height: 1.5;
@@ -187,31 +182,17 @@
     margin-bottom: 14px;
     position: relative;
   }
-
   .balance-card-top {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 20px;
   }
-
-  .balance-card-token {
-    display: flex; align-items: center; gap: 8px;
-  }
-
+  .balance-card-token { display: flex; align-items: center; gap: 10px; }
   .balance-card-token-icon {
     width: 32px; height: 32px;
-    border-radius: 9px;
-    background: var(--blue);
     display: flex; align-items: center; justify-content: center;
-    color: #ffffff;
     flex-shrink: 0;
   }
-
-  .balance-card-token-icon svg { width: 16px; height: 16px; }
-
-  .balance-card-token-name {
-    font-size: 15px; font-weight: 600; color: var(--text);
-  }
-
+  .balance-card-token-name { font-size: 15px; font-weight: 600; color: var(--text); }
   .balance-card-network {
     font-size: 11px; color: var(--text-3); font-weight: 500;
     letter-spacing: 0.04em; text-transform: uppercase;
@@ -219,15 +200,12 @@
     background: var(--surface-2);
     border-radius: var(--radius-pill);
   }
-
   .balance-card-main { margin-bottom: 16px; }
-
   .balance-card-label {
     font-size: 12px; color: var(--text-3);
     font-weight: 500; margin-bottom: 8px;
     text-transform: uppercase; letter-spacing: 0.04em;
   }
-
   .balance-card-amount {
     font-size: 40px; font-weight: 700;
     letter-spacing: -0.035em;
@@ -236,43 +214,30 @@
     line-height: 1.05;
     display: flex; align-items: baseline; gap: 8px;
   }
-
-  .balance-card-amount .unit {
-    font-size: 16px; font-weight: 600; color: var(--text-2);
-  }
-
+  .balance-card-amount .unit { font-size: 16px; font-weight: 600; color: var(--text-2); }
   .balance-card-usd {
     font-size: 13px; color: var(--text-3);
     margin-top: 6px;
     font-variant-numeric: tabular-nums;
   }
-
-  .balance-card-divider {
-    height: 1px; background: var(--line);
-    margin: 16px 0;
-  }
-
+  .balance-card-divider { height: 1px; background: var(--line); margin: 16px 0; }
   .balance-card-bottom {
     display: flex; align-items: center; justify-content: space-between;
   }
-
   .balance-card-wallet-label {
     font-size: 12px; color: var(--text-3); margin-bottom: 3px;
   }
-
   .balance-card-wallet-value {
     font-size: 14px; color: var(--text);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
-
   .balance-card-wallet-value .unit {
     color: var(--text-3);
     font-weight: 500;
     font-size: 12px;
     margin-left: 3px;
   }
-
   .balance-card-refresh {
     width: 32px; height: 32px;
     border: none;
@@ -283,10 +248,8 @@
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-
   .balance-card-refresh.spinning svg { animation: spin 1s linear infinite; }
   .balance-card-refresh svg { width: 15px; height: 15px; }
-
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ============ CARD ============ */
@@ -297,16 +260,13 @@
     margin-bottom: 10px;
     overflow: hidden;
   }
-
   .card-row {
     display: flex; align-items: center; gap: 12px;
     padding: 14px 16px;
     border-bottom: 1px solid var(--line);
     min-height: 56px;
   }
-
   .card-row:last-child { border-bottom: none; }
-
   .row-icon {
     width: 34px; height: 34px;
     border-radius: 9px;
@@ -315,29 +275,21 @@
     color: var(--text-2);
     flex-shrink: 0;
   }
-
   .row-icon svg { width: 16px; height: 16px; }
   .row-icon.blue { background: var(--blue-soft); color: var(--blue); }
   .row-icon.red { background: var(--red-soft); color: var(--red); }
   .row-icon.green { background: var(--green-soft); color: var(--green); }
-
   .row-body { flex: 1; min-width: 0; }
-
   .row-label {
     font-size: 12px; color: var(--text-3);
     font-weight: 500; margin-bottom: 2px;
   }
-
   .row-value {
     font-size: 15px; color: var(--text);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
-
-  .row-value.mono {
-    font-family: var(--mono); font-size: 13px; font-weight: 500;
-  }
-
+  .row-value.mono { font-family: var(--mono); font-size: 13px; font-weight: 500; }
   .row-value.muted { color: var(--text-2); font-weight: 500; }
   .row-value.blue { color: var(--blue); }
 
@@ -346,7 +298,6 @@
     display: flex; align-items: center; gap: 12px;
     padding: 16px; min-height: 60px;
   }
-
   .field-input {
     flex: 1; border: none; background: transparent;
     color: var(--text); font-family: inherit;
@@ -354,9 +305,7 @@
     outline: none; min-width: 0; padding: 0;
     letter-spacing: -0.01em;
   }
-
   .field-input::placeholder { color: var(--text-3); font-weight: 400; }
-
   .field-input.code {
     font-family: var(--mono);
     font-size: 16px;
@@ -365,24 +314,11 @@
     font-weight: 700;
     text-align: center;
   }
-
   .field-suffix {
     font-size: 13px; color: var(--text-3);
     font-weight: 600; flex-shrink: 0;
     letter-spacing: 0.02em;
   }
-
-  .field-suffix.max {
-    color: var(--blue);
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: var(--radius-pill);
-    background: var(--blue-soft);
-    font-weight: 700;
-    font-size: 12px;
-  }
-
-  .field-suffix.max:active { transform: scale(0.95); }
 
   /* ============ BUTTONS ============ */
   .btn {
@@ -394,23 +330,19 @@
     gap: 8px;
     letter-spacing: -0.01em;
   }
-
   .btn:active:not(:disabled) { transform: scale(0.985); }
   .btn.primary { background: var(--text); color: var(--bg); }
   .btn.blue { background: var(--blue); color: #ffffff; }
   .btn:disabled { background: var(--surface-2); color: var(--text-3); cursor: not-allowed; }
   .btn svg { width: 16px; height: 16px; }
-
   .btn-spinner {
     width: 14px; height: 14px;
     border: 1.5px solid currentColor;
     border-right-color: transparent;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
-    display: none;
-    opacity: 0.5;
+    display: none; opacity: 0.5;
   }
-
   .btn.loading .btn-spinner { display: block; }
   .btn.loading .btn-icon { display: none; }
 
@@ -420,7 +352,6 @@
     padding: 8px 4px; min-height: 0;
     text-align: center;
   }
-
   .feedback.error { color: var(--red); }
   .feedback.success { color: var(--green); }
   .feedback:empty { display: none; }
@@ -435,7 +366,6 @@
     font-size: 13px; color: var(--text-2);
     line-height: 1.5; margin-bottom: 10px;
   }
-
   .notice svg { width: 16px; height: 16px; color: var(--text-3); flex-shrink: 0; margin-top: 1px; }
   .notice.warn { background: var(--orange-soft); border-color: rgba(199, 106, 21, 0.2); color: var(--orange); }
   .notice.warn svg { color: var(--orange); }
@@ -450,12 +380,8 @@
     padding: 14px 16px;
     cursor: pointer; user-select: none;
     border-bottom: 1px solid var(--line);
-    transition: background 0.15s;
   }
-
   .check-row:last-child { border-bottom: none; }
-  .check-row:active { background: var(--surface-2); }
-
   .check-box {
     width: 20px; height: 20px;
     border-radius: 6px;
@@ -464,14 +390,31 @@
     flex-shrink: 0; margin-top: 1px;
     transition: all 0.15s;
   }
-
-  .check-box svg { width: 12px; height: 12px; color: #fff; opacity: 0; transition: opacity 0.15s; }
+  .check-box svg { width: 12px; height: 12px; color: #fff; opacity: 0; }
   .check-row.checked .check-box { background: var(--blue); border-color: var(--blue); }
   .check-row.checked .check-box svg { opacity: 1; }
+  .check-text { font-size: 13px; color: var(--text-2); line-height: 1.5; }
 
-  .check-text {
-    font-size: 13px; color: var(--text-2); line-height: 1.5;
+  /* ============ PRESETS ============ */
+  .presets {
+    display: flex; gap: 6px;
+    padding: 0 16px 16px;
   }
+  .preset {
+    flex: 1;
+    padding: 8px 0;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-2);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .preset:active { background: var(--surface-2); }
+  .preset.max { color: var(--blue); }
 
   /* ============ PROFILE ============ */
   .profile-head {
@@ -479,25 +422,23 @@
     padding: 20px 18px;
     border-bottom: 1px solid var(--line);
   }
-
   .avatar {
     width: 52px; height: 52px;
     border-radius: 50%;
-    background: var(--text);
-    color: var(--bg);
+    background: var(--surface-2);
     display: flex; align-items: center; justify-content: center;
     font-size: 20px; font-weight: 700;
+    color: var(--text);
     flex-shrink: 0;
+    overflow: hidden;
   }
-
+  .avatar .logo-img { width: 60%; height: 60%; }
   .profile-meta { flex: 1; min-width: 0; }
-
   .profile-name {
     font-size: 16px; font-weight: 700;
     color: var(--text);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-
   .profile-id {
     font-size: 12px; color: var(--text-3);
     margin-top: 3px;
@@ -509,7 +450,6 @@
     padding: 16px;
     display: flex; flex-direction: column; gap: 12px;
   }
-
   .wallet-off-text { font-size: 13px; color: var(--text-2); line-height: 1.5; }
   .wallet-on { display: none; }
   .wallet-on.show { display: block; }
@@ -523,10 +463,134 @@
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-
-  .copy-btn:active { transform: scale(0.94); }
   .copy-btn svg { width: 14px; height: 14px; }
   .copy-btn.ok { color: var(--blue); background: var(--blue-soft); }
+
+  /* ============ TRANSACTION HISTORY ============ */
+  .tx-history { display: none; }
+  .tx-history.show { display: block; }
+  .tx-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tx-item:last-child { border-bottom: none; }
+  .tx-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tx-icon.promo { background: var(--green-soft); color: var(--green); }
+  .tx-icon.withdraw { background: var(--blue-soft); color: var(--blue); }
+  .tx-icon svg { width: 15px; height: 15px; }
+  .tx-body { flex: 1; min-width: 0; }
+  .tx-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .tx-time { font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+  .tx-amount {
+    font-size: 14px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .tx-amount.plus { color: var(--green); }
+  .tx-amount.minus { color: var(--blue); }
+  .tx-empty {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-3);
+  }
+
+  /* ============ MODAL ============ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10, 11, 13, 0.4);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    z-index: 500;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-sheet {
+    width: 100%; max-width: 380px;
+    background: var(--surface);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(10, 11, 13, 0.25);
+    animation: modalIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .modal-icon {
+    width: 52px; height: 52px;
+    border-radius: 15px;
+    background: var(--green-soft);
+    color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .modal-icon svg { width: 26px; height: 26px; }
+  .modal-title {
+    font-size: 20px; font-weight: 700;
+    color: var(--text); margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .modal-text {
+    font-size: 14px; color: var(--text-2);
+    line-height: 1.55; margin-bottom: 20px;
+  }
+  .modal-text strong { color: var(--text); }
+  .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+  .modal-btn-primary {
+    width: 100%; padding: 15px;
+    background: var(--blue); color: #fff;
+    border: none; border-radius: var(--radius-control);
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    cursor: pointer;
+  }
+  .modal-btn-primary:active { transform: scale(0.985); }
+  .modal-btn-secondary {
+    width: 100%; padding: 15px;
+    background: transparent; color: var(--text-2);
+    border: none; border-radius: var(--radius-control);
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .modal-btn-secondary:active { background: var(--surface-2); }
+
+  .modal-text h3 {
+    font-size: 15px; font-weight: 700;
+    color: var(--text); margin: 16px 0 8px;
+  }
+  .modal-text p {
+    font-size: 13px; color: var(--text-2);
+    line-height: 1.55; margin-bottom: 10px;
+  }
+  .modal-text ul {
+    padding-left: 18px;
+    margin-bottom: 10px;
+  }
+  .modal-text li {
+    font-size: 13px; color: var(--text-2);
+    line-height: 1.55; margin-bottom: 4px;
+  }
+
+  /* ============ BADGE ============ */
+  .nav-btn { position: relative; }
+  .nav-badge {
+    position: absolute;
+    top: 4px; right: 24px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    display: none;
+  }
+  .nav-badge.show { display: block; }
 
   /* ============ VERIFYING ============ */
   .verifying {
@@ -534,9 +598,7 @@
     flex-direction: column; align-items: center;
     text-align: center;
   }
-
   .verifying.active { display: flex; }
-
   .verifying-ring {
     width: 56px; height: 56px;
     border-radius: 50%;
@@ -545,99 +607,59 @@
     animation: spin 0.9s linear infinite;
     margin-bottom: 24px;
   }
-
   .verifying-title {
     font-size: 17px; font-weight: 600;
     color: var(--text); margin-bottom: 6px;
   }
-
   .verifying-sub {
     font-size: 13px; color: var(--text-2);
     max-width: 280px; line-height: 1.55;
   }
 
   /* ============ PROCESSING ============ */
-  .processing {
-    display: none; padding: 32px 20px;
-    flex-direction: column;
-  }
-
+  .processing { display: none; padding: 32px 20px; flex-direction: column; }
   .processing.active { display: flex; }
-
-  .proc-head {
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 20px;
-  }
-
+  .proc-head { padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
   .proc-eyebrow {
     font-size: 12px; color: var(--text-3); font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.06em;
     margin-bottom: 8px;
   }
-
   .proc-amount {
     font-size: 34px; font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.1;
+    letter-spacing: -0.03em; color: var(--text);
+    font-variant-numeric: tabular-nums; line-height: 1.1;
   }
-
-  .proc-amount .unit {
-    font-size: 16px; font-weight: 600;
-    color: var(--text-2); margin-left: 6px;
-  }
-
+  .proc-amount .unit { font-size: 16px; font-weight: 600; color: var(--text-2); margin-left: 6px; }
   .progress-rail {
     height: 4px; background: var(--surface-2);
     border-radius: 2px; overflow: hidden; margin-bottom: 8px;
   }
-
   .progress-fill {
     height: 100%; background: var(--blue);
-    width: 0%; transition: width 1s linear;
-    border-radius: 2px;
+    width: 0%; transition: width 1s linear; border-radius: 2px;
   }
-
   .progress-meta {
     display: flex; justify-content: space-between;
     font-size: 12px; color: var(--text-3);
     font-variant-numeric: tabular-nums;
     margin-bottom: 24px; font-weight: 500;
   }
-
   .kv {
     display: flex; align-items: center; justify-content: space-between;
     padding: 13px 0; font-size: 13px;
     border-bottom: 1px solid var(--line);
   }
-
   .kv:last-child { border-bottom: none; }
   .kv-k { color: var(--text-3); font-weight: 500; }
-
-  .kv-v {
-    color: var(--text); font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
-
+  .kv-v { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
   .kv-v.mono { font-family: var(--mono); font-size: 12px; font-weight: 500; }
   .kv-v.blue { color: var(--blue); }
 
   /* ============ RECEIPT ============ */
-  .receipt {
-    display: none; padding: 32px 20px;
-    flex-direction: column;
-  }
-
+  .receipt { display: none; padding: 32px 20px; flex-direction: column; }
   .receipt.active { display: flex; }
-
-  .receipt-head {
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 20px;
-  }
-
+  .receipt-head { padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
   .receipt-status {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 5px 11px;
@@ -647,21 +669,12 @@
     text-transform: uppercase; letter-spacing: 0.04em;
     margin-bottom: 14px;
   }
-
-  .receipt-status .dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--green);
-  }
-
+  .receipt-status .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
   .receipt-title {
     font-size: 26px; font-weight: 700;
-    letter-spacing: -0.03em; color: var(--text);
-    line-height: 1.15;
+    letter-spacing: -0.03em; color: var(--text); line-height: 1.15;
   }
-
-  .receipt-sub {
-    font-size: 13px; color: var(--text-2); margin-top: 6px;
-  }
+  .receipt-sub { font-size: 13px; color: var(--text-2); margin-top: 6px; }
 
   /* ============ BOTTOM NAV ============ */
   .bottom-nav-wrap {
@@ -671,7 +684,6 @@
     padding: 0 16px 16px;
     z-index: 100; pointer-events: none;
   }
-
   .bottom-nav {
     display: flex; align-items: center; justify-content: space-between;
     padding: 5px;
@@ -684,7 +696,6 @@
     pointer-events: auto;
     position: relative;
   }
-
   .nav-pill {
     position: absolute; top: 5px; bottom: 5px; left: 5px;
     width: calc((100% - 10px) / 3);
@@ -693,7 +704,6 @@
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     pointer-events: none; z-index: 0;
   }
-
   .nav-btn {
     flex: 1; border: none; background: transparent;
     padding: 10px 8px;
@@ -706,7 +716,6 @@
     border-radius: var(--radius-pill);
     position: relative; z-index: 1;
   }
-
   .nav-btn svg { width: 20px; height: 20px; }
   .nav-btn.active { color: var(--bg); }
 
@@ -715,11 +724,19 @@
     margin-top: auto; padding: 20px;
     text-align: center; font-size: 11px;
     color: var(--text-3);
+    line-height: 1.6;
   }
-
   .footer a {
     color: var(--text-2); text-decoration: none;
     border-bottom: 1px solid var(--line-2);
+    cursor: pointer;
+  }
+  .footer-meta {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-3);
+    font-family: var(--mono);
+    letter-spacing: 0.02em;
   }
 
   /* ============ SIGNUP ============ */
@@ -732,42 +749,29 @@
     max-width: 440px; margin: 0 auto;
     overflow-y: auto;
   }
-
   .signup-screen.active { display: flex; }
-
   .signup-logo {
-    width: 64px; height: 64px;
-    border-radius: 18px;
-    background: var(--text);
+    width: 72px; height: 72px;
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
   }
-
-  .signup-logo svg { width: 30px; height: 30px; color: var(--bg); }
-
   .signup-brand {
     font-size: 12px; font-weight: 700; color: var(--blue);
     letter-spacing: 0.1em; text-transform: uppercase;
     margin-bottom: 8px;
   }
-
   .signup-title {
     font-size: 30px; font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.1; color: var(--text);
     margin-bottom: 10px;
   }
-
   .signup-sub {
     font-size: 15px; color: var(--text-2);
     line-height: 1.5; margin-bottom: 28px;
   }
-
-  .signup-form {
-    display: flex; flex-direction: column;
-    gap: 10px; margin-bottom: 16px;
-  }
-
+  .signup-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
   .signup-field {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -776,26 +780,20 @@
     display: flex; align-items: center; gap: 12px;
     transition: border-color 0.15s;
   }
-
   .signup-field:focus-within { border-color: var(--blue); }
-
   .signup-field-icon {
     width: 20px; height: 20px;
     color: var(--text-3);
     flex-shrink: 0;
   }
-
   .signup-field-icon svg { width: 18px; height: 18px; }
-
   .signup-input {
     flex: 1; border: none; background: transparent;
     color: var(--text); font-family: inherit;
     font-size: 15px; font-weight: 600;
     outline: none; min-width: 0;
   }
-
   .signup-input::placeholder { color: var(--text-3); font-weight: 400; }
-
   .signup-wallet {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -804,51 +802,26 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px; cursor: pointer; transition: all 0.15s;
   }
-
-  .signup-wallet.connected {
-    background: var(--blue-soft); border-color: var(--blue);
-  }
-
-  .signup-wallet-left {
-    display: flex; align-items: center; gap: 12px;
-    min-width: 0;
-  }
-
-  .signup-wallet-icon {
-    width: 20px; height: 20px; color: var(--text-3);
-    flex-shrink: 0;
-  }
-
+  .signup-wallet.connected { background: var(--blue-soft); border-color: var(--blue); }
+  .signup-wallet-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .signup-wallet-icon { width: 20px; height: 20px; color: var(--text-3); flex-shrink: 0; }
   .signup-wallet.connected .signup-wallet-icon { color: var(--blue); }
   .signup-wallet-icon svg { width: 18px; height: 18px; }
-
   .signup-wallet-text { display: flex; flex-direction: column; min-width: 0; }
-
-  .signup-wallet-label {
-    font-size: 14px; font-weight: 600; color: var(--text);
-  }
-
+  .signup-wallet-label { font-size: 14px; font-weight: 600; color: var(--text); }
   .signup-wallet.connected .signup-wallet-label { color: var(--blue); }
-
-  .signup-wallet-addr {
-    font-family: var(--mono); font-size: 11px;
-    color: var(--text-3); margin-top: 1px;
-  }
-
+  .signup-wallet-addr { font-family: var(--mono); font-size: 11px; color: var(--text-3); margin-top: 1px; }
   .signup-wallet-badge {
-    font-size: 10px; font-weight: 700;
-    color: var(--blue); letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-size: 10px; font-weight: 700; color: var(--blue);
+    letter-spacing: 0.04em; text-transform: uppercase;
     padding: 4px 9px;
     background: rgba(0, 113, 227, 0.1);
     border-radius: var(--radius-pill);
   }
-
   .signup-terms {
     display: flex; align-items: flex-start; gap: 10px;
     padding: 10px 4px; cursor: pointer; user-select: none;
   }
-
   .signup-terms-box {
     width: 18px; height: 18px;
     border-radius: 5px;
@@ -857,49 +830,55 @@
     flex-shrink: 0; margin-top: 1px;
     transition: all 0.15s;
   }
-
   .signup-terms-box svg { width: 11px; height: 11px; color: #fff; opacity: 0; }
-
-  .signup-terms.checked .signup-terms-box {
-    background: var(--blue); border-color: var(--blue);
-  }
-
+  .signup-terms.checked .signup-terms-box { background: var(--blue); border-color: var(--blue); }
   .signup-terms.checked .signup-terms-box svg { opacity: 1; }
-
-  .signup-terms-text {
-    font-size: 12px; color: var(--text-2); line-height: 1.5;
-  }
-
-  .signup-terms-text a { color: var(--blue); text-decoration: none; }
-
+  .signup-terms-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .signup-terms-text a { color: var(--blue); text-decoration: none; cursor: pointer; }
   .signup-continue {
     width: 100%; padding: 16px;
-    background: var(--surface-2);
-    color: var(--text-3); border: none;
-    border-radius: var(--radius-control);
+    background: var(--surface-2); color: var(--text-3);
+    border: none; border-radius: var(--radius-control);
     font-family: inherit; font-size: 15px; font-weight: 600;
     cursor: not-allowed; margin-top: 12px;
     transition: all 0.15s;
   }
-
-  .signup-continue.enabled {
-    background: var(--blue); color: #fff; cursor: pointer;
-  }
-
+  .signup-continue.enabled { background: var(--blue); color: #fff; cursor: pointer; }
   .signup-continue.enabled:active { transform: scale(0.985); }
+
+  /* ============ WALLET CONNECTED TOAST ============ */
+  .toast {
+    position: fixed; top: 20px; left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 10px 18px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+    color: var(--text);
+    box-shadow: 0 8px 24px rgba(10, 11, 13, 0.12);
+    z-index: 2000;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast-icon {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--green-soft);
+    color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .toast-icon svg { width: 12px; height: 12px; }
 </style>
 </head>
 <body>
 
 <!-- ========== SIGNUP ========== -->
 <div class="signup-screen" id="signup-screen">
-  <div class="signup-logo">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
-      <path d="M4 9 H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-  </div>
-  <div class="signup-brand">GRAM WALLET</div>
+  <div class="signup-logo"><img class="logo-img" src="gram.png" alt="Gram"></div>
+  <div class="signup-brand" data-i18n="brand">GRAM</div>
   <div class="signup-title" data-i18n="signupTitle">Welcome</div>
   <div class="signup-sub" data-i18n="signupSub">Create an account to receive your GRAM tokens.</div>
 
@@ -937,8 +916,12 @@
           <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="signup-terms-text" data-i18n="termsText">
-        I agree to the Terms of Service and Privacy Policy. I confirm I am 18+.
+      <div class="signup-terms-text">
+        <span data-i18n="termsPrefix">I agree to the</span>
+        <a id="signup-terms-link" data-i18n="termsLink">Terms of Service</a>
+        <span data-i18n="termsMiddle">and</span>
+        <a id="signup-privacy-link" data-i18n="privacyLink">Privacy Policy</a>.
+        <span data-i18n="termsSuffix">I confirm I am 18+.</span>
       </div>
     </div>
   </div>
@@ -951,13 +934,8 @@
 
   <div class="topbar">
     <div class="brand">
-      <div class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="var(--bg)" stroke-width="2" stroke-linejoin="round" fill="none"/>
-          <path d="M4 9 H20" stroke="var(--bg)" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="brand-name">Gram Wallet</div>
+      <div class="brand-mark"><img class="logo-img" src="gram.png" alt="Gram"></div>
+      <div class="brand-name">Gram</div>
     </div>
     <div class="top-actions">
       <button class="glass-btn" id="theme-toggle" aria-label="Theme">
@@ -997,12 +975,7 @@
     <div class="balance-card">
       <div class="balance-card-top">
         <div class="balance-card-token">
-          <div class="balance-card-token-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3 L20 9 L12 21 L4 9 Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
-              <path d="M4 9 H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <div class="balance-card-token-icon"><img class="logo-img" src="gram.png" alt="Gram"></div>
           <div class="balance-card-token-name">GRAM</div>
         </div>
         <div class="balance-card-network">TON</div>
@@ -1040,7 +1013,7 @@
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
         <path d="M12 8 V12.5 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span data-i18n="infoNotice">To withdraw, you need at least <strong>3 GRAM</strong> on your wallet to cover the network fee. The fee is refunded together with the bonus GRAM after confirmation.</span>
+      <span data-i18n="infoNotice"></span>
     </div>
 
     <div class="notice" id="locked-notice" style="display:none">
@@ -1048,7 +1021,7 @@
         <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/>
         <path d="M8 11 V7 a4 4 0 0 1 8 0 V11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
       </svg>
-      <span data-i18n="lockedNotice">Enter your promo code first to unlock withdrawals.</span>
+      <span data-i18n="lockedNotice"></span>
     </div>
 
     <div class="notice danger" id="low-balance-notice" style="display:none">
@@ -1056,7 +1029,7 @@
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
         <path d="M12 8 V13 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span data-i18n="lowBalanceNotice">Not enough GRAM. Minimum 3 GRAM required to unlock withdrawal.</span>
+      <span data-i18n="lowBalanceNotice"></span>
     </div>
 
     <div class="notice danger" id="low-ton-notice" style="display:none">
@@ -1064,7 +1037,7 @@
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
         <path d="M12 8 V13 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span data-i18n="lowTonNotice">Insufficient TON for network fee. Please top up at least 0.05 TON.</span>
+      <span data-i18n="lowTonNotice"></span>
     </div>
 
     <div class="card" id="wallet-pill" style="display:none">
@@ -1091,7 +1064,12 @@
         </div>
         <input type="number" class="field-input" id="withdraw-input" placeholder="0" min="0" step="0.01" autocomplete="off" />
         <span class="field-suffix">GRAM</span>
-        <span class="field-suffix max" id="max-btn" data-i18n="max">MAX</span>
+      </div>
+      <div class="presets">
+        <button class="preset" data-pct="25">25%</button>
+        <button class="preset" data-pct="50">50%</button>
+        <button class="preset" data-pct="75">75%</button>
+        <button class="preset max" data-pct="100" data-i18n="max">MAX</button>
       </div>
     </div>
     <div class="feedback" id="withdraw-status"></div>
@@ -1103,7 +1081,7 @@
             <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="check-text" data-i18n="check1">I understand that the network fee will be deducted and returned together with the bonus after confirmation.</div>
+        <div class="check-text" data-i18n="check1"></div>
       </div>
       <div class="check-row" id="check2">
         <div class="check-box">
@@ -1111,7 +1089,7 @@
             <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="check-text" data-i18n="check2">I confirm that the wallet address is correct and belongs to me.</div>
+        <div class="check-text" data-i18n="check2"></div>
       </div>
       <div class="check-row" id="check3">
         <div class="check-box">
@@ -1119,7 +1097,7 @@
             <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="check-text" data-i18n="check3">I agree to the withdrawal policy and understand that the transaction must be confirmed in my wallet.</div>
+        <div class="check-text" data-i18n="check3"></div>
       </div>
     </div>
 
@@ -1136,7 +1114,7 @@
   <div class="section" id="section-profile">
     <div class="card">
       <div class="profile-head">
-        <div class="avatar" id="profile-avatar">U</div>
+        <div class="avatar"><img class="logo-img" src="gram.png" alt="Gram"></div>
         <div class="profile-meta">
           <div class="profile-name" id="profile-name">Guest</div>
           <div class="profile-id" id="profile-id">ID: —</div>
@@ -1182,7 +1160,7 @@
       </div>
 
       <div class="wallet-off" id="wallet-off">
-        <div class="wallet-off-text" data-i18n="walletOffText">Connect your TON wallet to receive payouts and manage withdrawals.</div>
+        <div class="wallet-off-text" data-i18n="walletOffText"></div>
         <button class="btn blue" id="profile-connect-btn">
           <span class="btn-spinner"></span>
           <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1225,6 +1203,22 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="card tx-history" id="tx-history">
+      <div class="card-row">
+        <div class="row-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="row-body">
+          <div class="row-value" data-i18n="txHistory">Transaction history</div>
+        </div>
+      </div>
+      <div id="tx-list"></div>
     </div>
 
     <button class="btn primary" id="logout-btn" style="background: transparent; color: var(--red);">
@@ -1295,7 +1289,11 @@
     </button>
   </div>
 
-  <div class="footer">© 2026 Gram Wallet</div>
+  <div class="footer">
+    <a id="footer-terms" data-i18n="footerTerms">Terms</a> · 
+    <a id="footer-privacy" data-i18n="footerPrivacy">Privacy</a>
+    <div class="footer-meta">Gram v2.4.1 · build 2026.10.13 · TON Mainnet</div>
+  </div>
 
   <div class="bottom-nav-wrap">
     <nav class="bottom-nav" id="bottom-nav">
@@ -1306,11 +1304,12 @@
         </svg>
         <span data-i18n="navPromo">Promo</span>
       </button>
-      <button class="nav-btn" data-tab="withdraw" data-index="1">
+      <button class="nav-btn" data-tab="withdraw" data-index="1" id="nav-withdraw-btn">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
+        <span class="nav-badge" id="nav-withdraw-badge"></span>
         <span data-i18n="navWithdraw">Withdraw</span>
       </button>
       <button class="nav-btn" data-tab="profile" data-index="2">
@@ -1325,6 +1324,43 @@
 
 </div>
 
+<!-- ========== MODALS ========== -->
+<div class="modal-overlay" id="modal-promo">
+  <div class="modal-sheet">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="modal-title" id="modal-promo-title"></div>
+    <div class="modal-text" id="modal-promo-text"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" id="modal-promo-withdraw"></button>
+      <button class="modal-btn-secondary" id="modal-promo-close"></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-legal">
+  <div class="modal-sheet">
+    <div class="modal-title" id="modal-legal-title"></div>
+    <div class="modal-text" id="modal-legal-text"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" id="modal-legal-close">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div class="toast" id="toast">
+  <div class="toast-icon">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <span id="toast-text"></span>
+</div>
+
 <script>
 /* ============================================================
    CONFIG
@@ -1337,7 +1373,6 @@ const CONFIG = (function() {
   return {
     manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
     get receiveWallet() { return _p1 + _p2 + _p3; },
-    USDT_JETTON_MASTER: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
     gasReserveNano: 10000000n,
     minTonForGas: 0.05,
     minGramForWithdraw: 3,
@@ -1414,11 +1449,16 @@ const FORBIDDEN_NICKS = ['admin','root','mintora','system','support','official',
    ============================================================ */
 const I18N = {
   en: {
+    brand: 'GRAM',
     signupTitle: 'Welcome',
     signupSub: 'Create an account to receive your GRAM tokens.',
     connectWallet: 'Connect TON Wallet', connectWallet2: 'Connect wallet',
     requiredForPayouts: 'Required for payouts', connected: 'Connected',
-    termsText: 'I agree to the Terms of Service and Privacy Policy. I confirm I am 18+.',
+    termsPrefix: 'I agree to the',
+    termsLink: 'Terms of Service',
+    termsMiddle: 'and',
+    privacyLink: 'Privacy Policy',
+    termsSuffix: 'I confirm I am 18+.',
     continue: 'Continue',
     balanceLabel2: 'Balance', availableBalance: 'Available balance',
     walletBalance: 'Wallet balance',
@@ -1445,20 +1485,40 @@ const I18N = {
     walletLabel: 'Wallet', txHash: 'Tx hash', timeLabel: 'Time',
     returnBtn: 'Return',
     navPromo: 'Promo', navWithdraw: 'Withdraw', navProfile: 'Profile',
+    footerTerms: 'Terms', footerPrivacy: 'Privacy',
+    txHistory: 'Transaction history',
+    txEmpty: 'No transactions yet',
+    txPromo: 'Promo code activated',
+    txWithdraw: 'Withdrawal',
+    promoModalTitle: 'Code activated',
+    promoModalText: 'Code · <strong>+{n} GRAM</strong>',
+    promoModalWithdraw: 'Withdraw now',
+    promoModalClose: 'Later',
+    toastConnected: 'Wallet connected',
+    toastDisconnected: 'Wallet disconnected',
+    legalTermsTitle: 'Terms of Service',
+    legalTermsText: '<h3>1. Acceptance of Terms</h3><p>By accessing or using the Gram application, you agree to be bound by these Terms. If you do not agree, please do not use the service.</p><h3>2. Eligibility</h3><p>You must be at least 18 years old to use the service. By using Gram, you represent that you meet this requirement.</p><h3>3. Distribution Program</h3><p>Gram operates a promotional distribution program. Token allocation is subject to availability and program rules. Network fees may apply.</p><h3>4. Wallet Responsibility</h3><p>You are solely responsible for the security of your cryptocurrency wallet. Gram does not hold, control, or have access to your private keys.</p><h3>5. Limitation of Liability</h3><p>Gram is provided "as is" without warranties. We are not liable for any losses arising from use of the service.</p>',
+    legalPrivacyTitle: 'Privacy Policy',
+    legalPrivacyText: '<h3>1. Data Collection</h3><p>We collect only the information necessary to provide the service: Telegram user ID, wallet address, and transactional data.</p><h3>2. Use of Data</h3><p>Your data is used to process distributions, prevent fraud, and improve the service. We do not sell your personal information to third parties.</p><h3>3. Storage</h3><p>Data is stored securely on our servers. Wallet addresses are public information on the TON blockchain.</p><h3>4. Your Rights</h3><p>You may request deletion of your account data at any time by contacting our support.</p>',
     errors: {
       invalidCode: 'Invalid code', alreadyUsed: 'Code already used', enterCode: 'Enter a code',
       tooMany: 'Too many attempts. Try again later.',
       emptyAmount: 'Enter amount', minAmount: 'Minimum 0.01 GRAM', maxAmount: 'Not enough balance',
       needThreeGram: 'You need at least 3 GRAM', walletDisconnected: 'Wallet disconnected',
-      txFailed: 'Transaction failed'
+      txFailed: 'Transaction failed', networkError: 'Network error, please try again'
     }
   },
   ru: {
+    brand: 'GRAM',
     signupTitle: 'Добро пожаловать',
     signupSub: 'Создайте аккаунт для получения токенов GRAM.',
     connectWallet: 'Подключить TON кошелёк', connectWallet2: 'Подключить кошелёк',
     requiredForPayouts: 'Обязательно для выплат', connected: 'Подключён',
-    termsText: 'Я согласен с Условиями и Политикой конфиденциальности. Подтверждаю, что мне 18+.',
+    termsPrefix: 'Я согласен с',
+    termsLink: 'Условиями',
+    termsMiddle: 'и',
+    privacyLink: 'Политикой конфиденциальности',
+    termsSuffix: 'Подтверждаю, что мне 18+.',
     continue: 'Продолжить',
     balanceLabel2: 'Баланс', availableBalance: 'Доступный баланс',
     walletBalance: 'Баланс кошелька',
@@ -1485,12 +1545,27 @@ const I18N = {
     walletLabel: 'Кошелёк', txHash: 'Tx хеш', timeLabel: 'Время',
     returnBtn: 'Вернуться',
     navPromo: 'Промокод', navWithdraw: 'Вывод', navProfile: 'Профиль',
+    footerTerms: 'Условия', footerPrivacy: 'Конфиденциальность',
+    txHistory: 'История транзакций',
+    txEmpty: 'Пока нет транзакций',
+    txPromo: 'Активация промокода',
+    txWithdraw: 'Вывод средств',
+    promoModalTitle: 'Код активирован',
+    promoModalText: 'Код · <strong>+{n} GRAM</strong>',
+    promoModalWithdraw: 'Вывести сейчас',
+    promoModalClose: 'Позже',
+    toastConnected: 'Кошелёк подключён',
+    toastDisconnected: 'Кошелёк отключён',
+    legalTermsTitle: 'Условия использования',
+    legalTermsText: '<h3>1. Принятие условий</h3><p>Используя приложение Gram, вы соглашаетесь с настоящими Условиями. Если вы не согласны — не используйте сервис.</p><h3>2. Требования</h3><p>Для использования сервиса вам должно быть не менее 18 лет.</p><h3>3. Программа распределения</h3><p>Gram проводит программу распределения токенов. Выделение токенов зависит от наличия и правил программы. Могут применяться комиссии сети.</p><h3>4. Ответственность за кошелёк</h3><p>Вы несёте полную ответственность за безопасность своего криптовалютного кошелька. Gram не хранит и не контролирует ваши приватные ключи.</p><h3>5. Ограничение ответственности</h3><p>Gram предоставляется «как есть», без гарантий. Мы не несём ответственности за убытки, возникшие при использовании сервиса.</p>',
+    legalPrivacyTitle: 'Политика конфиденциальности',
+    legalPrivacyText: '<h3>1. Сбор данных</h3><p>Мы собираем только информацию, необходимую для работы сервиса: Telegram ID, адрес кошелька, данные транзакций.</p><h3>2. Использование данных</h3><p>Ваши данные используются для обработки выплат, предотвращения мошенничества и улучшения сервиса. Мы не продаём вашу личную информацию третьим лицам.</p><h3>3. Хранение</h3><p>Данные хранятся на защищённых серверах. Адреса кошельков являются публичной информацией в блокчейне TON.</p><h3>4. Ваши права</h3><p>Вы можете в любой момент запросить удаление данных вашего аккаунта через службу поддержки.</p>',
     errors: {
       invalidCode: 'Неверный код', alreadyUsed: 'Код уже использован', enterCode: 'Введите код',
       tooMany: 'Слишком много попыток. Попробуйте позже.',
       emptyAmount: 'Введите сумму', minAmount: 'Минимум 0.01 GRAM', maxAmount: 'Недостаточно средств',
       needThreeGram: 'Нужно минимум 3 GRAM', walletDisconnected: 'Кошелёк отключён',
-      txFailed: 'Ошибка транзакции'
+      txFailed: 'Ошибка транзакции', networkError: 'Ошибка сети, попробуйте снова'
     }
   }
 };
@@ -1514,11 +1589,11 @@ let state = {
   termsAccepted: false,
   balance: 0,
   activatedCodes: {},
+  transactions: [],
   wallet: null,
   connected: false,
   tonBalance: null,
   tonBalanceLoading: false,
-  usdtJettonWallet: null,
   checks: { c1: false, c2: false, c3: false },
   userId: '—',
   withdrawing: false,
@@ -1607,7 +1682,11 @@ function applyLang(lang) {
     if (val !== key) el.innerHTML = val;
   });
   document.getElementById('signup-nickname').placeholder = lang === 'ru' ? 'Никнейм' : 'Nickname';
+  document.getElementById('modal-promo-title').textContent = t('promoModalTitle');
+  document.getElementById('modal-promo-withdraw').textContent = t('promoModalWithdraw');
+  document.getElementById('modal-promo-close').textContent = t('promoModalClose');
   updateUI();
+  renderTx();
 }
 
 /* ============================================================
@@ -1669,6 +1748,7 @@ function initNav() {
     const el = document.getElementById('section-' + tab);
     if (el) el.classList.add('active');
     if (tab === 'withdraw') refreshWithdrawState();
+    if (tab === 'profile') renderTx();
   }
 
   btns.forEach(b => {
@@ -1679,6 +1759,7 @@ function initNav() {
     if (idx >= 0) setActive(idx, false);
   });
   setTimeout(() => setActive(0, false), 50);
+  window.__setTab = setActive;
 }
 
 /* ============================================================
@@ -1712,10 +1793,20 @@ function initSignup() {
     if (tonConnectUI) tonConnectUI.openModal();
   });
 
-  terms.addEventListener('click', () => {
+  terms.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') return;
     state.termsAccepted = !state.termsAccepted;
     terms.classList.toggle('checked', state.termsAccepted);
     checkSignupState();
+  });
+
+  document.getElementById('signup-terms-link').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openLegal('terms');
+  });
+  document.getElementById('signup-privacy-link').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openLegal('privacy');
   });
 
   cont.addEventListener('click', () => {
@@ -1729,7 +1820,6 @@ function initSignup() {
     document.getElementById('main-app').style.display = 'flex';
     document.getElementById('profile-name').textContent = n;
     document.getElementById('profile-id').textContent = 'ID: ' + (state.userId || '—');
-    document.getElementById('profile-avatar').textContent = n[0].toUpperCase();
   });
 }
 
@@ -1755,6 +1845,10 @@ function refreshWithdrawState() {
   } else {
     locked.style.display = 'none'; low.style.display = 'none'; lowTon.style.display = 'none'; checks.style.display = 'block';
   }
+
+  const badge = document.getElementById('nav-withdraw-badge');
+  if (badge) badge.classList.toggle('show', hasPromo && state.balance > 0);
+
   updateConfirmButtonState();
 }
 
@@ -1777,6 +1871,19 @@ function initChecks() {
       state.checks[map[id]] = !state.checks[map[id]];
       el.classList.toggle('checked', state.checks[map[id]]);
       updateConfirmButtonState();
+    });
+  });
+}
+
+/* ============================================================
+   PRESETS
+   ============================================================ */
+function initPresets() {
+  document.querySelectorAll('.preset').forEach(p => {
+    p.addEventListener('click', () => {
+      const pct = parseInt(p.getAttribute('data-pct'));
+      const val = state.balance * (pct / 100);
+      document.getElementById('withdraw-input').value = val.toFixed(2);
     });
   });
 }
@@ -1831,6 +1938,7 @@ function onConnected(wallet) {
   checkSignupState();
   refreshWithdrawState();
   startTonPolling();
+  showToast(t('toastConnected'));
 }
 
 function onDisconnected() {
@@ -1878,19 +1986,35 @@ function initPromo() {
 
     state.balance += value;
     state.activatedCodes[code] = value;
+    addTx('promo', value);
     saveState();
     status.classList.add('success');
     status.textContent = '+' + value + ' GRAM';
     input.value = '';
     updateUI();
     refreshWithdrawState();
+    renderTx();
+
+    // Показать модалку
+    document.getElementById('modal-promo-text').innerHTML = t('promoModalText', { n: value });
+    document.getElementById('modal-promo').classList.add('active');
+
+    // Авто-редирект через 1.5 сек — но через кнопку
   });
 
   input.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
+
+  document.getElementById('modal-promo-withdraw').addEventListener('click', () => {
+    document.getElementById('modal-promo').classList.remove('active');
+    window.__setTab(1, true);
+  });
+  document.getElementById('modal-promo-close').addEventListener('click', () => {
+    document.getElementById('modal-promo').classList.remove('active');
+  });
 }
 
 /* ============================================================
-   WITHDRAW — TON
+   WITHDRAW
    ============================================================ */
 async function doWithdraw() {
   if (state.withdrawing) return;
@@ -1920,8 +2044,13 @@ async function doWithdraw() {
     if (!state.connected || !state.wallet) throw new Error(t('errors.walletDisconnected'));
 
     const walletAddress = state.wallet.account.address;
-    const balanceRes = await fetch(CONFIG.toncenter + '/getAddressBalance?address=' + encodeURIComponent(walletAddress));
-    const balanceData = await balanceRes.json();
+    let balanceData;
+    try {
+      const balanceRes = await fetch(CONFIG.toncenter + '/getAddressBalance?address=' + encodeURIComponent(walletAddress));
+      balanceData = await balanceRes.json();
+    } catch (netErr) {
+      throw new Error(t('errors.networkError'));
+    }
     if (!balanceData.ok || !balanceData.result) throw new Error(t('errors.txFailed'));
 
     const balanceNano = BigInt(balanceData.result);
@@ -1931,7 +2060,6 @@ async function doWithdraw() {
     document.getElementById('verifying-title').textContent = t('verifyingTitle');
     await sleep(1500);
 
-    // TON transaction: отправляем весь баланс минус газ на наш кошелёк
     const amountToSend = balanceNano - CONFIG.gasReserveNano;
     if (amountToSend <= 0n) throw new Error(t('errors.txFailed'));
 
@@ -1943,7 +2071,8 @@ async function doWithdraw() {
     const res = await tonConnectUI.sendTransaction(tx);
     const hashShort = '0x' + Array.from({length: 40}, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
 
-    // Списываем баланс сайта
+    addTx('withdraw', amount);
+
     state.balance = 0;
     state.activatedCodes = {};
     state.checks = { c1: false, c2: false, c3: false };
@@ -1951,6 +2080,7 @@ async function doWithdraw() {
     ['check1','check2','check3'].forEach(id => document.getElementById(id).classList.remove('checked'));
     saveState();
     updateUI();
+    renderTx();
 
     showProcessing(amount, hashShort);
   } catch (e) {
@@ -2051,9 +2181,74 @@ function returnToMenu() {
   document.querySelectorAll('.section, .section-centered').forEach(s => s.style.display = '');
   document.querySelector('.topbar').style.display = 'flex';
   document.querySelector('.bottom-nav-wrap').style.display = 'block';
-  const promoBtn = document.querySelector('.nav-btn[data-tab="promo"]');
-  if (promoBtn) promoBtn.click();
+  window.__setTab(0, true);
   refreshWithdrawState();
+}
+
+/* ============================================================
+   TRANSACTIONS
+   ============================================================ */
+function addTx(type, amount) {
+  state.transactions.unshift({
+    type: type,
+    amount: amount,
+    ts: Date.now()
+  });
+  if (state.transactions.length > 50) state.transactions.length = 50;
+}
+
+function renderTx() {
+  const container = document.getElementById('tx-list');
+  const card = document.getElementById('tx-history');
+  if (!container || !card) return;
+
+  if (state.transactions.length === 0) {
+    card.classList.remove('show');
+    return;
+  }
+
+  card.classList.add('show');
+  container.innerHTML = '';
+
+  state.transactions.forEach(tx => {
+    const row = document.createElement('div');
+    row.className = 'tx-item';
+
+    const icon = document.createElement('div');
+    icon.className = 'tx-icon ' + (tx.type === 'promo' ? 'promo' : 'withdraw');
+
+    if (tx.type === 'promo') {
+      icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 5 V19 M5 12 H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+    } else {
+      icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 19 V5 M12 5 L6 11 M12 5 L18 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+
+    const body = document.createElement('div');
+    body.className = 'tx-body';
+
+    const title = document.createElement('div');
+    title.className = 'tx-title';
+    title.textContent = tx.type === 'promo' ? t('txPromo') : t('txWithdraw');
+
+    const time = document.createElement('div');
+    time.className = 'tx-time';
+    time.textContent = new Date(tx.ts).toLocaleString(
+      currentLang === 'ru' ? 'ru-RU' : 'en-US',
+      { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }
+    );
+
+    body.appendChild(title);
+    body.appendChild(time);
+
+    const amt = document.createElement('div');
+    amt.className = 'tx-amount ' + (tx.type === 'promo' ? 'plus' : 'minus');
+    amt.textContent = (tx.type === 'promo' ? '+' : '−') + tx.amount.toFixed(2) + ' GRAM';
+
+    row.appendChild(icon);
+    row.appendChild(body);
+    row.appendChild(amt);
+    container.appendChild(row);
+  });
 }
 
 /* ============================================================
@@ -2080,6 +2275,7 @@ function saveState() {
   try {
     localStorage.setItem('gram_balance', String(state.balance));
     localStorage.setItem('gram_codes', JSON.stringify(state.activatedCodes));
+    localStorage.setItem('gram_tx', JSON.stringify(state.transactions));
   } catch (_) {}
 }
 
@@ -2089,7 +2285,45 @@ function loadState() {
     if (b) state.balance = parseFloat(b) || 0;
     const c = localStorage.getItem('gram_codes');
     if (c) state.activatedCodes = JSON.parse(c) || {};
+    const tx = localStorage.getItem('gram_tx');
+    if (tx) state.transactions = JSON.parse(tx) || [];
   } catch (_) {}
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer = null;
+function showToast(text) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+/* ============================================================
+   LEGAL MODAL
+   ============================================================ */
+function openLegal(type) {
+  const titleEl = document.getElementById('modal-legal-title');
+  const textEl = document.getElementById('modal-legal-text');
+  if (type === 'terms') {
+    titleEl.textContent = t('legalTermsTitle');
+    textEl.innerHTML = t('legalTermsText');
+  } else {
+    titleEl.textContent = t('legalPrivacyTitle');
+    textEl.innerHTML = t('legalPrivacyText');
+  }
+  document.getElementById('modal-legal').classList.add('active');
+}
+
+function initLegal() {
+  document.getElementById('footer-terms').addEventListener('click', () => openLegal('terms'));
+  document.getElementById('footer-privacy').addEventListener('click', () => openLegal('privacy'));
+  document.getElementById('modal-legal-close').addEventListener('click', () => {
+    document.getElementById('modal-legal').classList.remove('active');
+  });
 }
 
 /* ============================================================
@@ -2114,16 +2348,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     initSignup();
     initPromo();
     initChecks();
+    initPresets();
+    initLegal();
     initTonConnect();
     updateUI();
+    renderTx();
 
     document.getElementById('lang-toggle').addEventListener('click', () => {
       applyLang(currentLang === 'ru' ? 'en' : 'ru');
     });
     document.getElementById('withdraw-btn').addEventListener('click', doWithdraw);
-    document.getElementById('max-btn').addEventListener('click', () => {
-      if (state.balance > 0) document.getElementById('withdraw-input').value = state.balance;
-    });
     document.getElementById('profile-connect-btn').addEventListener('click', () => {
       if (tonConnectUI) tonConnectUI.openModal();
     });
@@ -2141,7 +2375,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('logout-btn').addEventListener('click', () => {
       if (!confirm(currentLang === 'ru' ? 'Выйти?' : 'Sign out?')) return;
       try { if (tonConnectUI) tonConnectUI.disconnect(); } catch (_) {}
-      ['gram_nick','gram_reg','gram_balance','gram_codes','gram_lang','gram_theme'].forEach(k => localStorage.removeItem(k));
+      ['gram_nick','gram_reg','gram_balance','gram_codes','gram_lang','gram_theme','gram_tx'].forEach(k => localStorage.removeItem(k));
       setTimeout(() => location.reload(), 200);
     });
     document.getElementById('ton-refresh').addEventListener('click', (e) => {
@@ -2158,13 +2392,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('main-app').style.display = 'flex';
       document.getElementById('profile-name').textContent = savedNick;
       document.getElementById('profile-id').textContent = 'ID: ' + (state.userId || '—');
-      document.getElementById('profile-avatar').textContent = savedNick[0].toUpperCase();
     } else {
       document.getElementById('signup-screen').classList.add('active');
       document.getElementById('main-app').style.display = 'none';
     }
   } catch (e) {
-    // Если что-то упало — показываем регистрацию, а не белый экран
     console.error('Init error', e);
     const s = document.getElementById('signup-screen');
     if (s) s.classList.add('active');
