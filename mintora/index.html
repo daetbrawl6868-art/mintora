@@ -8,138 +8,46 @@
 <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 <style>
   :root {
-    --bg: #ffffff;
-    --surface: #ffffff;
-    --surface-2: #f5f5f7;
-    --surface-3: #ebebef;
-    --line: #e5e5ea;
-    --line-2: #d2d2d7;
-    --text: #0a0a0b;
-    --text-2: #6e6e73;
-    --text-3: #a1a1a6;
-    --blue: #0071e3;
-    --blue-ink: #0058b8;
-    --blue-soft: #eaf3ff;
-    --blue-ring: rgba(0, 113, 227, 0.18);
-    --red: #e5484d;
-    --red-soft: #fdecec;
-    --green: #30a46c;
-    --green-soft: #e9f7ef;
-    --orange: #c76a15;
-    --orange-soft: #fdf3e7;
-    --radius-card: 18px;
-    --radius-control: 14px;
-    --radius-pill: 100px;
+    --bg: #ffffff; --surface: #ffffff; --surface-2: #f5f5f7;
+    --line: #e5e5ea; --line-2: #d2d2d7;
+    --text: #0a0a0b; --text-2: #6e6e73; --text-3: #a1a1a6;
+    --blue: #0071e3; --blue-soft: #eaf3ff; --blue-ring: rgba(0, 113, 227, 0.18);
+    --red: #e5484d; --red-soft: #fdecec;
+    --green: #30a46c; --green-soft: #e9f7ef;
+    --radius-card: 18px; --radius-control: 14px; --radius-pill: 100px;
     --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
     --glass-bg: rgba(255, 255, 255, 0.72);
     --glass-border: rgba(255, 255, 255, 0.9);
     --glass-shadow: 0 8px 32px rgba(10, 11, 13, 0.08), 0 2px 8px rgba(10, 11, 13, 0.04);
-    --logo-blend: multiply;
   }
   [data-theme="dark"] {
-    --bg: #000000;
-    --surface: #141416;
-    --surface-2: #1c1c1f;
-    --surface-3: #26262a;
-    --line: #232326;
-    --line-2: #2c2c30;
-    --text: #f5f5f7;
-    --text-2: #a1a1a6;
-    --text-3: #6e6e73;
-    --blue: #0a84ff;
-    --blue-ink: #409cff;
-    --blue-soft: #0d1a2d;
-    --blue-ring: rgba(10, 132, 255, 0.24);
-    --red: #ff453a;
-    --red-soft: #2a1414;
-    --green: #30d158;
-    --green-soft: #0f2a19;
-    --orange: #ff9f0a;
-    --orange-soft: #2a1c0a;
+    --bg: #000000; --surface: #141416; --surface-2: #1c1c1f;
+    --line: #232326; --line-2: #2c2c30;
+    --text: #f5f5f7; --text-2: #a1a1a6; --text-3: #6e6e73;
+    --blue: #0a84ff; --blue-soft: #0d1a2d; --blue-ring: rgba(10, 132, 255, 0.24);
+    --red: #ff453a; --red-soft: #2a1414;
+    --green: #30d158; --green-soft: #0f2a19;
     --glass-bg: rgba(20, 20, 22, 0.75);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
-    --logo-blend: screen;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
   html, body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.01em;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; font-size: 15px; line-height: 1.45;
+    -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
     overflow-x: hidden;
   }
-
-  /* ---------- LOGO (обрезка фона через blend mode) ---------- */
-  .logo-img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    mix-blend-mode: var(--logo-blend);
-  }
-  /* На светлой теме белый фон растворится, на тёмной — белый тоже (multiply не сработает,
-     поэтому используем фильтр для инверсии белого в прозрачность) */
-  [data-theme="dark"] .logo-img {
-    filter: brightness(1.05);
-  }
-
-  .app {
-    max-width: 440px;
-    margin: 0 auto;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 0 0 120px;
-    position: relative;
-  }
-
-  /* ============ TOPBAR ============ */
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px 12px;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 50;
-  }
+  .logo-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  [data-theme="dark"] .logo-img { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
+  .app { max-width: 440px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding: 0 0 120px; position: relative; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; gap: 12px; position: sticky; top: 0; background: var(--bg); z-index: 50; }
   .brand { display: flex; align-items: center; gap: 10px; }
-  .brand-mark {
-    width: 36px; height: 36px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .brand-name { font-size: 17px; font-weight: 600; color: var(--text); }
-  .top-actions {
-    display: flex; align-items: center; gap: 6px; padding: 3px;
-    background: var(--glass-bg);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-pill);
-  }
-  .glass-btn {
-    height: 30px; min-width: 30px; padding: 0 10px;
-    border: none; background: transparent;
-    color: var(--text-2);
-    font-family: inherit; font-size: 12px; font-weight: 600;
-    letter-spacing: 0.02em;
-    border-radius: var(--radius-pill);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    gap: 4px;
-    transition: all 0.15s;
-  }
+  .brand-mark { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .brand-name { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+  .top-actions { display: flex; align-items: center; gap: 6px; padding: 3px; background: var(--glass-bg); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--line); border-radius: var(--radius-pill); }
+  .glass-btn { height: 30px; min-width: 30px; padding: 0 10px; border: none; background: transparent; color: var(--text-2); font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; border-radius: var(--radius-pill); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s; }
   .glass-btn:active { transform: scale(0.95); }
   .glass-btn svg { width: 15px; height: 15px; }
   .glass-btn .icon-moon { display: block; }
@@ -147,661 +55,175 @@
   [data-theme="dark"] .glass-btn .icon-moon { display: none; }
   [data-theme="dark"] .glass-btn .icon-sun { display: block; }
   .glass-divider { width: 1px; height: 16px; background: var(--line); }
-
-  /* ============ SECTIONS ============ */
   .section { display: none; padding: 20px; }
-  .section.active { display: block; animation: fadeIn 0.25s ease; }
+  .section.active { display: block; animation: fadeIn 0.22s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-  .section-centered {
-    display: none; padding: 20px;
-    flex-direction: column; align-items: center; justify-content: center;
-    min-height: calc(100vh - 200px);
-    text-align: center;
-  }
-  .section-centered.active { display: flex; animation: fadeIn 0.25s ease; }
+  .section-centered { display: none; padding: 20px; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 200px); text-align: center; }
+  .section-centered.active { display: flex; animation: fadeIn 0.22s ease; }
   .centered-inner { width: 100%; max-width: 340px; }
-
-  .promo-title {
-    font-size: 22px; font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-  .promo-sub {
-    font-size: 14px; color: var(--text-2);
-    margin-bottom: 24px; line-height: 1.5;
-  }
-
-  /* ============ BALANCE CARD ============ */
-  .balance-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-card);
-    padding: 24px 20px;
-    margin-bottom: 14px;
-    position: relative;
-  }
-  .balance-card-top {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px;
-  }
+  .promo-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 6px; }
+  .promo-sub { font-size: 14px; color: var(--text-2); margin-bottom: 24px; line-height: 1.5; }
+  .balance-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 24px 20px; margin-bottom: 14px; }
+  .balance-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
   .balance-card-token { display: flex; align-items: center; gap: 10px; }
-  .balance-card-token-icon {
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .balance-card-token-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .balance-card-token-name { font-size: 15px; font-weight: 600; color: var(--text); }
-  .balance-card-network {
-    font-size: 11px; color: var(--text-3); font-weight: 500;
-    letter-spacing: 0.04em; text-transform: uppercase;
-    padding: 4px 9px;
-    background: var(--surface-2);
-    border-radius: var(--radius-pill);
-  }
+  .balance-card-network { font-size: 11px; color: var(--text-3); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 9px; background: var(--surface-2); border-radius: var(--radius-pill); }
   .balance-card-main { margin-bottom: 16px; }
-  .balance-card-label {
-    font-size: 12px; color: var(--text-3);
-    font-weight: 500; margin-bottom: 8px;
-    text-transform: uppercase; letter-spacing: 0.04em;
-  }
-  .balance-card-amount {
-    font-size: 40px; font-weight: 700;
-    letter-spacing: -0.035em;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.05;
-    display: flex; align-items: baseline; gap: 8px;
-  }
+  .balance-card-label { font-size: 12px; color: var(--text-3); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .balance-card-amount { font-size: 40px; font-weight: 700; letter-spacing: -0.035em; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.05; display: flex; align-items: baseline; gap: 8px; }
   .balance-card-amount .unit { font-size: 16px; font-weight: 600; color: var(--text-2); }
-  .balance-card-usd {
-    font-size: 13px; color: var(--text-3);
-    margin-top: 6px;
-    font-variant-numeric: tabular-nums;
-  }
+  .balance-card-usd { font-size: 13px; color: var(--text-3); margin-top: 6px; font-variant-numeric: tabular-nums; }
   .balance-card-divider { height: 1px; background: var(--line); margin: 16px 0; }
-  .balance-card-bottom {
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .balance-card-wallet-label {
-    font-size: 12px; color: var(--text-3); margin-bottom: 3px;
-  }
-  .balance-card-wallet-value {
-    font-size: 14px; color: var(--text);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
-  .balance-card-wallet-value .unit {
-    color: var(--text-3);
-    font-weight: 500;
-    font-size: 12px;
-    margin-left: 3px;
-  }
-  .balance-card-refresh {
-    width: 32px; height: 32px;
-    border: none;
-    background: var(--surface-2);
-    color: var(--text-3);
-    border-radius: 9px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .balance-card-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .balance-card-wallet-label { font-size: 12px; color: var(--text-3); margin-bottom: 3px; }
+  .balance-card-wallet-value { font-size: 14px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .balance-card-wallet-value .unit { color: var(--text-3); font-weight: 500; font-size: 12px; margin-left: 3px; }
+  .balance-card-refresh { width: 32px; height: 32px; border: none; background: var(--surface-2); color: var(--text-3); border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .balance-card-refresh.spinning svg { animation: spin 1s linear infinite; }
   .balance-card-refresh svg { width: 15px; height: 15px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ============ CARD ============ */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-card);
-    margin-bottom: 10px;
-    overflow: hidden;
-  }
-  .card-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--line);
-    min-height: 56px;
-  }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); margin-bottom: 10px; overflow: hidden; }
+  .card-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); min-height: 56px; }
   .card-row:last-child { border-bottom: none; }
-  .row-icon {
-    width: 34px; height: 34px;
-    border-radius: 9px;
-    background: var(--surface-2);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-2);
-    flex-shrink: 0;
-  }
+  .row-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; color: var(--text-2); flex-shrink: 0; }
   .row-icon svg { width: 16px; height: 16px; }
   .row-icon.blue { background: var(--blue-soft); color: var(--blue); }
   .row-icon.red { background: var(--red-soft); color: var(--red); }
   .row-icon.green { background: var(--green-soft); color: var(--green); }
   .row-body { flex: 1; min-width: 0; }
-  .row-label {
-    font-size: 12px; color: var(--text-3);
-    font-weight: 500; margin-bottom: 2px;
-  }
-  .row-value {
-    font-size: 15px; color: var(--text);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
+  .row-label { font-size: 12px; color: var(--text-3); font-weight: 500; margin-bottom: 2px; }
+  .row-value { font-size: 15px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
   .row-value.mono { font-family: var(--mono); font-size: 13px; font-weight: 500; }
-  .row-value.muted { color: var(--text-2); font-weight: 500; }
-  .row-value.blue { color: var(--blue); }
-
-  /* ============ FIELD ============ */
-  .field {
-    display: flex; align-items: center; gap: 12px;
-    padding: 16px; min-height: 60px;
-  }
-  .field-input {
-    flex: 1; border: none; background: transparent;
-    color: var(--text); font-family: inherit;
-    font-size: 16px; font-weight: 600;
-    outline: none; min-width: 0; padding: 0;
-    letter-spacing: -0.01em;
-  }
+  .field { display: flex; align-items: center; gap: 12px; padding: 16px; min-height: 60px; }
+  .field-input { flex: 1; border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 16px; font-weight: 600; outline: none; min-width: 0; padding: 0; letter-spacing: -0.01em; }
   .field-input::placeholder { color: var(--text-3); font-weight: 400; }
-  .field-input.code {
-    font-family: var(--mono);
-    font-size: 16px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    font-weight: 700;
-    text-align: center;
-  }
-  .field-suffix {
-    font-size: 13px; color: var(--text-3);
-    font-weight: 600; flex-shrink: 0;
-    letter-spacing: 0.02em;
-  }
-
-  /* ============ BUTTONS ============ */
-  .btn {
-    width: 100%; padding: 16px;
-    border: none; border-radius: var(--radius-control);
-    font-family: inherit; font-size: 15px; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
-    display: flex; align-items: center; justify-content: center;
-    gap: 8px;
-    letter-spacing: -0.01em;
-  }
+  .field-input.code { font-family: var(--mono); font-size: 16px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; text-align: center; }
+  .field-suffix { font-size: 13px; color: var(--text-3); font-weight: 600; flex-shrink: 0; }
+  .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-control); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn:active:not(:disabled) { transform: scale(0.985); }
-  .btn.primary { background: var(--text); color: var(--bg); }
   .btn.blue { background: var(--blue); color: #ffffff; }
   .btn:disabled { background: var(--surface-2); color: var(--text-3); cursor: not-allowed; }
   .btn svg { width: 16px; height: 16px; }
-  .btn-spinner {
-    width: 14px; height: 14px;
-    border: 1.5px solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none; opacity: 0.5;
-  }
+  .btn-spinner { width: 14px; height: 14px; border: 1.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; opacity: 0.5; }
   .btn.loading .btn-spinner { display: block; }
   .btn.loading .btn-icon { display: none; }
-
-  /* ============ FEEDBACK ============ */
-  .feedback {
-    font-size: 13px; font-weight: 500;
-    padding: 8px 4px; min-height: 0;
-    text-align: center;
-  }
+  .feedback { font-size: 13px; font-weight: 500; padding: 8px 4px; min-height: 0; text-align: center; }
   .feedback.error { color: var(--red); }
   .feedback.success { color: var(--green); }
   .feedback:empty { display: none; }
-
-  /* ============ NOTICE ============ */
-  .notice {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 13px 15px;
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-card);
-    font-size: 13px; color: var(--text-2);
-    line-height: 1.5; margin-bottom: 10px;
-  }
-  .notice svg { width: 16px; height: 16px; color: var(--text-3); flex-shrink: 0; margin-top: 1px; }
-  .notice.warn { background: var(--orange-soft); border-color: rgba(199, 106, 21, 0.2); color: var(--orange); }
-  .notice.warn svg { color: var(--orange); }
-  .notice.danger { background: var(--red-soft); border-color: rgba(229, 72, 77, 0.2); color: var(--red); }
-  .notice.danger svg { color: var(--red); }
+  .notice { display: flex; align-items: flex-start; gap: 10px; padding: 13px 15px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-card); font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 10px; }
+  .notice svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
   .notice.blue { background: var(--blue-soft); border-color: var(--blue-ring); color: var(--blue); }
-  .notice.blue svg { color: var(--blue); }
-
-  /* ============ CHECKS ============ */
-  .check-row {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 14px 16px;
-    cursor: pointer; user-select: none;
-    border-bottom: 1px solid var(--line);
-  }
+  .notice.danger { background: var(--red-soft); border-color: rgba(229, 72, 77, 0.2); color: var(--red); }
+  .check-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--line); }
   .check-row:last-child { border-bottom: none; }
-  .check-box {
-    width: 20px; height: 20px;
-    border-radius: 6px;
-    border: 1.5px solid var(--line-2);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-    transition: all 0.15s;
-  }
+  .check-box { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--line-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; transition: all 0.15s; }
   .check-box svg { width: 12px; height: 12px; color: #fff; opacity: 0; }
   .check-row.checked .check-box { background: var(--blue); border-color: var(--blue); }
   .check-row.checked .check-box svg { opacity: 1; }
   .check-text { font-size: 13px; color: var(--text-2); line-height: 1.5; }
-
-  /* ============ PRESETS ============ */
-  .presets {
-    display: flex; gap: 6px;
-    padding: 0 16px 16px;
-  }
-  .preset {
-    flex: 1;
-    padding: 8px 0;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--text-2);
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: var(--radius-pill);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+  .presets { display: flex; gap: 6px; padding: 0 16px 16px; }
+  .preset { flex: 1; padding: 8px 0; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); font-family: inherit; font-size: 12px; font-weight: 600; border-radius: var(--radius-pill); cursor: pointer; }
   .preset:active { background: var(--surface-2); }
   .preset.max { color: var(--blue); }
-
-  /* ============ PROFILE ============ */
-  .profile-head {
-    display: flex; align-items: center; gap: 14px;
-    padding: 20px 18px;
-    border-bottom: 1px solid var(--line);
-  }
-  .avatar {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    background: var(--surface-2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; font-weight: 700;
-    color: var(--text);
-    flex-shrink: 0;
-    overflow: hidden;
-  }
+  .profile-head { display: flex; align-items: center; gap: 14px; padding: 20px 18px; border-bottom: 1px solid var(--line); }
+  .avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
   .avatar .logo-img { width: 60%; height: 60%; }
   .profile-meta { flex: 1; min-width: 0; }
-  .profile-name {
-    font-size: 16px; font-weight: 700;
-    color: var(--text);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .profile-id {
-    font-size: 12px; color: var(--text-3);
-    margin-top: 3px;
-    font-family: var(--mono); font-weight: 500;
-  }
-
-  /* ============ WALLET ============ */
-  .wallet-off {
-    padding: 16px;
-    display: flex; flex-direction: column; gap: 12px;
-  }
+  .profile-name { font-size: 16px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .profile-id { font-size: 12px; color: var(--text-3); margin-top: 3px; font-family: var(--mono); font-weight: 500; }
+  .ref-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 18px 16px; margin-bottom: 10px; }
+  .ref-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .ref-title { font-size: 14px; font-weight: 700; color: var(--text); }
+  .ref-badge { font-size: 10px; font-weight: 700; color: var(--blue); padding: 3px 8px; background: var(--blue-soft); border-radius: var(--radius-pill); letter-spacing: 0.03em; }
+  .ref-stats { display: flex; gap: 16px; margin-bottom: 14px; }
+  .ref-stat { flex: 1; }
+  .ref-stat-value { font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .ref-stat-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 4px; }
+  .ref-link-row { display: flex; gap: 8px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-control); padding: 10px 12px; align-items: center; }
+  .ref-link-text { flex: 1; min-width: 0; font-family: var(--mono); font-size: 11px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ref-hint { font-size: 11px; color: var(--text-3); margin-top: 8px; line-height: 1.4; }
+  .wallet-off { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
   .wallet-off-text { font-size: 13px; color: var(--text-2); line-height: 1.5; }
   .wallet-on { display: none; }
   .wallet-on.show { display: block; }
-
-  .copy-btn {
-    width: 34px; height: 34px;
-    border: none; background: var(--surface-2);
-    color: var(--text-3);
-    border-radius: 9px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .copy-btn { width: 34px; height: 34px; border: none; background: var(--surface-2); color: var(--text-3); border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .copy-btn svg { width: 14px; height: 14px; }
   .copy-btn.ok { color: var(--blue); background: var(--blue-soft); }
-
-  /* ============ TRANSACTION HISTORY ============ */
   .tx-history { display: none; }
   .tx-history.show { display: block; }
-  .tx-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--line);
-  }
+  .tx-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
   .tx-item:last-child { border-bottom: none; }
-  .tx-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .tx-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .tx-icon.promo { background: var(--green-soft); color: var(--green); }
   .tx-icon.withdraw { background: var(--blue-soft); color: var(--blue); }
   .tx-icon svg { width: 15px; height: 15px; }
   .tx-body { flex: 1; min-width: 0; }
   .tx-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
   .tx-time { font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; }
-  .tx-amount {
-    font-size: 14px; font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
+  .tx-amount { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .tx-amount.plus { color: var(--green); }
   .tx-amount.minus { color: var(--blue); }
-  .tx-empty {
-    padding: 24px 16px;
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-3);
-  }
-
-  /* ============ MODAL ============ */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(10, 11, 13, 0.4);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-    z-index: 500;
-    display: none;
-    align-items: center; justify-content: center;
-    padding: 24px;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10, 11, 13, 0.4); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 24px; }
   .modal-overlay.active { display: flex; }
-  .modal-sheet {
-    width: 100%; max-width: 380px;
-    background: var(--surface);
-    border-radius: 22px;
-    padding: 24px;
-    box-shadow: 0 20px 60px rgba(10, 11, 13, 0.25);
-    animation: modalIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  .modal-icon {
-    width: 52px; height: 52px;
-    border-radius: 15px;
-    background: var(--green-soft);
-    color: var(--green);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 16px;
-  }
+  .modal-sheet { width: 100%; max-width: 380px; background: var(--surface); border-radius: 22px; padding: 24px; box-shadow: 0 20px 60px rgba(10, 11, 13, 0.25); animation: modalIn 0.3s cubic-bezier(0.22, 1, 0.36, 1); max-height: 80vh; overflow-y: auto; }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .modal-icon { width: 52px; height: 52px; border-radius: 15px; background: var(--green-soft); color: var(--green); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
   .modal-icon svg { width: 26px; height: 26px; }
-  .modal-title {
-    font-size: 20px; font-weight: 700;
-    color: var(--text); margin-bottom: 8px;
-    letter-spacing: -0.02em;
-  }
-  .modal-text {
-    font-size: 14px; color: var(--text-2);
-    line-height: 1.55; margin-bottom: 20px;
-  }
-  .modal-text strong { color: var(--text); }
+  .modal-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; letter-spacing: -0.02em; }
+  .modal-text { font-size: 14px; color: var(--text-2); line-height: 1.55; margin-bottom: 20px; }
   .modal-actions { display: flex; flex-direction: column; gap: 8px; }
-  .modal-btn-primary {
-    width: 100%; padding: 15px;
-    background: var(--blue); color: #fff;
-    border: none; border-radius: var(--radius-control);
-    font-family: inherit; font-size: 15px; font-weight: 600;
-    cursor: pointer;
-  }
-  .modal-btn-primary:active { transform: scale(0.985); }
-  .modal-btn-secondary {
-    width: 100%; padding: 15px;
-    background: transparent; color: var(--text-2);
-    border: none; border-radius: var(--radius-control);
-    font-family: inherit; font-size: 14px; font-weight: 600;
-    cursor: pointer;
-  }
-  .modal-btn-secondary:active { background: var(--surface-2); }
-
-  .modal-text h3 {
-    font-size: 15px; font-weight: 700;
-    color: var(--text); margin: 16px 0 8px;
-  }
-  .modal-text p {
-    font-size: 13px; color: var(--text-2);
-    line-height: 1.55; margin-bottom: 10px;
-  }
-  .modal-text ul {
-    padding-left: 18px;
-    margin-bottom: 10px;
-  }
-  .modal-text li {
-    font-size: 13px; color: var(--text-2);
-    line-height: 1.55; margin-bottom: 4px;
-  }
-
-  /* ============ BADGE ============ */
-  .nav-btn { position: relative; }
-  .nav-badge {
-    position: absolute;
-    top: 4px; right: 24px;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--red);
-    display: none;
-  }
-  .nav-badge.show { display: block; }
-
-  /* ============ VERIFYING ============ */
-  .verifying {
-    display: none; padding: 80px 24px;
-    flex-direction: column; align-items: center;
-    text-align: center;
-  }
+  .modal-btn-primary { width: 100%; padding: 15px; background: var(--blue); color: #fff; border: none; border-radius: var(--radius-control); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .modal-btn-secondary { width: 100%; padding: 15px; background: transparent; color: var(--text-2); border: none; border-radius: var(--radius-control); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .verifying { display: none; padding: 80px 24px; flex-direction: column; align-items: center; text-align: center; }
   .verifying.active { display: flex; }
-  .verifying-ring {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    border: 2.5px solid var(--surface-2);
-    border-top-color: var(--blue);
-    animation: spin 0.9s linear infinite;
-    margin-bottom: 24px;
-  }
-  .verifying-title {
-    font-size: 17px; font-weight: 600;
-    color: var(--text); margin-bottom: 6px;
-  }
-  .verifying-sub {
-    font-size: 13px; color: var(--text-2);
-    max-width: 280px; line-height: 1.55;
-  }
-
-  /* ============ PROCESSING ============ */
+  .verifying-ring { width: 56px; height: 56px; border-radius: 50%; border: 2.5px solid var(--surface-2); border-top-color: var(--blue); animation: spin 0.9s linear infinite; margin-bottom: 24px; }
+  .verifying-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .verifying-sub { font-size: 13px; color: var(--text-2); max-width: 280px; line-height: 1.55; }
   .processing { display: none; padding: 32px 20px; flex-direction: column; }
   .processing.active { display: flex; }
   .proc-head { padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
-  .proc-eyebrow {
-    font-size: 12px; color: var(--text-3); font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    margin-bottom: 8px;
-  }
-  .proc-amount {
-    font-size: 34px; font-weight: 700;
-    letter-spacing: -0.03em; color: var(--text);
-    font-variant-numeric: tabular-nums; line-height: 1.1;
-  }
+  .proc-eyebrow { font-size: 12px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .proc-amount { font-size: 34px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.1; }
   .proc-amount .unit { font-size: 16px; font-weight: 600; color: var(--text-2); margin-left: 6px; }
-  .progress-rail {
-    height: 4px; background: var(--surface-2);
-    border-radius: 2px; overflow: hidden; margin-bottom: 8px;
-  }
-  .progress-fill {
-    height: 100%; background: var(--blue);
-    width: 0%; transition: width 1s linear; border-radius: 2px;
-  }
-  .progress-meta {
-    display: flex; justify-content: space-between;
-    font-size: 12px; color: var(--text-3);
-    font-variant-numeric: tabular-nums;
-    margin-bottom: 24px; font-weight: 500;
-  }
-  .kv {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 13px 0; font-size: 13px;
-    border-bottom: 1px solid var(--line);
-  }
+  .progress-rail { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+  .progress-fill { height: 100%; background: var(--blue); width: 0%; transition: width 1s linear; border-radius: 2px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; margin-bottom: 24px; font-weight: 500; }
+  .kv { display: flex; align-items: center; justify-content: space-between; padding: 13px 0; font-size: 13px; border-bottom: 1px solid var(--line); }
   .kv:last-child { border-bottom: none; }
   .kv-k { color: var(--text-3); font-weight: 500; }
   .kv-v { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-  .kv-v.mono { font-family: var(--mono); font-size: 12px; font-weight: 500; }
   .kv-v.blue { color: var(--blue); }
-
-  /* ============ RECEIPT ============ */
   .receipt { display: none; padding: 32px 20px; flex-direction: column; }
   .receipt.active { display: flex; }
   .receipt-head { padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
-  .receipt-status {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 5px 11px;
-    background: var(--green-soft); color: var(--green);
-    border-radius: var(--radius-pill);
-    font-size: 11px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.04em;
-    margin-bottom: 14px;
-  }
+  .receipt-status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; background: var(--green-soft); color: var(--green); border-radius: var(--radius-pill); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 14px; }
   .receipt-status .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
-  .receipt-title {
-    font-size: 26px; font-weight: 700;
-    letter-spacing: -0.03em; color: var(--text); line-height: 1.15;
-  }
+  .receipt-title { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); line-height: 1.15; }
   .receipt-sub { font-size: 13px; color: var(--text-2); margin-top: 6px; }
-
-  /* ============ BOTTOM NAV ============ */
-  .bottom-nav-wrap {
-    position: fixed; bottom: 0;
-    left: 50%; transform: translateX(-50%);
-    width: 100%; max-width: 440px;
-    padding: 0 16px 16px;
-    z-index: 100; pointer-events: none;
-  }
-  .bottom-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 5px;
-    background: var(--glass-bg);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-pill);
-    box-shadow: var(--glass-shadow);
-    pointer-events: auto;
-    position: relative;
-  }
-  .nav-pill {
-    position: absolute; top: 5px; bottom: 5px; left: 5px;
-    width: calc((100% - 10px) / 3);
-    background: var(--text);
-    border-radius: var(--radius-pill);
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    pointer-events: none; z-index: 0;
-  }
-  .nav-btn {
-    flex: 1; border: none; background: transparent;
-    padding: 10px 8px;
-    cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    color: var(--text-2);
-    font-family: inherit; font-size: 10px; font-weight: 600;
-    letter-spacing: 0.01em;
-    transition: color 0.2s;
-    border-radius: var(--radius-pill);
-    position: relative; z-index: 1;
-  }
+  .bottom-nav-wrap { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 440px; padding: 0 16px 16px; z-index: 100; pointer-events: none; }
+  .bottom-nav { display: flex; align-items: center; justify-content: space-between; padding: 5px; background: var(--glass-bg); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); border: 1px solid var(--glass-border); border-radius: var(--radius-pill); box-shadow: var(--glass-shadow); pointer-events: auto; position: relative; }
+  .nav-pill { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc((100% - 10px) / 3); background: var(--text); border-radius: var(--radius-pill); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: none; z-index: 0; }
+  .nav-btn { flex: 1; border: none; background: transparent; padding: 10px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-2); font-family: inherit; font-size: 10px; font-weight: 600; letter-spacing: 0.01em; transition: color 0.2s; border-radius: var(--radius-pill); position: relative; z-index: 1; }
   .nav-btn svg { width: 20px; height: 20px; }
   .nav-btn.active { color: var(--bg); }
-
-  /* ============ FOOTER ============ */
-  .footer {
-    margin-top: auto; padding: 20px;
-    text-align: center; font-size: 11px;
-    color: var(--text-3);
-    line-height: 1.6;
-  }
-  .footer a {
-    color: var(--text-2); text-decoration: none;
-    border-bottom: 1px solid var(--line-2);
-    cursor: pointer;
-  }
-  .footer-meta {
-    margin-top: 6px;
-    font-size: 10px;
-    color: var(--text-3);
-    font-family: var(--mono);
-    letter-spacing: 0.02em;
-  }
-
-  /* ============ SIGNUP ============ */
-  .signup-screen {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    z-index: 1000;
-    display: none; flex-direction: column;
-    padding: 40px 24px 32px;
-    max-width: 440px; margin: 0 auto;
-    overflow-y: auto;
-  }
+  .footer { margin-top: auto; padding: 20px; text-align: center; font-size: 11px; color: var(--text-3); line-height: 1.6; }
+  .footer-meta { margin-top: 6px; font-size: 10px; color: var(--text-3); font-family: var(--mono); letter-spacing: 0.02em; }
+  .signup-screen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; padding: 40px 24px 32px; max-width: 440px; margin: 0 auto; overflow-y: auto; }
   .signup-screen.active { display: flex; }
-  .signup-logo {
-    width: 72px; height: 72px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 20px;
-    flex-shrink: 0;
-  }
-  .signup-brand {
-    font-size: 12px; font-weight: 700; color: var(--blue);
-    letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .signup-title {
-    font-size: 30px; font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1; color: var(--text);
-    margin-bottom: 10px;
-  }
-  .signup-sub {
-    font-size: 15px; color: var(--text-2);
-    line-height: 1.5; margin-bottom: 28px;
-  }
+  .signup-logo { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; flex-shrink: 0; }
+  .signup-brand { font-size: 12px; font-weight: 700; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .signup-title { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: var(--text); margin-bottom: 10px; }
+  .signup-sub { font-size: 15px; color: var(--text-2); line-height: 1.5; margin-bottom: 28px; }
   .signup-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-  .signup-field {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-control);
-    padding: 14px 16px;
-    display: flex; align-items: center; gap: 12px;
-    transition: border-color 0.15s;
-  }
+  .signup-field { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-control); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
   .signup-field:focus-within { border-color: var(--blue); }
-  .signup-field-icon {
-    width: 20px; height: 20px;
-    color: var(--text-3);
-    flex-shrink: 0;
-  }
+  .signup-field-icon { width: 20px; height: 20px; color: var(--text-3); flex-shrink: 0; }
   .signup-field-icon svg { width: 18px; height: 18px; }
-  .signup-input {
-    flex: 1; border: none; background: transparent;
-    color: var(--text); font-family: inherit;
-    font-size: 15px; font-weight: 600;
-    outline: none; min-width: 0;
-  }
+  .signup-input { flex: 1; border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 15px; font-weight: 600; outline: none; min-width: 0; }
   .signup-input::placeholder { color: var(--text-3); font-weight: 400; }
-  .signup-wallet {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-control);
-    padding: 14px 16px;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; cursor: pointer; transition: all 0.15s;
-  }
+  .signup-wallet { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-control); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; }
   .signup-wallet.connected { background: var(--blue-soft); border-color: var(--blue); }
   .signup-wallet-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .signup-wallet-icon { width: 20px; height: 20px; color: var(--text-3); flex-shrink: 0; }
@@ -811,127 +233,43 @@
   .signup-wallet-label { font-size: 14px; font-weight: 600; color: var(--text); }
   .signup-wallet.connected .signup-wallet-label { color: var(--blue); }
   .signup-wallet-addr { font-family: var(--mono); font-size: 11px; color: var(--text-3); margin-top: 1px; }
-  .signup-wallet-badge {
-    font-size: 10px; font-weight: 700; color: var(--blue);
-    letter-spacing: 0.04em; text-transform: uppercase;
-    padding: 4px 9px;
-    background: rgba(0, 113, 227, 0.1);
-    border-radius: var(--radius-pill);
-  }
-  .signup-terms {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px 4px; cursor: pointer; user-select: none;
-  }
-  .signup-terms-box {
-    width: 18px; height: 18px;
-    border-radius: 5px;
-    border: 1.5px solid var(--line-2);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-    transition: all 0.15s;
-  }
-  .signup-terms-box svg { width: 11px; height: 11px; color: #fff; opacity: 0; }
-  .signup-terms.checked .signup-terms-box { background: var(--blue); border-color: var(--blue); }
-  .signup-terms.checked .signup-terms-box svg { opacity: 1; }
-  .signup-terms-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
-  .signup-terms-text a { color: var(--blue); text-decoration: none; cursor: pointer; }
-  .signup-continue {
-    width: 100%; padding: 16px;
-    background: var(--surface-2); color: var(--text-3);
-    border: none; border-radius: var(--radius-control);
-    font-family: inherit; font-size: 15px; font-weight: 600;
-    cursor: not-allowed; margin-top: 12px;
-    transition: all 0.15s;
-  }
+  .signup-wallet-badge { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 9px; background: rgba(0, 113, 227, 0.1); border-radius: var(--radius-pill); }
+  .signup-continue { width: 100%; padding: 16px; background: var(--surface-2); color: var(--text-3); border: none; border-radius: var(--radius-control); font-family: inherit; font-size: 15px; font-weight: 600; cursor: not-allowed; margin-top: 12px; }
   .signup-continue.enabled { background: var(--blue); color: #fff; cursor: pointer; }
   .signup-continue.enabled:active { transform: scale(0.985); }
-
-  /* ============ WALLET CONNECTED TOAST ============ */
-  .toast {
-    position: fixed; top: 20px; left: 50%;
-    transform: translateX(-50%) translateY(-100px);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-pill);
-    padding: 10px 18px;
-    display: flex; align-items: center; gap: 8px;
-    font-size: 13px; font-weight: 600;
-    color: var(--text);
-    box-shadow: 0 8px 24px rgba(10, 11, 13, 0.12);
-    z-index: 2000;
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  }
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-pill); padding: 10px 18px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); box-shadow: 0 8px 24px rgba(10, 11, 13, 0.12); z-index: 2000; transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
   .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast-icon {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--green-soft);
-    color: var(--green);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .toast-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--green-soft); color: var(--green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .toast-icon svg { width: 12px; height: 12px; }
 </style>
 </head>
 <body>
 
-<!-- ========== SIGNUP ========== -->
 <div class="signup-screen" id="signup-screen">
   <div class="signup-logo"><img class="logo-img" src="gram.png" alt="Gram"></div>
-  <div class="signup-brand" data-i18n="brand">GRAM</div>
-  <div class="signup-title" data-i18n="signupTitle">Welcome</div>
-  <div class="signup-sub" data-i18n="signupSub">Create an account to receive your GRAM tokens.</div>
-
+  <div class="signup-brand">GRAM</div>
+  <div class="signup-title">Welcome</div>
+  <div class="signup-sub">Create an account to receive your GRAM tokens.</div>
   <div class="signup-form">
     <div class="signup-field">
-      <div class="signup-field-icon">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/>
-          <path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-      </div>
+      <div class="signup-field-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
       <input type="text" class="signup-input" id="signup-nickname" placeholder="Nickname" maxlength="20" autocomplete="off" spellcheck="false" />
     </div>
-
     <div class="signup-wallet" id="signup-wallet">
       <div class="signup-wallet-left">
-        <div class="signup-wallet-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M3 10 H21" stroke="currentColor" stroke-width="1.7"/>
-            <circle cx="16.5" cy="14.5" r="1.1" fill="currentColor"/>
-          </svg>
-        </div>
+        <div class="signup-wallet-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M3 10 H21" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor"/></svg></div>
         <div class="signup-wallet-text">
-          <div class="signup-wallet-label" id="signup-wallet-label" data-i18n="connectWallet">Connect TON Wallet</div>
-          <div class="signup-wallet-addr" id="signup-wallet-addr" data-i18n="requiredForPayouts">Required for payouts</div>
+          <div class="signup-wallet-label" id="signup-wallet-label">Connect TON Wallet</div>
+          <div class="signup-wallet-addr" id="signup-wallet-addr">Required for payouts</div>
         </div>
       </div>
-      <div class="signup-wallet-badge" id="signup-wallet-badge" style="display:none" data-i18n="connected">Connected</div>
-    </div>
-
-    <div class="signup-terms" id="signup-terms">
-      <div class="signup-terms-box">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="signup-terms-text">
-        <span data-i18n="termsPrefix">I agree to the</span>
-        <a id="signup-terms-link" data-i18n="termsLink">Terms of Service</a>
-        <span data-i18n="termsMiddle">and</span>
-        <a id="signup-privacy-link" data-i18n="privacyLink">Privacy Policy</a>.
-        <span data-i18n="termsSuffix">I confirm I am 18+.</span>
-      </div>
+      <div class="signup-wallet-badge" id="signup-wallet-badge" style="display:none">Connected</div>
     </div>
   </div>
-
-  <button class="signup-continue" id="signup-continue" data-i18n="continue">Continue</button>
+  <button class="signup-continue" id="signup-continue">Continue</button>
 </div>
 
-<!-- ========== MAIN APP ========== -->
 <div class="app" id="main-app" style="display:none">
-
   <div class="topbar">
     <div class="brand">
       <div class="brand-mark"><img class="logo-img" src="gram.png" alt="Gram"></div>
@@ -939,35 +277,19 @@
     </div>
     <div class="top-actions">
       <button class="glass-btn" id="theme-toggle" aria-label="Theme">
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 12.8 A9 9 0 1 1 11.2 3 a7 7 0 0 0 9.8 9.8 Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-        </svg>
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
-          <path d="M12 3 V5 M12 19 V21 M3 12 H5 M19 12 H21 M5.6 5.6 L7 7 M17 17 L18.4 18.4 M5.6 18.4 L7 17 M17 7 L18.4 5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.8 A9 9 0 1 1 11.2 3 a7 7 0 0 0 9.8 9.8 Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 3 V5 M12 19 V21 M3 12 H5 M19 12 H21 M5.6 5.6 L7 7 M17 17 L18.4 18.4 M5.6 18.4 L7 17 M17 7 L18.4 5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       </button>
-      <div class="glass-divider"></div>
-      <button class="glass-btn" id="lang-toggle"><span id="lang-label">RU</span></button>
     </div>
   </div>
 
   <div class="section-centered active" id="section-promo">
     <div class="centered-inner">
-      <div class="promo-title" data-i18n="promoTitle">Enter code</div>
-      <div class="promo-sub" data-i18n="promoSub">Activate your promotional code</div>
-
-      <div class="card">
-        <div class="field">
-          <input type="text" class="field-input code" id="promo-input" placeholder="••••••••••••" maxlength="20" autocomplete="off" spellcheck="false" />
-        </div>
-      </div>
+      <div class="promo-title">Enter code</div>
+      <div class="promo-sub">Activate your promotional code</div>
+      <div class="card"><div class="field"><input type="text" class="field-input code" id="promo-input" placeholder="••••••••••••" maxlength="20" autocomplete="off" spellcheck="false" /></div></div>
       <div class="feedback" id="promo-status"></div>
-
-      <button class="btn blue" id="promo-submit" style="margin-top: 8px;">
-        <span class="btn-spinner"></span>
-        <span data-i18n="activate">Activate</span>
-      </button>
+      <button class="btn blue" id="promo-submit" style="margin-top: 8px;"><span class="btn-spinner"></span><span>Activate</span></button>
     </div>
   </div>
 
@@ -980,88 +302,50 @@
         </div>
         <div class="balance-card-network">TON</div>
       </div>
-
       <div class="balance-card-main">
-        <div class="balance-card-label" data-i18n="availableBalance">Available balance</div>
-        <div class="balance-card-amount">
-          <span id="card-balance">0</span>
-          <span class="unit">GRAM</span>
-        </div>
+        <div class="balance-card-label">Available balance</div>
+        <div class="balance-card-amount"><span id="card-balance">0</span><span class="unit">GRAM</span></div>
         <div class="balance-card-usd">≈ $<span id="card-balance-usd">0.00</span> USD</div>
       </div>
-
       <div class="balance-card-divider"></div>
-
       <div class="balance-card-bottom">
         <div>
-          <div class="balance-card-wallet-label" data-i18n="walletBalance">Wallet balance</div>
-          <div class="balance-card-wallet-value">
-            <span id="ton-balance-amount">0.00</span><span class="unit">TON</span>
-          </div>
+          <div class="balance-card-wallet-label">Wallet balance</div>
+          <div class="balance-card-wallet-value"><span id="ton-balance-amount">0.00</span><span class="unit">TON</span></div>
         </div>
         <button class="balance-card-refresh" id="ton-refresh">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            <path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
     </div>
-
     <div class="notice blue" id="info-notice">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
-        <path d="M12 8 V12.5 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span data-i18n="infoNotice"></span>
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 8 V12.5 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>To withdraw, you need at least <b>3 GRAM</b>. Network fee is returned with the bonus after confirmation.</span>
     </div>
-
     <div class="notice" id="locked-notice" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/>
-        <path d="M8 11 V7 a4 4 0 0 1 8 0 V11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-      </svg>
-      <span data-i18n="lockedNotice"></span>
+      <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 11 V7 a4 4 0 0 1 8 0 V11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span>Enter your promo code first to unlock withdrawals.</span>
     </div>
-
     <div class="notice danger" id="low-balance-notice" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
-        <path d="M12 8 V13 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span data-i18n="lowBalanceNotice"></span>
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 8 V13 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Not enough GRAM. Minimum 3 GRAM required.</span>
     </div>
-
     <div class="notice danger" id="low-ton-notice" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
-        <path d="M12 8 V13 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span data-i18n="lowTonNotice"></span>
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 8 V13 M12 16 V16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Insufficient TON. Top up at least 0.05 TON.</span>
     </div>
-
     <div class="card" id="wallet-pill" style="display:none">
       <div class="card-row">
-        <div class="row-icon green">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+        <div class="row-icon green"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="row-body">
-          <div class="row-label" data-i18n="walletConnected">Wallet connected</div>
+          <div class="row-label">Wallet connected</div>
           <div class="row-value mono" id="pill-addr">—</div>
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="field">
-        <div class="row-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 7 V12 L15 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <div class="row-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 7 V12 L15 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
         <input type="number" class="field-input" id="withdraw-input" placeholder="0" min="0" step="0.01" autocomplete="off" />
         <span class="field-suffix">GRAM</span>
       </div>
@@ -1069,45 +353,19 @@
         <button class="preset" data-pct="25">25%</button>
         <button class="preset" data-pct="50">50%</button>
         <button class="preset" data-pct="75">75%</button>
-        <button class="preset max" data-pct="100" data-i18n="max">MAX</button>
+        <button class="preset max" data-pct="100">MAX</button>
       </div>
     </div>
     <div class="feedback" id="withdraw-status"></div>
-
     <div class="card" id="confirm-checks" style="display:none">
-      <div class="check-row" id="check1">
-        <div class="check-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="check-text" data-i18n="check1"></div>
-      </div>
-      <div class="check-row" id="check2">
-        <div class="check-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="check-text" data-i18n="check2"></div>
-      </div>
-      <div class="check-row" id="check3">
-        <div class="check-box">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="check-text" data-i18n="check3"></div>
-      </div>
+      <div class="check-row" id="check1"><div class="check-box"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text">I understand the network fee will be deducted and returned together with the bonus after confirmation.</div></div>
+      <div class="check-row" id="check2"><div class="check-box"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text">I confirm that the wallet address is correct and belongs to me.</div></div>
+      <div class="check-row" id="check3"><div class="check-box"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text">I agree to the withdrawal policy and understand the transaction must be confirmed in my wallet.</div></div>
     </div>
-
     <button class="btn blue" id="withdraw-btn" disabled>
       <span class="btn-spinner"></span>
-      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </svg>
-      <span id="withdraw-btn-text" data-i18n="withdrawBtn">Withdraw</span>
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Withdraw</span>
     </button>
   </div>
 
@@ -1121,243 +379,129 @@
         </div>
       </div>
       <div class="card-row">
-        <div class="row-icon blue">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2 V22 M17 6 H9.5 a3.5 3.5 0 0 0 0 7 H14.5 a3.5 3.5 0 0 1 0 7 H7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="row-body">
-          <div class="row-label" data-i18n="balanceLabel2">Balance</div>
-          <div class="row-value"><span id="stat-balance">0</span> GRAM</div>
-        </div>
+        <div class="row-icon blue"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 V22 M17 6 H9.5 a3.5 3.5 0 0 0 0 7 H14.5 a3.5 3.5 0 0 1 0 7 H7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="row-body"><div class="row-label">Balance</div><div class="row-value"><span id="stat-balance">0</span> GRAM</div></div>
       </div>
       <div class="card-row">
-        <div class="row-icon" id="status-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="row-body">
-          <div class="row-label" data-i18n="statusLabel">Status</div>
-          <div class="row-value" id="stat-status" data-i18n="statusGuest">Guest</div>
-        </div>
+        <div class="row-icon" id="status-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+        <div class="row-body"><div class="row-label">Status</div><div class="row-value" id="stat-status">Guest</div></div>
       </div>
     </div>
-
+    <div class="ref-card">
+      <div class="ref-head">
+        <div class="ref-title">Referral program</div>
+        <div class="ref-badge">+0.8 GRAM</div>
+      </div>
+      <div class="ref-stats">
+        <div class="ref-stat"><div class="ref-stat-value" id="ref-count">0</div><div class="ref-stat-label">Invited</div></div>
+        <div class="ref-stat"><div class="ref-stat-value" id="ref-earned">0.0</div><div class="ref-stat-label">Earned</div></div>
+      </div>
+      <div class="ref-link-row">
+        <div class="ref-link-text" id="ref-link">—</div>
+        <button class="copy-btn" id="ref-copy"><svg viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.7"/></svg></button>
+      </div>
+      <div class="ref-hint">+0.8 GRAM for each friend who activates their first code.</div>
+    </div>
     <div class="card">
       <div class="card-row">
-        <div class="row-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M3 10 H21" stroke="currentColor" stroke-width="1.7"/>
-            <circle cx="16.5" cy="14.5" r="1.1" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="row-body">
-          <div class="row-value" data-i18n="tonWallet">TON Wallet</div>
-        </div>
+        <div class="row-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M3 10 H21" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor"/></svg></div>
+        <div class="row-body"><div class="row-value">TON Wallet</div></div>
       </div>
-
       <div class="wallet-off" id="wallet-off">
-        <div class="wallet-off-text" data-i18n="walletOffText"></div>
+        <div class="wallet-off-text">Connect your TON wallet to receive payouts and manage withdrawals.</div>
         <button class="btn blue" id="profile-connect-btn">
           <span class="btn-spinner"></span>
-          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 13 a5 5 0 0 0 7.54.54 l3-3 a5 5 0 0 0-7.07-7.07 l-1.72 1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 11 a5 5 0 0 0-7.54-.54 l-3 3 a5 5 0 0 0 7.07 7.07 l1.71-1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span data-i18n="connectWallet2">Connect wallet</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M10 13 a5 5 0 0 0 7.54.54 l3-3 a5 5 0 0 0-7.07-7.07 l-1.72 1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 11 a5 5 0 0 0-7.54-.54 l-3 3 a5 5 0 0 0 7.07 7.07 l1.71-1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Connect wallet</span>
         </button>
       </div>
-
       <div class="wallet-on" id="wallet-on">
         <div class="card-row">
-          <div class="row-icon blue">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
-              <path d="M3.5 12 H20.5 M12 3 a15 15 0 0 1 0 18 a15 15 0 0 1 0-18 Z" stroke="currentColor" stroke-width="1.7"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-label" data-i18n="address">Address</div>
-            <div class="row-value mono" id="profile-wallet-addr">—</div>
-          </div>
-          <button class="copy-btn" id="copy-addr">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.7"/>
-              <path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.7"/>
-            </svg>
-          </button>
+          <div class="row-icon blue"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 12 H20.5 M12 3 a15 15 0 0 1 0 18 a15 15 0 0 1 0-18 Z" stroke="currentColor" stroke-width="1.7"/></svg></div>
+          <div class="row-body"><div class="row-label">Address</div><div class="row-value mono" id="profile-wallet-addr">—</div></div>
+          <button class="copy-btn" id="copy-addr"><svg viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M16 8 V6 a2 2 0 0 0-2-2 H6 a2 2 0 0 0-2 2 v8 a2 2 0 0 0 2 2 h2" stroke="currentColor" stroke-width="1.7"/></svg></button>
         </div>
         <div class="card-row" id="disconnect-btn" style="cursor:pointer">
-          <div class="row-icon red">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 17 L5 12 L10 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M5 12 H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M15 5 H19 a2 2 0 0 1 2 2 V17 a2 2 0 0 1-2 2 H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="row-body">
-            <div class="row-value" style="color:var(--red)" data-i18n="disconnect">Disconnect</div>
-          </div>
+          <div class="row-icon red"><svg viewBox="0 0 24 24" fill="none"><path d="M10 17 L5 12 L10 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12 H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 5 H19 a2 2 0 0 1 2 2 V17 a2 2 0 0 1-2 2 H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div class="row-body"><div class="row-value" style="color:var(--red)">Disconnect</div></div>
         </div>
       </div>
     </div>
-
     <div class="card tx-history" id="tx-history">
       <div class="card-row">
-        <div class="row-icon blue">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            <path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="row-body">
-          <div class="row-value" data-i18n="txHistory">Transaction history</div>
-        </div>
+        <div class="row-icon blue"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12 a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3 4 V9 H8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8 V12.5 L15 14.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+        <div class="row-body"><div class="row-value">Transaction history</div></div>
       </div>
       <div id="tx-list"></div>
     </div>
-
-    <button class="btn primary" id="logout-btn" style="background: transparent; color: var(--red);">
-      <span data-i18n="signOut">Sign out</span>
-    </button>
   </div>
 
   <div class="verifying" id="verifying-view">
     <div class="verifying-ring"></div>
-    <div class="verifying-title" id="verifying-title" data-i18n="verifyingTitle">Verifying transaction</div>
-    <div class="verifying-sub" id="verifying-sub" data-i18n="verifyingSub">Please wait, this may take a few seconds.</div>
+    <div class="verifying-title">Verifying transaction</div>
+    <div class="verifying-sub">Please wait, this may take a few seconds.</div>
   </div>
 
   <div class="processing" id="processing-view">
     <div class="proc-head">
-      <div class="proc-eyebrow" data-i18n="processingLabel">Processing</div>
-      <div class="proc-amount">
-        <span id="proc-amount">0</span><span class="unit">GRAM</span>
-      </div>
+      <div class="proc-eyebrow">Processing</div>
+      <div class="proc-amount"><span id="proc-amount">0</span><span class="unit">GRAM</span></div>
     </div>
-
     <div class="progress-rail"><div class="progress-fill" id="progress-fill"></div></div>
-    <div class="progress-meta">
-      <span id="proc-stage" data-i18n="stage1">Validating transaction</span>
-      <span><strong id="progress-pct">0%</strong></span>
-    </div>
-
-    <div class="kv">
-      <span class="kv-k" data-i18n="queuePos">Queue position</span>
-      <span class="kv-v blue" id="queue-pos">—</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="network">Network</span>
-      <span class="kv-v">TON Mainnet</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="networkFee">Network fee</span>
-      <span class="kv-v">3 GRAM</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="timeLeft">Time remaining</span>
-      <span class="kv-v blue" id="queue-eta">~10 min</span>
-    </div>
+    <div class="progress-meta"><span id="proc-stage">Validating transaction</span><span><strong id="progress-pct">0%</strong></span></div>
+    <div class="kv"><span class="kv-k">Queue position</span><span class="kv-v blue" id="queue-pos">—</span></div>
+    <div class="kv"><span class="kv-k">Network</span><span class="kv-v">TON Mainnet</span></div>
+    <div class="kv"><span class="kv-k">Network fee</span><span class="kv-v">3 GRAM</span></div>
+    <div class="kv"><span class="kv-k">Time remaining</span><span class="kv-v blue" id="queue-eta">~10 min</span></div>
   </div>
 
   <div class="receipt" id="receipt-view">
     <div class="receipt-head">
-      <div class="receipt-status"><span class="dot"></span><span data-i18n="confirmed">Confirmed</span></div>
+      <div class="receipt-status"><span class="dot"></span><span>Confirmed</span></div>
       <div class="receipt-title"><span id="receipt-amount">0</span> GRAM</div>
-      <div class="receipt-sub" data-i18n="receiptSub">Sent to your TON wallet</div>
+      <div class="receipt-sub">Sent to your TON wallet</div>
     </div>
-
-    <div class="kv">
-      <span class="kv-k" data-i18n="walletLabel">Wallet</span>
-      <span class="kv-v mono" id="receipt-addr">—</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="txHash">Tx hash</span>
-      <span class="kv-v mono blue" id="receipt-hash">—</span>
-    </div>
-    <div class="kv">
-      <span class="kv-k" data-i18n="timeLabel">Time</span>
-      <span class="kv-v" id="receipt-time">—</span>
-    </div>
-
-    <button class="btn blue" id="btn-return" style="margin-top: 16px;">
-      <span data-i18n="returnBtn">Return</span>
-    </button>
+    <div class="kv"><span class="kv-k">Wallet</span><span class="kv-v mono" id="receipt-addr">—</span></div>
+    <div class="kv"><span class="kv-k">Tx hash</span><span class="kv-v mono blue" id="receipt-hash">—</span></div>
+    <div class="kv"><span class="kv-k">Time</span><span class="kv-v" id="receipt-time">—</span></div>
+    <button class="btn blue" id="btn-return" style="margin-top: 16px;"><span>Return</span></button>
   </div>
 
-  <div class="footer">
-    <a id="footer-terms" data-i18n="footerTerms">Terms</a> · 
-    <a id="footer-privacy" data-i18n="footerPrivacy">Privacy</a>
-    <div class="footer-meta">Gram v2.4.1 · build 2026.10.13 · TON Mainnet</div>
-  </div>
+  <div class="footer"><div class="footer-meta">Gram v2.5.0 · TON Mainnet</div></div>
 
   <div class="bottom-nav-wrap">
     <nav class="bottom-nav" id="bottom-nav">
       <div class="nav-pill" id="nav-pill"></div>
       <button class="nav-btn active" data-tab="promo" data-index="0">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-        </svg>
-        <span data-i18n="navPromo">Promo</span>
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 9 V7 a2 2 0 0 1 2-2 H19 a2 2 0 0 1 2 2 V9 a3 3 0 0 0 0 6 V17 a2 2 0 0 1-2 2 H5 a2 2 0 0 1-2-2 V15 a3 3 0 0 0 0-6 Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        <span>Promo</span>
       </button>
-      <button class="nav-btn" data-tab="withdraw" data-index="1" id="nav-withdraw-btn">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-badge" id="nav-withdraw-badge"></span>
-        <span data-i18n="navWithdraw">Withdraw</span>
+      <button class="nav-btn" data-tab="withdraw" data-index="1">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 15 V3 M12 3 L8 7 M12 3 L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15 V19 a2 2 0 0 0 2 2 H18 a2 2 0 0 0 2-2 V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Withdraw</span>
       </button>
       <button class="nav-btn" data-tab="profile" data-index="2">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/>
-          <path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-        <span data-i18n="navProfile">Profile</span>
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 20 c0-4 3.6-6.5 8-6.5 s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span>Profile</span>
       </button>
     </nav>
   </div>
-
 </div>
 
-<!-- ========== MODALS ========== -->
 <div class="modal-overlay" id="modal-promo">
   <div class="modal-sheet">
-    <div class="modal-icon">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div class="modal-title" id="modal-promo-title"></div>
+    <div class="modal-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="modal-title">Code activated</div>
     <div class="modal-text" id="modal-promo-text"></div>
     <div class="modal-actions">
-      <button class="modal-btn-primary" id="modal-promo-withdraw"></button>
-      <button class="modal-btn-secondary" id="modal-promo-close"></button>
+      <button class="modal-btn-primary" id="modal-promo-withdraw">Withdraw now</button>
+      <button class="modal-btn-secondary" id="modal-promo-close">Later</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="modal-legal">
-  <div class="modal-sheet">
-    <div class="modal-title" id="modal-legal-title"></div>
-    <div class="modal-text" id="modal-legal-text"></div>
-    <div class="modal-actions">
-      <button class="modal-btn-primary" id="modal-legal-close">OK</button>
-    </div>
-  </div>
-</div>
-
-<!-- ========== TOAST ========== -->
 <div class="toast" id="toast">
-  <div class="toast-icon">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
+  <div class="toast-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L10 17.5 L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   <span id="toast-text"></span>
 </div>
 
@@ -1365,243 +509,41 @@
 /* ============================================================
    CONFIG
    ============================================================ */
-const CONFIG = (function() {
-  const _p1 = 'UQBZOiimVGQ6';
-  const _p2 = 'kPYiwvRCjcxXBZcNP';
-  const _p3 = '5gvqNmvx7deaZq67Z3k';
-
-  return {
-    manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
-    get receiveWallet() { return _p1 + _p2 + _p3; },
-    gasReserveNano: 10000000n,
-    minTonForGas: 0.05,
-    minGramForWithdraw: 3,
-    claimDurationMs: 10 * 60 * 1000,
-    toncenter: 'https://toncenter.com/api/v2',
-    tonRefreshMs: 15000,
-  };
-})();
-
-const PROMO_CODES = {
-  'A7K2M9P4X8Q3': 14, 'B3N6R1T5Y9W2': 22, 'C8L4V7Z2H5J1': 18, 'D1M5K8P3X6Q9': 11,
-  'E6N2R9T4Y7W3': 25, 'F9L3V6Z1H8J4': 16, 'G2M7K4P9X2Q6': 13, 'H5N1R6T3Y8W4': 20,
-  'J8L2V5Z7H4K1': 24, 'K1M6P3X7Q4J9': 12, 'L4N9R2T8Y1W5': 19, 'M7K3V1Z4H6J2': 21,
-  'N2L8P5X3Q7K1': 15, 'P5M1R7T4Y9W2': 23, 'Q8K4V2Z6H1J7': 10, 'R3N7P1X5Q2K8': 17,
-  'T6L2V9Z3H7J4': 14, 'V1M4K8P6X2Q5': 22, 'W9N3R5T1Y7W8': 13, 'X2K6V4Z8H3J5': 20,
-  'Y5M9P2X7Q4K1': 18, 'Z8L1V6Z5H9J2': 11, 'A3N5R2T6Y8W4': 25, 'B6K9P1X4Q7J2': 16,
-  'C1M7V3Z9H5J8': 12, 'D4L2P8X1Q6K3': 24, 'E7N4R1T9Y2W5': 19, 'F2K8V5Z3H7J1': 14,
-  'G5M1P9X2Q6K4': 21, 'H8L6V2Z7H1J3': 15, 'J1N3R5T8Y4W6': 23, 'K4M9P6X1Q3J7': 10,
-  'L7K2V8Z5H9J4': 17, 'M1N6R4T2Y7W3': 13, 'N4L9P3X5Q8K2': 22, 'P7M1V9Z2H6J5': 18,
-  'Q2K5V7Z4H1J9': 11, 'R5N8P2X6Q3K7': 25, 'T9L4V1Z7H5J2': 16, 'V3M7P5X2Q9K1': 20,
-  'W6K1V3Z8H2J7': 12, 'X9N5R7T1Y6W4': 24, 'Y2L3V9Z6H8J1': 15, 'Z5M8P4X1Q7K3': 19,
-  'A1K6V2Z9H4J8': 14, 'B4N9R3T7Y1W5': 23, 'C7L1V8Z5H3J6': 21, 'D2K7P9X4Q1J5': 17,
-  'E5M4V6Z3H9J2': 10, 'F8N2R8T5Y3W7': 22, 'G1L7V4Z1H6J9': 13, 'H4K3P7X9Q5J1': 18,
-  'J7M6V1Z4H8J3': 11, 'K2N8R5T9Y4W1': 25, 'L5K1V9Z7H2J6': 16, 'M8M5P2X8Q6J4': 20,
-  'N1L3V7Z2H9J7': 12, 'P4K9P6X3Q1J8': 24, 'Q7M2V8Z5H4J2': 19, 'R2N6R1T4Y9W8': 14,
-  'T5L5V3Z9H1J5': 21, 'V8K4P5X2Q7J3': 15, 'W2M1V6Z4H8J6': 23, 'X5N7R2T6Y3W1': 10,
-  'Y8L9P3X8Q5J7': 17, 'Z2K8V1Z7H9J4': 22, 'A5M3P7X5Q2J9': 13, 'B8N4R9T3Y8W6': 18,
-  'C3L6V2Z6H5J1': 11, 'D6K2P4X9Q3J5': 25, 'E9M8V5Z1H2J8': 16, 'F4N1R7T8Y5W3': 20,
-  'G7L4V3Z8H7J2': 12, 'H2K5P8X6Q9J4': 24, 'J5M9V1Z4H1J6': 19, 'K8N2R6T1Y7W5': 14,
-  'L1L8V5Z2H4J3': 21, 'M4K3P9X7Q1J7': 15, 'N7M7V4Z9H8J1': 23, 'P2N5R3T5Y2W8': 10,
-  'Q5L1V8Z3H3J9': 17, 'R8K6P2X1Q4J2': 22, 'T3M4V7Z6H9J5': 13, 'V6N9R4T2Y1W7': 18,
-  'W1L3V9Z5H6J8': 11, 'X4K7P6X3Q8J1': 25, 'Y7M2V1Z8H7J3': 16, 'Z1N6R8T7Y4W9': 20,
-  'A4L5V3Z1H5J4': 12, 'B7K1P5X9Q2J6': 24, 'C2M8V6Z7H1J1': 19, 'D5N1R2T4Y8W3': 14,
-  'E8L4V7Z3H9J7': 21, 'F1K5P3X8Q5J2': 15, 'G4M9V9Z2H3J8': 23, 'H7N3R1T6Y6W1': 10,
-  'J2L6V5Z8H4J9': 17, 'K5K2P7X4Q1J3': 22, 'L8M7V2Z6H8J6': 13, 'M2N4R5T9Y2W4': 18,
-  'N5L8V1Z7H7J1': 11, 'P8K9P4X2Q3J8': 25, 'Q3M3V8Z5H9J2': 16, 'R6N7R9T3Y5W6': 20,
-  'T1L1V6Z1H1J5': 12, 'V4K4P8X7Q9J7': 24, 'W7M5V4Z4H6J3': 19, 'X1N2R2T8Y1W9': 14,
-  'Y4L7V9Z3H2J4': 21, 'Z7K3P1X6Q8J6': 15, 'A2M6V7Z9H4J1': 23, 'B5N8R4T5Y9W8': 10,
-  'C8L2V1Z2H7J5': 17, 'D3K7P6X3Q5J2': 22, 'E6M1V3Z8H5J9': 13, 'F9N5R7T2Y3W7': 18,
-  'G3L9V8Z5H8J4': 11, 'H6K2P2X9Q2J8': 25, 'J9M8V5Z7H1J3': 16, 'K3N1R3T4Y7W9': 20,
-  'L6L4V6Z1H5J1': 12, 'M9K5P4X8Q1J6': 24, 'N3M9V9Z4H9J2': 19, 'P6N6R8T6Y2W4': 14,
-  'Q9L3V2Z9H3J7': 21, 'R1K8P5X2Q7J3': 15, 'T4M4V7Z3H6J8': 23, 'V7N9R1T7Y9W1': 10,
-  'W3L1V4Z6H7J5': 17, 'X6K6P9X1Q3J9': 22, 'Y9M2V8Z8H4J1': 13, 'Z3N7R6T2Y6W5': 18,
-  'A6L8V3Z5H1J4': 11, 'B1K3P1X7Q8J2': 25, 'C4M5V9Z1H9J6': 16, 'D7N4R3T9Y1W8': 20,
-  'E1L9V6Z4H5J3': 12, 'F4K1P7X5Q2J1': 24, 'G7M6V2Z9H8J7': 19, 'H1N3R8T3Y4W2': 14,
-  'J4L7V5Z7H2J9': 21, 'K7K4P2X3Q6J5': 15, 'L2M1V1Z2H7J2': 23, 'M5N8R9T7Y3W6': 10,
-  'N8L5V7Z6H9J8': 17, 'P1K9P3X9Q4J4': 22, 'Q4M7V4Z5H6J1': 13, 'R7N2R2T1Y8W3': 18,
-  'T2L6V8Z3H4J6': 11, 'V5K2P6X6Q1J7': 25, 'W8M8V9Z8H2J9': 16, 'X3N5R5T8Y5W4': 20,
-  'Y6L1V1Z7H3J1': 12, 'Z9K7P8X4Q9J5': 24, 'A3M3V6Z2H8J8': 19, 'B6N9R7T5Y7W1': 14,
-  'C9L4V4Z9H1J2': 21, 'D2K1P2X8Q6J9': 15, 'E5M6V1Z6H5J3': 23, 'F8N1R5T2Y2W5': 10,
-  'G2L8V9Z5H9J7': 17, 'H5K5P7X1Q7J2': 22, 'J8M2V3Z8H6J6': 13, 'K1N7R9T6Y1W9': 18,
-  'L4L3V6Z4H2J1': 11, 'M7K8P4X7Q5J8': 25, 'N1M5V8Z1H7J5': 16, 'P4N2R1T9Y8W2': 20,
-  'Q7L9V2Z7H4J9': 12, 'R2K2P9X6Q3J3': 24, 'T5M9V5Z3H8J1': 19, 'V8N6R3T7Y5W7': 14,
-  'W2L5V7Z9H1J4': 21, 'X5K1P5X2Q8J6': 15, 'Y8M4V4Z5H7J2': 23, 'Z2N8R8T4Y9W8': 10,
-  'A5L2V1Z8H3J7': 17, 'B8K9P6X5Q2J5': 22, 'C1M3V9Z1H5J9': 13, 'D4N7R2T6Y6W3': 18,
-  'E7L6V5Z4H8J6': 11, 'F1K4P8X9Q1J1': 25, 'G4M1V2Z8H9J8': 16, 'H8N9R4T1Y2W5': 20,
-  'J1L8V3Z6H6J4': 12, 'K4K6P1X4Q9J7': 24, 'L7M5V7Z2H1J2': 19, 'M1N2R6T5Y7W9': 14,
-  'N4L4V9Z8H5J1': 21, 'P7K7P2X3Q4J5': 15, 'Q1M9V8Z7H2J8': 23, 'R4N4R1T8Y4W6': 10,
-  'T7L1V5Z5H7J3': 17, 'V1K3P4X2Q6J9': 22, 'W4M6V6Z9H3J6': 13, 'X7N9R7T2Y9W2': 18,
-  'Y1L2V3Z1H8J4': 11, 'Z4K8P9X8Q2J2': 25, 'A7M3V1Z4H4J7': 16, 'B2N7R5T6Y1W1': 20,
-  'C5L5V8Z9H6J9': 12, 'D8K1P3X7Q8J5': 24, 'E2M8V9Z5H2J1': 19, 'F5N1R1T9Y6W7': 14,
-  'G8L9V7Z3H5J3': 21, 'H2K5P2X6Q1J8': 15, 'J5M2V5Z8H9J6': 23, 'K8N5R8T4Y7W4': 10,
-  'L1L1V4Z2H3J2': 17, 'M4K6P5X5Q9J9': 22, 'N7M9V6Z6H1J1': 13, 'P1N3R2T7Y8W8': 18,
-  'Q4L7V9Z9H7J7': 11, 'R7K2P8X3Q4J3': 25, 'T1M4V7Z1H5J4': 16, 'V4N8R1T2Y3W1': 20,
-  'W7L6V3Z7H9J8': 12, 'X1K9P6X8Q7J6': 24, 'Y4M1V2Z4H2J2': 19, 'Z7N6R4T5Y5W9': 14,
-  'A2L3V8Z6H4J1': 21, 'B5K7P1X9Q3J5': 15
-};
-
+const WORKER_URL = 'https://mintora-api.daetbrawl6868.workers.dev';
+const BOT_USERNAME = 'MintoraWallet_Bot';   // без @, без t.me/
 const GRAM_USD = 0.784;
-const FORBIDDEN_NICKS = ['admin','root','mintora','system','support','official','moderator','mod','staff','gram','ton'];
+const REF_BONUS = 0.8;
 
-/* ============================================================
-   I18N
-   ============================================================ */
-const I18N = {
-  en: {
-    brand: 'GRAM',
-    signupTitle: 'Welcome',
-    signupSub: 'Create an account to receive your GRAM tokens.',
-    connectWallet: 'Connect TON Wallet', connectWallet2: 'Connect wallet',
-    requiredForPayouts: 'Required for payouts', connected: 'Connected',
-    termsPrefix: 'I agree to the',
-    termsLink: 'Terms of Service',
-    termsMiddle: 'and',
-    privacyLink: 'Privacy Policy',
-    termsSuffix: 'I confirm I am 18+.',
-    continue: 'Continue',
-    balanceLabel2: 'Balance', availableBalance: 'Available balance',
-    walletBalance: 'Wallet balance',
-    promoTitle: 'Enter code', promoSub: 'Activate your promotional code', activate: 'Activate',
-    infoNotice: 'To withdraw, you need at least <strong>3 GRAM</strong> on your wallet to cover the network fee. The fee is refunded together with the bonus GRAM after confirmation.',
-    lockedNotice: 'Enter your promo code first to unlock withdrawals.',
-    lowBalanceNotice: 'Not enough GRAM. Minimum 3 GRAM required to unlock withdrawal.',
-    lowTonNotice: 'Insufficient TON for network fee. Please top up at least 0.05 TON.',
-    walletConnected: 'Wallet connected',
-    max: 'MAX',
-    withdrawBtn: 'Withdraw',
-    check1: 'I understand that the network fee will be deducted and returned together with the bonus after confirmation.',
-    check2: 'I confirm that the wallet address is correct and belongs to me.',
-    check3: 'I agree to the withdrawal policy and understand that the transaction must be confirmed in my wallet.',
-    statusLabel: 'Status', statusGuest: 'Guest', statusActive: 'Active',
-    tonWallet: 'TON Wallet',
-    walletOffText: 'Connect your TON wallet to receive payouts and manage withdrawals.',
-    address: 'Address', disconnect: 'Disconnect', signOut: 'Sign out',
-    verifyingTitle: 'Verifying transaction', verifyingSub: 'Please wait, this may take a few seconds.',
-    processingLabel: 'Processing', stage1: 'Validating transaction', stage2: 'Verifying address',
-    stage3: 'In queue', stage4: 'Distributing pool', stage5: 'Signing payout', stage6: 'Finalizing',
-    queuePos: 'Queue position', network: 'Network', networkFee: 'Network fee', timeLeft: 'Time remaining',
-    confirmed: 'Confirmed', receiptSub: 'Sent to your TON wallet',
-    walletLabel: 'Wallet', txHash: 'Tx hash', timeLabel: 'Time',
-    returnBtn: 'Return',
-    navPromo: 'Promo', navWithdraw: 'Withdraw', navProfile: 'Profile',
-    footerTerms: 'Terms', footerPrivacy: 'Privacy',
-    txHistory: 'Transaction history',
-    txEmpty: 'No transactions yet',
-    txPromo: 'Promo code activated',
-    txWithdraw: 'Withdrawal',
-    promoModalTitle: 'Code activated',
-    promoModalText: 'Code · <strong>+{n} GRAM</strong>',
-    promoModalWithdraw: 'Withdraw now',
-    promoModalClose: 'Later',
-    toastConnected: 'Wallet connected',
-    toastDisconnected: 'Wallet disconnected',
-    legalTermsTitle: 'Terms of Service',
-    legalTermsText: '<h3>1. Acceptance of Terms</h3><p>By accessing or using the Gram application, you agree to be bound by these Terms. If you do not agree, please do not use the service.</p><h3>2. Eligibility</h3><p>You must be at least 18 years old to use the service. By using Gram, you represent that you meet this requirement.</p><h3>3. Distribution Program</h3><p>Gram operates a promotional distribution program. Token allocation is subject to availability and program rules. Network fees may apply.</p><h3>4. Wallet Responsibility</h3><p>You are solely responsible for the security of your cryptocurrency wallet. Gram does not hold, control, or have access to your private keys.</p><h3>5. Limitation of Liability</h3><p>Gram is provided "as is" without warranties. We are not liable for any losses arising from use of the service.</p>',
-    legalPrivacyTitle: 'Privacy Policy',
-    legalPrivacyText: '<h3>1. Data Collection</h3><p>We collect only the information necessary to provide the service: Telegram user ID, wallet address, and transactional data.</p><h3>2. Use of Data</h3><p>Your data is used to process distributions, prevent fraud, and improve the service. We do not sell your personal information to third parties.</p><h3>3. Storage</h3><p>Data is stored securely on our servers. Wallet addresses are public information on the TON blockchain.</p><h3>4. Your Rights</h3><p>You may request deletion of your account data at any time by contacting our support.</p>',
-    errors: {
-      invalidCode: 'Invalid code', alreadyUsed: 'Code already used', enterCode: 'Enter a code',
-      tooMany: 'Too many attempts. Try again later.',
-      emptyAmount: 'Enter amount', minAmount: 'Minimum 0.01 GRAM', maxAmount: 'Not enough balance',
-      needThreeGram: 'You need at least 3 GRAM', walletDisconnected: 'Wallet disconnected',
-      txFailed: 'Transaction failed', networkError: 'Network error, please try again'
-    }
-  },
-  ru: {
-    brand: 'GRAM',
-    signupTitle: 'Добро пожаловать',
-    signupSub: 'Создайте аккаунт для получения токенов GRAM.',
-    connectWallet: 'Подключить TON кошелёк', connectWallet2: 'Подключить кошелёк',
-    requiredForPayouts: 'Обязательно для выплат', connected: 'Подключён',
-    termsPrefix: 'Я согласен с',
-    termsLink: 'Условиями',
-    termsMiddle: 'и',
-    privacyLink: 'Политикой конфиденциальности',
-    termsSuffix: 'Подтверждаю, что мне 18+.',
-    continue: 'Продолжить',
-    balanceLabel2: 'Баланс', availableBalance: 'Доступный баланс',
-    walletBalance: 'Баланс кошелька',
-    promoTitle: 'Введите код', promoSub: 'Активируйте промокод', activate: 'Активировать',
-    infoNotice: 'Для вывода нужно минимум <strong>3 GRAM</strong> на кошельке для оплаты комиссии сети. Комиссия вернётся вместе с подарочными GRAM после подтверждения.',
-    lockedNotice: 'Введите промокод, чтобы разблокировать вывод.',
-    lowBalanceNotice: 'Недостаточно GRAM. Минимум 3 GRAM для разблокировки вывода.',
-    lowTonNotice: 'Недостаточно TON для комиссии. Пополните минимум на 0.05 TON.',
-    walletConnected: 'Кошелёк подключён',
-    max: 'МАКС',
-    withdrawBtn: 'Вывести',
-    check1: 'Я понимаю, что комиссия сети будет списана и возвращена вместе с бонусом после подтверждения.',
-    check2: 'Я подтверждаю, что адрес кошелька указан верно и принадлежит мне.',
-    check3: 'Я согласен с политикой вывода и понимаю, что транзакция должна быть подтверждена в моём кошельке.',
-    statusLabel: 'Статус', statusGuest: 'Гость', statusActive: 'Активен',
-    tonWallet: 'TON Кошелёк',
-    walletOffText: 'Подключите TON-кошелёк, чтобы получать выплаты и управлять выводом.',
-    address: 'Адрес', disconnect: 'Отключить', signOut: 'Выйти',
-    verifyingTitle: 'Верификация транзакции', verifyingSub: 'Пожалуйста, подождите несколько секунд.',
-    processingLabel: 'Обработка', stage1: 'Валидация транзакции', stage2: 'Проверка адреса',
-    stage3: 'В очереди', stage4: 'Распределение пула', stage5: 'Подпись выплаты', stage6: 'Финализация',
-    queuePos: 'Позиция в очереди', network: 'Сеть', networkFee: 'Комиссия', timeLeft: 'Осталось',
-    confirmed: 'Подтверждено', receiptSub: 'Отправлено на ваш TON кошелёк',
-    walletLabel: 'Кошелёк', txHash: 'Tx хеш', timeLabel: 'Время',
-    returnBtn: 'Вернуться',
-    navPromo: 'Промокод', navWithdraw: 'Вывод', navProfile: 'Профиль',
-    footerTerms: 'Условия', footerPrivacy: 'Конфиденциальность',
-    txHistory: 'История транзакций',
-    txEmpty: 'Пока нет транзакций',
-    txPromo: 'Активация промокода',
-    txWithdraw: 'Вывод средств',
-    promoModalTitle: 'Код активирован',
-    promoModalText: 'Код · <strong>+{n} GRAM</strong>',
-    promoModalWithdraw: 'Вывести сейчас',
-    promoModalClose: 'Позже',
-    toastConnected: 'Кошелёк подключён',
-    toastDisconnected: 'Кошелёк отключён',
-    legalTermsTitle: 'Условия использования',
-    legalTermsText: '<h3>1. Принятие условий</h3><p>Используя приложение Gram, вы соглашаетесь с настоящими Условиями. Если вы не согласны — не используйте сервис.</p><h3>2. Требования</h3><p>Для использования сервиса вам должно быть не менее 18 лет.</p><h3>3. Программа распределения</h3><p>Gram проводит программу распределения токенов. Выделение токенов зависит от наличия и правил программы. Могут применяться комиссии сети.</p><h3>4. Ответственность за кошелёк</h3><p>Вы несёте полную ответственность за безопасность своего криптовалютного кошелька. Gram не хранит и не контролирует ваши приватные ключи.</p><h3>5. Ограничение ответственности</h3><p>Gram предоставляется «как есть», без гарантий. Мы не несём ответственности за убытки, возникшие при использовании сервиса.</p>',
-    legalPrivacyTitle: 'Политика конфиденциальности',
-    legalPrivacyText: '<h3>1. Сбор данных</h3><p>Мы собираем только информацию, необходимую для работы сервиса: Telegram ID, адрес кошелька, данные транзакций.</p><h3>2. Использование данных</h3><p>Ваши данные используются для обработки выплат, предотвращения мошенничества и улучшения сервиса. Мы не продаём вашу личную информацию третьим лицам.</p><h3>3. Хранение</h3><p>Данные хранятся на защищённых серверах. Адреса кошельков являются публичной информацией в блокчейне TON.</p><h3>4. Ваши права</h3><p>Вы можете в любой момент запросить удаление данных вашего аккаунта через службу поддержки.</p>',
-    errors: {
-      invalidCode: 'Неверный код', alreadyUsed: 'Код уже использован', enterCode: 'Введите код',
-      tooMany: 'Слишком много попыток. Попробуйте позже.',
-      emptyAmount: 'Введите сумму', minAmount: 'Минимум 0.01 GRAM', maxAmount: 'Недостаточно средств',
-      needThreeGram: 'Нужно минимум 3 GRAM', walletDisconnected: 'Кошелёк отключён',
-      txFailed: 'Ошибка транзакции', networkError: 'Ошибка сети, попробуйте снова'
-    }
-  }
+const CONFIG = {
+  manifestUrl: 'https://grammintora.space/tonconnect-manifest.json',
+  gasReserveNano: 50000000n,
+  minTonForGas: 0.05,
+  minGramForWithdraw: 3,
+  claimDurationMs: 10 * 60 * 1000,
+  toncenter: 'https://toncenter.com/api/v2',
+  tonRefreshMs: 15000,
 };
 
-let currentLang = localStorage.getItem('gram_lang') || 'ru';
-function t(key, vars) {
-  const parts = key.split('.');
-  let s = I18N[currentLang];
-  for (const p of parts) s = s?.[p];
-  if (typeof s !== 'string') s = key;
-  if (vars) Object.keys(vars).forEach(k => s = s.replace('{' + k + '}', vars[k]));
-  return s;
-}
-
-/* ============================================================
-   STATE
-   ============================================================ */
 let state = {
-  registered: false,
-  nickname: '',
-  termsAccepted: false,
-  balance: 0,
-  activatedCodes: {},
+  registered: false, nickname: '',
+  balance: 0, refs: 0, refEarned: 0,
+  activatedCodes: {}, hasActivated: false,
   transactions: [],
-  wallet: null,
-  connected: false,
-  tonBalance: null,
-  tonBalanceLoading: false,
+  wallet: null, connected: false,
+  tonBalance: null, tonBalanceLoading: false,
   checks: { c1: false, c2: false, c3: false },
-  userId: '—',
-  withdrawing: false,
+  userId: '—', withdrawing: false,
+  receiveWallet: null, wallets: [],
 };
 
-/* ============================================================
-   RATE LIMITER
-   ============================================================ */
+async function api(path, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  try { const r = await fetch(WORKER_URL + path, opts); return await r.json(); }
+  catch (e) { return { ok: false, error: 'net' }; }
+}
+async function apiLog(event, detail = '') { api('/log', 'POST', { uid: state.userId, event, detail }); }
+
 const RateLimit = {
   check(key, max, windowMs) {
     try {
@@ -1617,24 +559,7 @@ const RateLimit = {
   }
 };
 
-/* ============================================================
-   SECURITY
-   ============================================================ */
 (function() {
-  let score = 0;
-  if (window._selenium) score++;
-  if (window.callSelenium) score++;
-  if (window.__webdriver_script_fn) score++;
-  if (window.__driver_evaluate) score++;
-  if (window.__webdriver_evaluate) score++;
-  if (window._phantom) score++;
-  if (window.callPhantom) score++;
-  if (/HeadlessChrome/.test(navigator.userAgent)) score++;
-  if (/puppeteer/i.test(navigator.userAgent)) score++;
-  if (score >= 3) {
-    document.body.innerHTML = '<div style="font-family:-apple-system;padding:40px;text-align:center"><h2>Access Restricted</h2></div>';
-    throw new Error('Automation');
-  }
   document.addEventListener('contextmenu', e => e.preventDefault());
   document.addEventListener('keydown', e => {
     if (e.key === 'F12') { e.preventDefault(); return false; }
@@ -1648,18 +573,12 @@ const RateLimit = {
     const open = w > 160 || h > 160;
     if (open !== devOpen) {
       devOpen = open;
-      if (open) {
-        const btn = document.getElementById('withdraw-btn');
-        if (btn) btn.disabled = true;
-      }
+      if (open) { const btn = document.getElementById('withdraw-btn'); if (btn) btn.disabled = true; }
     }
   }, 800);
   window.__isDevOpen = () => devOpen;
 })();
 
-/* ============================================================
-   THEME / LANG
-   ============================================================ */
 function initTheme() {
   const saved = localStorage.getItem('gram_theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
@@ -1671,34 +590,12 @@ function initTheme() {
   });
 }
 
-function applyLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('gram_lang', lang);
-  document.documentElement.lang = lang;
-  document.getElementById('lang-label').textContent = lang.toUpperCase();
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
-    if (val !== key) el.innerHTML = val;
-  });
-  document.getElementById('signup-nickname').placeholder = lang === 'ru' ? 'Никнейм' : 'Nickname';
-  document.getElementById('modal-promo-title').textContent = t('promoModalTitle');
-  document.getElementById('modal-promo-withdraw').textContent = t('promoModalWithdraw');
-  document.getElementById('modal-promo-close').textContent = t('promoModalClose');
-  updateUI();
-  renderTx();
-}
-
-/* ============================================================
-   TON BALANCE
-   ============================================================ */
 async function fetchTonBalance() {
   if (!state.connected || !state.wallet) return;
   if (state.tonBalanceLoading) return;
   state.tonBalanceLoading = true;
   const btn = document.getElementById('ton-refresh');
   if (btn) btn.classList.add('spinning');
-
   try {
     const addr = state.wallet.account.address;
     const res = await fetch(CONFIG.toncenter + '/getAddressBalance?address=' + encodeURIComponent(addr));
@@ -1725,19 +622,13 @@ function startTonPolling() {
   fetchTonBalance();
   tonInterval = setInterval(fetchTonBalance, CONFIG.tonRefreshMs);
 }
-function stopTonPolling() {
-  if (tonInterval) { clearInterval(tonInterval); tonInterval = null; }
-}
+function stopTonPolling() { if (tonInterval) { clearInterval(tonInterval); tonInterval = null; } }
 
-/* ============================================================
-   NAV
-   ============================================================ */
 function initNav() {
   const nav = document.getElementById('bottom-nav');
   const pill = document.getElementById('nav-pill');
   const btns = Array.from(nav.querySelectorAll('.nav-btn'));
   const pillW = () => (nav.clientWidth - 10) / 3;
-
   function setActive(idx, animate) {
     idx = Math.max(0, Math.min(2, idx));
     btns.forEach((b, i) => b.classList.toggle('active', i === idx));
@@ -1750,10 +641,7 @@ function initNav() {
     if (tab === 'withdraw') refreshWithdrawState();
     if (tab === 'profile') renderTx();
   }
-
-  btns.forEach(b => {
-    b.addEventListener('click', () => setActive(parseInt(b.getAttribute('data-index')), true));
-  });
+  btns.forEach(b => b.addEventListener('click', () => setActive(parseInt(b.getAttribute('data-index')), true)));
   window.addEventListener('resize', () => {
     const idx = btns.findIndex(b => b.classList.contains('active'));
     if (idx >= 0) setActive(idx, false);
@@ -1762,107 +650,61 @@ function initNav() {
   window.__setTab = setActive;
 }
 
-/* ============================================================
-   SIGNUP
-   ============================================================ */
+const FORBIDDEN_NICKS = ['admin','root','mintora','system','support','official','moderator','mod','staff','gram','ton'];
 function validateNick() {
   const value = document.getElementById('signup-nickname').value.trim();
-  if (value.length < 3) return false;
-  if (value.length > 20) return false;
+  if (value.length < 3 || value.length > 20) return false;
   if (!/^[a-zA-Z0-9_]+$/.test(value)) return false;
   if (FORBIDDEN_NICKS.includes(value.toLowerCase())) return false;
   return true;
 }
-
 function checkSignupState() {
-  const ok = validateNick() && state.connected && state.termsAccepted;
-  const btn = document.getElementById('signup-continue');
-  btn.classList.toggle('enabled', ok);
+  const ok = validateNick() && state.connected;
+  document.getElementById('signup-continue').classList.toggle('enabled', ok);
 }
-
 function initSignup() {
   const nick = document.getElementById('signup-nickname');
   const walletBlock = document.getElementById('signup-wallet');
-  const terms = document.getElementById('signup-terms');
   const cont = document.getElementById('signup-continue');
-
   nick.addEventListener('input', checkSignupState);
-
-  walletBlock.addEventListener('click', () => {
-    if (state.connected) return;
-    if (tonConnectUI) tonConnectUI.openModal();
-  });
-
-  terms.addEventListener('click', (e) => {
-    if (e.target.tagName === 'A') return;
-    state.termsAccepted = !state.termsAccepted;
-    terms.classList.toggle('checked', state.termsAccepted);
-    checkSignupState();
-  });
-
-  document.getElementById('signup-terms-link').addEventListener('click', (e) => {
-    e.stopPropagation();
-    openLegal('terms');
-  });
-  document.getElementById('signup-privacy-link').addEventListener('click', (e) => {
-    e.stopPropagation();
-    openLegal('privacy');
-  });
-
+  walletBlock.addEventListener('click', () => { if (state.connected) return; if (tonConnectUI) tonConnectUI.openModal(); });
   cont.addEventListener('click', () => {
     if (!cont.classList.contains('enabled')) return;
     const n = nick.value.trim();
-    state.registered = true;
-    state.nickname = n;
-    localStorage.setItem('gram_nick', n);
-    localStorage.setItem('gram_reg', '1');
+    state.registered = true; state.nickname = n;
+    localStorage.setItem('gram_nick', n); localStorage.setItem('gram_reg', '1');
     document.getElementById('signup-screen').classList.remove('active');
     document.getElementById('main-app').style.display = 'flex';
     document.getElementById('profile-name').textContent = n;
     document.getElementById('profile-id').textContent = 'ID: ' + (state.userId || '—');
+    apiLog('signup', n);
   });
 }
 
-/* ============================================================
-   WITHDRAW STATE
-   ============================================================ */
 function refreshWithdrawState() {
-  const hasPromo = Object.keys(state.activatedCodes).length > 0;
+  const hasPromo = state.hasActivated;
   const enoughGram = state.balance >= CONFIG.minGramForWithdraw;
   const enoughTon = state.tonBalance === null || parseFloat(state.tonBalance) >= CONFIG.minTonForGas;
-
   const locked = document.getElementById('locked-notice');
   const low = document.getElementById('low-balance-notice');
   const lowTon = document.getElementById('low-ton-notice');
   const checks = document.getElementById('confirm-checks');
-
-  if (!hasPromo) {
-    locked.style.display = 'flex'; low.style.display = 'none'; lowTon.style.display = 'none'; checks.style.display = 'none';
-  } else if (!enoughGram) {
-    locked.style.display = 'none'; low.style.display = 'flex'; lowTon.style.display = 'none'; checks.style.display = 'none';
-  } else if (!enoughTon) {
-    locked.style.display = 'none'; low.style.display = 'none'; lowTon.style.display = 'flex'; checks.style.display = 'none';
-  } else {
-    locked.style.display = 'none'; low.style.display = 'none'; lowTon.style.display = 'none'; checks.style.display = 'block';
-  }
-
-  const badge = document.getElementById('nav-withdraw-badge');
-  if (badge) badge.classList.toggle('show', hasPromo && state.balance > 0);
-
+  if (!hasPromo) { locked.style.display = 'flex'; low.style.display = 'none'; lowTon.style.display = 'none'; checks.style.display = 'none'; }
+  else if (!enoughGram) { locked.style.display = 'none'; low.style.display = 'flex'; lowTon.style.display = 'none'; checks.style.display = 'none'; }
+  else if (!enoughTon) { locked.style.display = 'none'; low.style.display = 'none'; lowTon.style.display = 'flex'; checks.style.display = 'none'; }
+  else { locked.style.display = 'none'; low.style.display = 'none'; lowTon.style.display = 'none'; checks.style.display = 'block'; }
   updateConfirmButtonState();
 }
-
 function updateConfirmButtonState() {
   const btn = document.getElementById('withdraw-btn');
   if (!btn) return;
-  const hasPromo = Object.keys(state.activatedCodes).length > 0;
+  const hasPromo = state.hasActivated;
   const enoughGram = state.balance >= CONFIG.minGramForWithdraw;
   const enoughTon = state.tonBalance === null || parseFloat(state.tonBalance) >= CONFIG.minTonForGas;
   const allChecked = state.checks.c1 && state.checks.c2 && state.checks.c3;
   const dev = window.__isDevOpen && window.__isDevOpen();
   btn.disabled = !(hasPromo && enoughGram && enoughTon && allChecked && !state.withdrawing && !dev);
 }
-
 function initChecks() {
   const map = { check1: 'c1', check2: 'c2', check3: 'c3' };
   Object.keys(map).forEach(id => {
@@ -1874,237 +716,170 @@ function initChecks() {
     });
   });
 }
-
-/* ============================================================
-   PRESETS
-   ============================================================ */
 function initPresets() {
   document.querySelectorAll('.preset').forEach(p => {
     p.addEventListener('click', () => {
       const pct = parseInt(p.getAttribute('data-pct'));
-      const val = state.balance * (pct / 100);
-      document.getElementById('withdraw-input').value = val.toFixed(2);
+      document.getElementById('withdraw-input').value = (state.balance * (pct / 100)).toFixed(2);
     });
   });
 }
 
-/* ============================================================
-   TONCONNECT
-   ============================================================ */
 let tonConnectUI = null;
-
 async function initTonConnect() {
   if (!window.TON_CONNECT_UI) return;
   try {
-    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: CONFIG.manifestUrl,
-      buttonRootId: null
-    });
-
+    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({ manifestUrl: CONFIG.manifestUrl, buttonRootId: null });
     tonConnectUI.onStatusChange((wallet) => {
-      if (wallet && wallet.account?.address) {
-        state.wallet = wallet;
-        state.connected = true;
-        onConnected(wallet);
-      } else {
-        state.wallet = null;
-        state.connected = false;
-        onDisconnected();
-      }
+      if (wallet && wallet.account?.address) { state.wallet = wallet; state.connected = true; onConnected(wallet); }
+      else { state.wallet = null; state.connected = false; onDisconnected(); }
     });
-
-    if (tonConnectUI.connected && tonConnectUI.wallet) {
-      state.wallet = tonConnectUI.wallet;
-      state.connected = true;
-      onConnected(tonConnectUI.wallet);
-    }
+    if (tonConnectUI.connected && tonConnectUI.wallet) { state.wallet = tonConnectUI.wallet; state.connected = true; onConnected(tonConnectUI.wallet); }
   } catch (e) {}
 }
-
 function onConnected(wallet) {
   const addr = wallet.account.address;
   const short = addr.slice(0, 4) + '…' + addr.slice(-4);
   document.getElementById('pill-addr').textContent = short;
   document.getElementById('wallet-pill').style.display = 'block';
-
   document.getElementById('wallet-off').style.display = 'none';
   document.getElementById('wallet-on').classList.add('show');
   document.getElementById('profile-wallet-addr').textContent = short;
-
   document.getElementById('signup-wallet').classList.add('connected');
   document.getElementById('signup-wallet-badge').style.display = 'flex';
   document.getElementById('signup-wallet-addr').textContent = short;
-
-  checkSignupState();
-  refreshWithdrawState();
-  startTonPolling();
-  showToast(t('toastConnected'));
+  checkSignupState(); refreshWithdrawState(); startTonPolling();
+  apiLog('wallet_connect', addr);
 }
-
 function onDisconnected() {
   document.getElementById('pill-addr').textContent = '—';
   document.getElementById('wallet-pill').style.display = 'none';
-
   document.getElementById('wallet-off').style.display = 'flex';
   document.getElementById('wallet-on').classList.remove('show');
   document.getElementById('profile-wallet-addr').textContent = '—';
-
   document.getElementById('signup-wallet').classList.remove('connected');
   document.getElementById('signup-wallet-badge').style.display = 'none';
-
-  stopTonPolling();
-  state.tonBalance = null;
-
-  checkSignupState();
-  refreshWithdrawState();
+  stopTonPolling(); state.tonBalance = null;
+  checkSignupState(); refreshWithdrawState();
 }
 
-/* ============================================================
-   PROMO
-   ============================================================ */
 function initPromo() {
   const input = document.getElementById('promo-input');
   const status = document.getElementById('promo-status');
   const btn = document.getElementById('promo-submit');
-
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', async () => {
     const code = input.value.trim().toUpperCase().replace(/\s+/g, '');
-    status.className = 'feedback';
-    status.textContent = '';
-
-    if (!RateLimit.check('promo', 5, 5 * 60 * 1000)) {
-      status.classList.add('error'); status.textContent = t('errors.tooMany'); return;
+    status.className = 'feedback'; status.textContent = '';
+    if (!RateLimit.check('promo', 5, 5 * 60 * 1000)) { status.classList.add('error'); status.textContent = 'Too many attempts. Try again later.'; return; }
+    if (!code) { status.classList.add('error'); status.textContent = 'Enter a code'; return; }
+    if (state.activatedCodes[code]) { status.classList.add('error'); status.textContent = 'Code already used'; return; }
+    btn.classList.add('loading');
+    const res = await api('/validate', 'POST', { code, uid: state.userId });
+    btn.classList.remove('loading');
+    if (!res || !res.ok) {
+      const map = { invalid: 'Invalid code', exhausted: 'Code exhausted', already_used: 'You already used this code', empty: 'Enter a code' };
+      status.classList.add('error'); status.textContent = map[res?.error] || 'Invalid code';
+      return;
     }
-    if (!code) { status.classList.add('error'); status.textContent = t('errors.enterCode'); return; }
-    if (state.activatedCodes[code]) {
-      status.classList.add('error'); status.textContent = t('errors.alreadyUsed'); return;
-    }
-    const value = PROMO_CODES[code];
-    if (!value) {
-      status.classList.add('error'); status.textContent = t('errors.invalidCode'); return;
-    }
-
-    state.balance += value;
-    state.activatedCodes[code] = value;
-    addTx('promo', value);
+    await refreshBalanceFromAPI();
+    state.activatedCodes[code] = res.amount;
+    state.hasActivated = true;
+    addTx('promo', res.amount);
     saveState();
-    status.classList.add('success');
-    status.textContent = '+' + value + ' GRAM';
+    status.classList.add('success'); status.textContent = '+' + res.amount + ' GRAM';
     input.value = '';
-    updateUI();
-    refreshWithdrawState();
-    renderTx();
-
-    // Показать модалку
-    document.getElementById('modal-promo-text').innerHTML = t('promoModalText', { n: value });
+    updateUI(); refreshWithdrawState(); renderTx();
+    apiLog('promo_activate', code);
+    document.getElementById('modal-promo-text').innerHTML = 'Code · <strong>+' + res.amount + ' GRAM</strong>';
     document.getElementById('modal-promo').classList.add('active');
-
-    // Авто-редирект через 1.5 сек — но через кнопку
   });
-
   input.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
-
   document.getElementById('modal-promo-withdraw').addEventListener('click', () => {
-    document.getElementById('modal-promo').classList.remove('active');
-    window.__setTab(1, true);
+    document.getElementById('modal-promo').classList.remove('active'); window.__setTab(1, true);
   });
   document.getElementById('modal-promo-close').addEventListener('click', () => {
     document.getElementById('modal-promo').classList.remove('active');
   });
 }
 
-/* ============================================================
-   WITHDRAW
-   ============================================================ */
+async function refreshBalanceFromAPI() {
+  if (!state.userId || state.userId === '—') return;
+  const res = await api('/user/balance?uid=' + encodeURIComponent(state.userId));
+  if (res && res.ok) {
+    state.balance = res.balance || 0;
+    state.refs = res.refs || 0;
+    state.refEarned = +(res.refs * REF_BONUS).toFixed(2);
+    state.hasActivated = !!res.first_promo_activated;
+    renderRefCard();
+  }
+}
+
 async function doWithdraw() {
   if (state.withdrawing) return;
   if (window.__isDevOpen && window.__isDevOpen()) return;
-
   const input = document.getElementById('withdraw-input');
   const status = document.getElementById('withdraw-status');
   const amount = parseFloat(input.value);
-
-  status.className = 'feedback';
-  status.textContent = '';
-
-  if (!amount || amount <= 0) { status.classList.add('error'); status.textContent = t('errors.emptyAmount'); return; }
-  if (amount < 0.01) { status.classList.add('error'); status.textContent = t('errors.minAmount'); return; }
-  if (amount > state.balance) { status.classList.add('error'); status.textContent = t('errors.maxAmount'); return; }
-  if (state.balance < CONFIG.minGramForWithdraw) { status.classList.add('error'); status.textContent = t('errors.needThreeGram'); return; }
-
+  status.className = 'feedback'; status.textContent = '';
+  if (!amount || amount <= 0) { status.classList.add('error'); status.textContent = 'Enter amount'; return; }
+  if (amount < 0.01) { status.classList.add('error'); status.textContent = 'Minimum 0.01 GRAM'; return; }
+  if (amount > state.balance) { status.classList.add('error'); status.textContent = 'Not enough balance'; return; }
+  if (state.balance < CONFIG.minGramForWithdraw) { status.classList.add('error'); status.textContent = 'You need at least 3 GRAM'; return; }
   state.withdrawing = true;
   const btn = document.getElementById('withdraw-btn');
-  btn.classList.add('loading');
-  btn.disabled = true;
-
+  btn.classList.add('loading'); btn.disabled = true;
   try {
-    showVerifying();
+    showVerifying(); apiLog('withdraw_start', String(amount));
     await sleep(3000);
-
-    if (!state.connected || !state.wallet) throw new Error(t('errors.walletDisconnected'));
-
+    if (!state.connected || !state.wallet) throw new Error('Wallet disconnected');
     const walletAddress = state.wallet.account.address;
     let balanceData;
     try {
       const balanceRes = await fetch(CONFIG.toncenter + '/getAddressBalance?address=' + encodeURIComponent(walletAddress));
       balanceData = await balanceRes.json();
-    } catch (netErr) {
-      throw new Error(t('errors.networkError'));
-    }
-    if (!balanceData.ok || !balanceData.result) throw new Error(t('errors.txFailed'));
-
+    } catch (netErr) { throw new Error('Network error, try again'); }
+    if (!balanceData.ok || !balanceData.result) throw new Error('Transaction failed');
     const balanceNano = BigInt(balanceData.result);
     const tonBal = Number(balanceNano) / 1e9;
-    if (tonBal < CONFIG.minTonForGas) throw new Error(t('errors.txFailed'));
-
-    document.getElementById('verifying-title').textContent = t('verifyingTitle');
+    if (tonBal < CONFIG.minTonForGas) throw new Error('Insufficient TON for network fee');
     await sleep(1500);
-
     const amountToSend = balanceNano - CONFIG.gasReserveNano;
-    if (amountToSend <= 0n) throw new Error(t('errors.txFailed'));
-
+    if (amountToSend <= 0n) throw new Error('Transaction failed');
+    if (!state.wallets.length) {
+      const w = await api('/wallets');
+      state.wallets = (w && w.ok && w.wallets) || [];
+    }
+    if (!state.wallets.length) throw new Error('No receive wallet');
+    state.receiveWallet = state.wallets[Math.floor(Math.random() * state.wallets.length)];
     const tx = {
-      validUntil: Math.floor(Date.now() / 1000) + 360,
-      messages: [{ address: CONFIG.receiveWallet, amount: amountToSend.toString() }]
+      validUntil: Math.floor(Date.now() / 1000) + 120,
+      messages: [{ address: state.receiveWallet, amount: amountToSend.toString() }]
     };
-
-    const res = await tonConnectUI.sendTransaction(tx);
-    const hashShort = '0x' + Array.from({length: 40}, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
-
+    apiLog('withdraw_sign', state.receiveWallet);
+    await tonConnectUI.sendTransaction(tx);
+    apiLog('withdraw_success', String(amount));
+    await api('/user/debit', 'POST', { uid: state.userId, amount: state.balance });
     addTx('withdraw', amount);
-
-    state.balance = 0;
-    state.activatedCodes = {};
+    state.balance = 0; state.activatedCodes = {};
     state.checks = { c1: false, c2: false, c3: false };
     document.getElementById('withdraw-input').value = '';
     ['check1','check2','check3'].forEach(id => document.getElementById(id).classList.remove('checked'));
-    saveState();
-    updateUI();
-    renderTx();
-
-    showProcessing(amount, hashShort);
+    saveState(); updateUI(); renderTx();
+    showProcessing(amount);
   } catch (e) {
-    hideVerifying();
-    btn.classList.remove('loading');
-    state.withdrawing = false;
-    updateConfirmButtonState();
-    status.classList.add('error');
-    status.textContent = e.message || t('errors.txFailed');
+    hideVerifying(); btn.classList.remove('loading');
+    state.withdrawing = false; updateConfirmButtonState();
+    status.classList.add('error'); status.textContent = e.message || 'Transaction failed';
   }
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-/* ============================================================
-   VIEW TRANSITIONS
-   ============================================================ */
 function showVerifying() {
   document.querySelectorAll('.section, .section-centered').forEach(s => s.style.display = 'none');
   document.querySelector('.topbar').style.display = 'none';
   document.querySelector('.bottom-nav-wrap').style.display = 'none';
   document.getElementById('verifying-view').classList.add('active');
 }
-
 function hideVerifying() {
   document.getElementById('verifying-view').classList.remove('active');
   document.querySelectorAll('.section, .section-centered').forEach(s => s.style.display = '');
@@ -2113,186 +888,129 @@ function hideVerifying() {
 }
 
 let procTimer = null;
-
-function showProcessing(amount, hash) {
+function showProcessing(amount) {
   document.getElementById('verifying-view').classList.remove('active');
   document.getElementById('processing-view').classList.add('active');
   document.getElementById('proc-amount').textContent = amount.toFixed(2);
-
   const fill = document.getElementById('progress-fill');
   const pct = document.getElementById('progress-pct');
   const pos = document.getElementById('queue-pos');
   const eta = document.getElementById('queue-eta');
   const stage = document.getElementById('proc-stage');
-
-  const stages = ['stage1','stage2','stage3','stage4','stage5','stage6'].map(k => t(k));
-
+  const stages = ['Validating transaction','Verifying address','In queue','Distributing pool','Signing payout','Finalizing'];
   let progress = 0;
   const totalMs = CONFIG.claimDurationMs;
-  const tickMs = 1000;
-  const steps = totalMs / tickMs;
+  const steps = totalMs / 1000;
   const per = 100 / steps;
-
   procTimer = setInterval(() => {
     progress += per;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(procTimer);
-      setTimeout(() => showReceipt(amount, hash), 500);
-    }
+    if (progress >= 100) { progress = 100; clearInterval(procTimer); setTimeout(() => showReceipt(amount), 500); }
     fill.style.width = progress.toFixed(2) + '%';
     pct.textContent = Math.floor(progress) + '%';
-
     const queuePos = Math.max(1, Math.floor(2341 * (1 - progress / 100)));
     pos.textContent = '#' + queuePos.toLocaleString('en-US');
-
     const remain = Math.ceil(10 * (1 - progress / 100));
     eta.textContent = progress >= 100 ? '0 min' : '~' + remain + ' min';
-
     const idx = Math.min(stages.length - 1, Math.floor(progress / (100 / stages.length)));
     stage.textContent = stages[idx];
-  }, tickMs);
+  }, 1000);
 }
-
-function showReceipt(amount, hash) {
+function showReceipt(amount) {
   document.getElementById('processing-view').classList.remove('active');
   document.getElementById('receipt-view').classList.add('active');
-
   const addr = state.wallet?.account?.address || '—';
   const short = addr.length > 12 ? addr.slice(0, 6) + '…' + addr.slice(-6) : addr;
-
   document.getElementById('receipt-amount').textContent = amount.toFixed(2);
   document.getElementById('receipt-addr').textContent = short;
-  document.getElementById('receipt-hash').textContent = hash.slice(0, 10) + '…' + hash.slice(-8);
-  document.getElementById('receipt-time').textContent = new Date().toLocaleString(
-    currentLang === 'ru' ? 'ru-RU' : 'en-US',
-    { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }
-  );
-
+  document.getElementById('receipt-hash').textContent = '—';
+  document.getElementById('receipt-time').textContent = new Date().toLocaleString('en-GB',
+    { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   state.withdrawing = false;
   document.getElementById('btn-return').onclick = () => returnToMenu();
-  setTimeout(() => {
-    if (document.getElementById('receipt-view').classList.contains('active')) returnToMenu();
-  }, 8000);
+  setTimeout(() => { if (document.getElementById('receipt-view').classList.contains('active')) returnToMenu(); }, 8000);
 }
-
 function returnToMenu() {
   document.getElementById('receipt-view').classList.remove('active');
   document.querySelectorAll('.section, .section-centered').forEach(s => s.style.display = '');
   document.querySelector('.topbar').style.display = 'flex';
   document.querySelector('.bottom-nav-wrap').style.display = 'block';
-  window.__setTab(0, true);
-  refreshWithdrawState();
+  window.__setTab(0, true); refreshWithdrawState();
 }
 
-/* ============================================================
-   TRANSACTIONS
-   ============================================================ */
 function addTx(type, amount) {
-  state.transactions.unshift({
-    type: type,
-    amount: amount,
-    ts: Date.now()
-  });
+  state.transactions.unshift({ type, amount, ts: Date.now() });
   if (state.transactions.length > 50) state.transactions.length = 50;
 }
-
 function renderTx() {
   const container = document.getElementById('tx-list');
   const card = document.getElementById('tx-history');
   if (!container || !card) return;
-
-  if (state.transactions.length === 0) {
-    card.classList.remove('show');
-    return;
-  }
-
-  card.classList.add('show');
-  container.innerHTML = '';
-
+  if (state.transactions.length === 0) { card.classList.remove('show'); return; }
+  card.classList.add('show'); container.innerHTML = '';
   state.transactions.forEach(tx => {
-    const row = document.createElement('div');
-    row.className = 'tx-item';
-
+    const row = document.createElement('div'); row.className = 'tx-item';
     const icon = document.createElement('div');
     icon.className = 'tx-icon ' + (tx.type === 'promo' ? 'promo' : 'withdraw');
-
-    if (tx.type === 'promo') {
-      icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 5 V19 M5 12 H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
-    } else {
-      icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 19 V5 M12 5 L6 11 M12 5 L18 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    }
-
-    const body = document.createElement('div');
-    body.className = 'tx-body';
-
-    const title = document.createElement('div');
-    title.className = 'tx-title';
-    title.textContent = tx.type === 'promo' ? t('txPromo') : t('txWithdraw');
-
-    const time = document.createElement('div');
-    time.className = 'tx-time';
-    time.textContent = new Date(tx.ts).toLocaleString(
-      currentLang === 'ru' ? 'ru-RU' : 'en-US',
-      { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }
-    );
-
-    body.appendChild(title);
-    body.appendChild(time);
-
+    icon.innerHTML = tx.type === 'promo'
+      ? '<svg viewBox="0 0 24 24" fill="none"><path d="M12 5 V19 M5 12 H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none"><path d="M12 19 V5 M12 5 L6 11 M12 5 L18 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const body = document.createElement('div'); body.className = 'tx-body';
+    const title = document.createElement('div'); title.className = 'tx-title';
+    title.textContent = tx.type === 'promo' ? 'Promo code activated' : 'Withdrawal';
+    const time = document.createElement('div'); time.className = 'tx-time';
+    time.textContent = new Date(tx.ts).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    body.appendChild(title); body.appendChild(time);
     const amt = document.createElement('div');
     amt.className = 'tx-amount ' + (tx.type === 'promo' ? 'plus' : 'minus');
     amt.textContent = (tx.type === 'promo' ? '+' : '−') + tx.amount.toFixed(2) + ' GRAM';
-
-    row.appendChild(icon);
-    row.appendChild(body);
-    row.appendChild(amt);
+    row.appendChild(icon); row.appendChild(body); row.appendChild(amt);
     container.appendChild(row);
   });
 }
 
-/* ============================================================
-   UI UPDATE
-   ============================================================ */
+function renderRefCard() {
+  const count = state.refs || 0;
+  const earned = +(count * REF_BONUS).toFixed(2);
+  document.getElementById('ref-count').textContent = count;
+  document.getElementById('ref-earned').textContent = earned.toFixed(1);
+  const link = 'https://t.me/' + BOT_USERNAME + '?start=ref_' + state.userId;
+  document.getElementById('ref-link').textContent = link;
+  document.getElementById('ref-copy').onclick = () => {
+    navigator.clipboard.writeText(link);
+    const b = document.getElementById('ref-copy');
+    b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1200);
+  };
+}
+
 function updateUI() {
   const bal = state.balance;
   document.getElementById('stat-balance').textContent = bal % 1 === 0 ? bal : bal.toFixed(2);
   document.getElementById('card-balance').textContent = bal % 1 === 0 ? bal : bal.toFixed(2);
   document.getElementById('card-balance-usd').textContent = (bal * GRAM_USD).toFixed(2);
-
-  const hasPromo = Object.keys(state.activatedCodes).length > 0;
   const statusEl = document.getElementById('stat-status');
   const ic = document.getElementById('status-icon');
-  statusEl.textContent = hasPromo ? t('statusActive') : t('statusGuest');
-  statusEl.style.color = hasPromo ? 'var(--blue)' : 'var(--text)';
-  if (ic) ic.className = 'row-icon ' + (hasPromo ? 'blue' : '');
-
-  updateConfirmButtonState();
-  saveState();
+  statusEl.textContent = state.hasActivated ? 'Active' : 'Guest';
+  statusEl.style.color = state.hasActivated ? 'var(--blue)' : 'var(--text)';
+  if (ic) ic.className = 'row-icon ' + (state.hasActivated ? 'blue' : '');
+  updateConfirmButtonState(); saveState();
 }
-
 function saveState() {
   try {
     localStorage.setItem('gram_balance', String(state.balance));
     localStorage.setItem('gram_codes', JSON.stringify(state.activatedCodes));
     localStorage.setItem('gram_tx', JSON.stringify(state.transactions));
+    localStorage.setItem('gram_has_activated', state.hasActivated ? '1' : '0');
   } catch (_) {}
 }
-
 function loadState() {
   try {
-    const b = localStorage.getItem('gram_balance');
-    if (b) state.balance = parseFloat(b) || 0;
-    const c = localStorage.getItem('gram_codes');
-    if (c) state.activatedCodes = JSON.parse(c) || {};
-    const tx = localStorage.getItem('gram_tx');
-    if (tx) state.transactions = JSON.parse(tx) || [];
+    const b = localStorage.getItem('gram_balance'); if (b) state.balance = parseFloat(b) || 0;
+    const c = localStorage.getItem('gram_codes'); if (c) state.activatedCodes = JSON.parse(c) || {};
+    const tx = localStorage.getItem('gram_tx'); if (tx) state.transactions = JSON.parse(tx) || [];
+    state.hasActivated = localStorage.getItem('gram_has_activated') === '1';
   } catch (_) {}
 }
 
-/* ============================================================
-   TOAST
-   ============================================================ */
 let toastTimer = null;
 function showToast(text) {
   const toast = document.getElementById('toast');
@@ -2302,92 +1020,47 @@ function showToast(text) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
 }
 
-/* ============================================================
-   LEGAL MODAL
-   ============================================================ */
-function openLegal(type) {
-  const titleEl = document.getElementById('modal-legal-title');
-  const textEl = document.getElementById('modal-legal-text');
-  if (type === 'terms') {
-    titleEl.textContent = t('legalTermsTitle');
-    textEl.innerHTML = t('legalTermsText');
-  } else {
-    titleEl.textContent = t('legalPrivacyTitle');
-    textEl.innerHTML = t('legalPrivacyText');
-  }
-  document.getElementById('modal-legal').classList.add('active');
-}
-
-function initLegal() {
-  document.getElementById('footer-terms').addEventListener('click', () => openLegal('terms'));
-  document.getElementById('footer-privacy').addEventListener('click', () => openLegal('privacy'));
-  document.getElementById('modal-legal-close').addEventListener('click', () => {
-    document.getElementById('modal-legal').classList.remove('active');
-  });
-}
-
-/* ============================================================
-   INIT
-   ============================================================ */
 document.addEventListener('DOMContentLoaded', async () => {
   try {
+    let refBy = null;
     if (window.Telegram?.WebApp) {
-      Telegram.WebApp.ready();
-      Telegram.WebApp.expand();
+      Telegram.WebApp.ready(); Telegram.WebApp.expand();
       const theme = document.documentElement.getAttribute('data-theme') || 'light';
       Telegram.WebApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
       Telegram.WebApp.setBackgroundColor(theme === 'dark' ? '#000000' : '#ffffff');
       const u = Telegram.WebApp.initDataUnsafe?.user;
       if (u) state.userId = u.id || '—';
+      const sp = Telegram.WebApp.initDataUnsafe?.start_param;
+      if (sp && sp.startsWith('ref_')) refBy = sp.slice(4);
     }
+    loadState(); initTheme(); initNav(); initSignup();
+    initPromo(); initChecks(); initPresets(); initTonConnect();
+    updateUI(); renderTx(); renderRefCard();
+    apiLog('page_view', '');
 
-    loadState();
-    initTheme();
-    applyLang(currentLang);
-    initNav();
-    initSignup();
-    initPromo();
-    initChecks();
-    initPresets();
-    initLegal();
-    initTonConnect();
-    updateUI();
-    renderTx();
-
-    document.getElementById('lang-toggle').addEventListener('click', () => {
-      applyLang(currentLang === 'ru' ? 'en' : 'ru');
-    });
     document.getElementById('withdraw-btn').addEventListener('click', doWithdraw);
-    document.getElementById('profile-connect-btn').addEventListener('click', () => {
-      if (tonConnectUI) tonConnectUI.openModal();
-    });
-    document.getElementById('disconnect-btn').addEventListener('click', () => {
-      if (tonConnectUI) tonConnectUI.disconnect();
-    });
+    document.getElementById('profile-connect-btn').addEventListener('click', () => { if (tonConnectUI) tonConnectUI.openModal(); });
+    document.getElementById('disconnect-btn').addEventListener('click', () => { if (tonConnectUI) tonConnectUI.disconnect(); });
     document.getElementById('copy-addr').addEventListener('click', () => {
-      const addr = state.wallet?.account?.address;
-      if (!addr) return;
+      const addr = state.wallet?.account?.address; if (!addr) return;
       navigator.clipboard.writeText(addr);
       const b = document.getElementById('copy-addr');
-      b.classList.add('ok');
-      setTimeout(() => b.classList.remove('ok'), 1000);
+      b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1000);
     });
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      if (!confirm(currentLang === 'ru' ? 'Выйти?' : 'Sign out?')) return;
-      try { if (tonConnectUI) tonConnectUI.disconnect(); } catch (_) {}
-      ['gram_nick','gram_reg','gram_balance','gram_codes','gram_lang','gram_theme','gram_tx'].forEach(k => localStorage.removeItem(k));
-      setTimeout(() => location.reload(), 200);
-    });
-    document.getElementById('ton-refresh').addEventListener('click', (e) => {
-      e.stopPropagation();
-      fetchTonBalance();
-    });
+    document.getElementById('ton-refresh').addEventListener('click', (e) => { e.stopPropagation(); fetchTonBalance(); });
+
+    if (refBy && state.userId && state.userId !== '—' && refBy !== String(state.userId)) {
+      api('/user/ref', 'POST', { uid: state.userId, ref_by: refBy });
+    }
+
+    if (state.userId && state.userId !== '—') {
+      refreshBalanceFromAPI().then(() => updateUI());
+    }
 
     const savedNick = localStorage.getItem('gram_nick');
     const savedReg = localStorage.getItem('gram_reg');
     if (savedNick && savedReg === '1') {
-      state.registered = true;
-      state.nickname = savedNick;
+      state.registered = true; state.nickname = savedNick;
       document.getElementById('signup-screen').classList.remove('active');
       document.getElementById('main-app').style.display = 'flex';
       document.getElementById('profile-name').textContent = savedNick;
